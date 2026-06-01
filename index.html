@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KG1 Teacher Hub · ACS Sriracha</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+/* ── ACS SRIRACHA DESIGN SYSTEM ─────────────────────────────────────────── */
+:root{
+  --red:        #B91C1C;   /* ACS Red — primary action colour  */
+  --red-dark:   #991B1B;
+  --red-light:  #FEF2F2;
+  --red-mid:    #FECACA;
+  --white:      #FFFFFF;
+  --bg:         #F8F9FA;
+  --surface:    #FFFFFF;
+  --border:     #E5E7EB;
+  --text:       #111827;
+  --muted:      #6B7280;
+  --faint:      #9CA3AF;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:'Nunito',sans-serif;height:100dvh;overflow:hidden;color:var(--text)}
+#root{height:100dvh;display:flex;flex-direction:column}
+
+.scrl{overflow-x:auto;white-space:nowrap}
+.scrl::-webkit-scrollbar{height:3px}
+.scrl::-webkit-scrollbar-thumb{background:var(--red);border-radius:3px}
+
+/* tabs */
+.tab-btn{padding:0.38rem 0.9rem;border-radius:6px 6px 0 0;border:none;
+  cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.75rem;
+  flex-shrink:0;transition:all 0.15s}
+
+/* animations */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse 1.5s infinite;flex-shrink:0}
+.sync-dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sync-ok{background:#22c55e}.sync-ing{background:#f59e0b;animation:pulse 1s infinite}.sync-err{background:#ef4444}
+
+select,input,textarea{font-family:'Nunito',sans-serif}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-box{background:#fff;border-radius:16px;padding:1.4rem;max-width:520px;width:100%;max-height:90dvh;
+  overflow-y:auto;box-shadow:0 8px 40px rgba(185,28,28,0.15);border-top:3px solid var(--red)}
+
+/* buttons */
+.btn{padding:0.45rem 1rem;border-radius:8px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;
+  font-weight:700;font-size:0.85rem;transition:all 0.15s}
+.btn-primary{background:var(--red);color:#fff}
+.btn-primary:hover{background:var(--red-dark)}
+.btn-sm{padding:0.3rem 0.7rem;font-size:0.75rem;border-radius:6px;border:none;
+  cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700}
+
+/* student cards */
+.stu-card{background:#f9fafb;border-radius:12px;padding:0.6rem;text-align:center;
+  cursor:pointer;transition:all 0.2s;border:2px solid transparent}
+.stu-card:hover{transform:scale(1.04);border-color:var(--red)}
+
+.toggle-row{display:flex;gap:0.4rem;flex-wrap:wrap}
+.tog{padding:0.4rem 0.8rem;border-radius:8px;border:2px solid #e5e7eb;
+  cursor:pointer;font-size:0.8rem;font-weight:700;background:#fff;transition:all 0.15s}
+.tog.on{border-color:currentColor;background:currentColor;color:#fff!important;filter:brightness(1.1)}
+
+/* panels (analytics) */
+.panel{position:absolute;background:#fff;border-radius:12px;
+  box-shadow:0 1px 8px rgba(0,0,0,0.08),0 0 0 1px rgba(0,0,0,0.04);
+  overflow:hidden;display:flex;flex-direction:column;min-width:200px;min-height:140px;
+  container-type:inline-size;container-name:panel}
+.panel-header{padding:0.55rem 0.85rem;font-weight:800;color:var(--red);
+  background:var(--red-light);border-bottom:1px solid var(--red-mid);
+  cursor:grab;user-select:none;flex-shrink:0;font-size:clamp(0.75rem,2.2cqi,1rem)}
+.panel-body{flex:1;overflow:hidden;position:relative}
+.resize-handle{position:absolute;bottom:0;right:0;width:22px;height:22px;cursor:se-resize;z-index:10}
+.resize-handle::after{content:'';position:absolute;bottom:4px;right:4px;width:12px;height:12px;
+  border-right:2.5px solid #9ca3af;border-bottom:2.5px solid #9ca3af;border-radius:1px}
+
+/* ── PERIOD ROWS — bigger, airier ── */
+.period-row{display:flex;align-items:stretch;gap:0;background:#fff;border-radius:10px;
+  box-shadow:0 1px 3px rgba(0,0,0,0.06);transition:all 0.2s;
+  margin-bottom:6px;cursor:pointer;border:1px solid var(--border);overflow:hidden}
+.period-row:hover{box-shadow:0 3px 10px rgba(185,28,28,0.12);border-color:var(--red-mid)}
+.period-row.active-period{box-shadow:0 4px 16px rgba(185,28,28,0.2);border-color:var(--red)}
+.period-row.past-period{opacity:0.42}
+.period-label{font-weight:900;color:var(--faint);width:3rem;flex-shrink:0;
+  font-size:0.72rem;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:0.5rem 0;background:#f9fafb;border-right:1px solid var(--border)}
+.period-time-sm{font-size:0.6rem;color:var(--faint);font-weight:600;margin-top:1px}
+.period-subj{font-weight:800;color:var(--text);font-size:clamp(0.85rem,2.8cqi,1.1rem);line-height:1.2}
+.period-tchr{color:var(--muted);font-size:clamp(0.68rem,1.8cqi,0.82rem);margin-top:2px}
+.period-topic{color:var(--muted);font-size:clamp(0.65rem,1.6cqi,0.78rem);margin-top:2px;font-style:italic}
+.period-time{color:var(--faint);font-size:clamp(0.58rem,1.6cqi,0.82rem);white-space:nowrap}
+.period-badge{font-size:clamp(0.58rem,1.6cqi,0.78rem);background:var(--red-light);color:var(--red);
+  border-radius:4px;padding:2px 6px;font-weight:700;white-space:nowrap}
+
+/* week grid */
+.week-grid-table{border-collapse:collapse;width:100%}
+.week-grid-table th{padding:8px 10px;font-weight:800;color:var(--muted);font-size:0.78rem}
+.week-grid-table td{padding:6px 8px;border-radius:6px;vertical-align:top}
+.week-cell-subj{font-weight:800;line-height:1.2;font-size:0.88rem}
+.week-cell-tchr{color:var(--muted);font-size:0.75rem;margin-top:1px}
+.week-cell-topic{color:var(--muted);font-size:0.72rem;font-style:italic;margin-top:2px}
+
+/* schedule / duty */
+.sched-row{display:flex;justify-content:space-between;align-items:center;
+  padding:clamp(0.25rem,1.5cqi,0.5rem) clamp(0.35rem,2cqi,0.6rem);
+  border-radius:6px;margin-bottom:clamp(2px,0.8cqi,4px);font-size:clamp(0.62rem,2cqi,1rem)}
+.sched-label{font-weight:700;color:var(--text)}
+.sched-time{color:var(--muted);font-size:0.88em}
+.duty-card{background:var(--red-light);border-radius:8px;
+  padding:clamp(0.3rem,1.5cqi,0.55rem) clamp(0.4rem,2cqi,0.65rem);
+  margin-bottom:clamp(3px,1cqi,6px);border-left:4px solid var(--red)}
+.duty-pos{font-weight:800;color:var(--red);font-size:clamp(0.62rem,2cqi,1rem)}
+.duty-staff{color:var(--muted);font-size:clamp(0.58rem,1.7cqi,0.88rem);margin-top:2px;line-height:1.4}
+
+/* analytics */
+.an-stat{background:var(--red-light);border-radius:10px;
+  padding:clamp(0.4rem,2cqi,0.7rem);text-align:center;margin-bottom:clamp(3px,1cqi,6px)}
+.an-stat-val{font-weight:800;color:var(--red);font-size:clamp(1rem,4cqi,2rem)}
+.an-stat-lbl{color:var(--muted);font-size:clamp(0.58rem,1.8cqi,0.85rem)}
+
+/* check-in */
+.ci-name{font-weight:800;color:var(--text);font-size:clamp(0.65rem,2.5cqi,0.9rem)}
+.ci-mood{font-size:clamp(0.9rem,3cqi,1.4rem)}
+
+/* roster */
+.roster-name{font-weight:800;font-size:clamp(0.72rem,2.5vw,1rem);color:var(--text)}
+.roster-nick{font-size:clamp(0.62rem,2vw,0.85rem);color:var(--faint)}
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- App scripts — order matters -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/render.js"></script>
+</body>
+</html>
