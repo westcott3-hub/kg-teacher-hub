@@ -67,7 +67,7 @@ let S={
 };
 
 // Bump this number any time DEFAULT_RESOURCES changes — forces Firestore to update
-const RESOURCES_VERSION=9;
+const RESOURCES_VERSION=10;
 
 let DB={
   snapshots:{},

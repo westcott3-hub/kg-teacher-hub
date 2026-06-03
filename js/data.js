@@ -1957,7 +1957,8 @@ const DEFAULT_RESOURCES=[
   {id:34, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Activity Book",       url:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/view",embedSrc:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 activity book"},
   {id:35, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Teacher's Book",      url:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/view",embedSrc:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 teacher's book"},
   // ── IEP · K1 ──────────────────────────────────────────────────────────────
-  // (add K1 IEP resources here)
+  {id:36,prog:"IEP",level:"K1",name:"Super Safari Pupils Book 1 – Flipbook",url:"https://online.flipbuilder.com/sdtta/slkt/",embedSrc:"https://online.flipbuilder.com/sdtta/slkt/",subject:"English",type:"Slides",note:"Super Safari Student Book Level 1 – interactive flipbook"},
+  {id:37,prog:"IEP",level:"K1",name:"Super Safari Workbook 1 – Flipbook",url:"https://online.flipbuilder.com/sdtta/lpsw/",embedSrc:"https://online.flipbuilder.com/sdtta/lpsw/",subject:"English",type:"Slides",note:"Super Safari Workbook Level 1 – interactive flipbook"},
   // ── IEP · K2 ──────────────────────────────────────────────────────────────
   {id:20, prog:"IEP",level:"K2",name:"Super Safari SB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/nyep/",embedSrc:"https://online.flipbuilder.com/sdtta/nyep/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 2 – interactive flipbook"},
   {id:21, prog:"IEP",level:"K2",name:"Super Safari WB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/ciat/",embedSrc:"https://online.flipbuilder.com/sdtta/ciat/", subject:"English", type:"Slides", note:"Super Safari Workbook Level 2 – interactive flipbook"},
