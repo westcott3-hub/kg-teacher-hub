@@ -13,7 +13,7 @@ const auth=firebase.auth();
 const db=firebase.firestore();
 
 // ── SCHOOL LOGO ───────────────────────────────────────────────────────────────
-const SCHOOL_LOGO="data:image/png;base64,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";
+const SCHOOL_LOGO="/logo.png";
 
 // ── STATIC DATA ───────────────────────────────────────────────────────────────
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday"];
@@ -43,224 +43,222 @@ const TIMETABLE={
   // ── KG1 MLP ───────────────────────────────────────────────────────────────
   K1A:{
     Monday:[
-      {sub:"Integration",   teacher:"Gary"},
+      null,
       {sub:"Integration",   teacher:"Gary"},
       {sub:"English",       teacher:"Gary"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
       {sub:"Math",          teacher:"Gary"}
     ],
     Tuesday:[
-      {sub:"Integration",   teacher:"Gary"},
+      null,
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"Integration",   teacher:"Gary"},
-      {sub:"STREAMSS",      teacher:""},
+      {sub:"STREAMSS",      teacher:"Gary"},
       {sub:"English",       teacher:"Gary"},
       {sub:"Math",          teacher:"Gary"}
     ],
     Wednesday:[
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"Gary"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
       {sub:"Integration",   teacher:"Gary"},
       {sub:"Play & Learn",  teacher:"Gary"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"Phonics",       teacher:"Gary"}
     ],
     Thursday:[
       {sub:"Play & Learn",  teacher:"Gary"},
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"Gary"},
-      {sub:"STREAMSS",      teacher:""},
+      null,
+      {sub:"STREAMSS",      teacher:"Gary"},
       {sub:"Science",       teacher:"Gary"},
       {sub:"Integration",   teacher:"Gary"}
     ],
     Friday:[
       {sub:"Integration",   teacher:"Gary"},
-      {sub:"Integration",   teacher:"Gary"},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Science",       teacher:"Gary"},
       {sub:"Phonics",       teacher:"Gary"},
-      {sub:"STREAMSS",      teacher:""}
+      {sub:"STREAMSS",      teacher:"Gary"}
     ]
   },
   K1B:{
     Monday:[
+      null,
       {sub:"Integration",   teacher:"Iuliia"},
-      {sub:"Integration",   teacher:"Iuliia"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
       {sub:"English",       teacher:"Iuliia"},
       {sub:"Math",          teacher:"Iuliia"}
     ],
     Tuesday:[
-      {sub:"Integration",   teacher:"Iuliia"},
+      null,
       {sub:"Integration",   teacher:"Iuliia"},
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"STREAMSS",      teacher:""},
+      {sub:"STREAMSS",      teacher:"Iuliia"},
       {sub:"English",       teacher:"Iuliia"},
       {sub:"Math",          teacher:"Iuliia"}
     ],
     Wednesday:[
+      null,
       {sub:"Integration",   teacher:"Iuliia"},
-      {sub:"Integration",   teacher:"Iuliia"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"STREAMSS",      teacher:""},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"STREAMSS",      teacher:"Iuliia"},
       {sub:"Phonics",       teacher:"Iuliia"},
       {sub:"Science",       teacher:"Iuliia"}
     ],
     Thursday:[
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"Play & Learn",  teacher:"Iuliia"},
-      {sub:"Integration",   teacher:"Iuliia"},
+      null,
       {sub:"Phonics",       teacher:"Iuliia"},
       {sub:"Science",       teacher:"Iuliia"},
       {sub:"Integration",   teacher:"Iuliia"}
     ],
     Friday:[
-      {sub:"STREAMSS",      teacher:""},
+      {sub:"STREAMSS",      teacher:"Iuliia"},
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"Iuliia"},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Play & Learn",  teacher:"Iuliia"},
       {sub:"Integration",   teacher:"Iuliia"}
     ]
   },
-
-  // ── KG1 IEP ───────────────────────────────────────────────────────────────
+    // ── KG1 IEP ───────────────────────────────────────────────────────────────
   "K1/1":{
     Monday:[
       {sub:"English",       teacher:"Inessa"},
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
+      null,
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"Math",          teacher:"Jussill"}
     ],
     Tuesday:[
       {sub:"English",       teacher:"Inessa"},
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Movement",      teacher:"กาญธิรา"}
+      null,
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
+      {sub:"Movement",      teacher:"มิสกาญธิรา"}
     ],
     Wednesday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      null,
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"STREAMSS",      teacher:""}
+      null
     ],
     Thursday:[
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Play & Learn",  teacher:"Shirley"}
     ],
     Friday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   },
   "K1/2":{
     Monday:[
       {sub:"Science",       teacher:"Daisy"},
       {sub:"English",       teacher:"Inessa"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Chinese",       teacher:"Li Yan"}
     ],
     Tuesday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Movement",      teacher:"กาญธิรา"},
+      null,
+      null,
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
       {sub:"Math",          teacher:"Jussill"}
     ],
     Wednesday:[
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"English",       teacher:"Inessa"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"}
+      null,
+      null,
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"}
     ],
     Thursday:[
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
+      null,
+      null,
+      null,
+      null
     ],
     Friday:[
-      {sub:"Music",         teacher:"อัครินทร์"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Science",       teacher:"Daisy"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null,
+      null
     ]
   },
   "K1/3":{
     Monday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Science",       teacher:"Daisy"},
       {sub:"English",       teacher:"Inessa"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null,
+      null
     ],
     Tuesday:[
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      null,
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"English",       teacher:"Inessa"}
     ],
     Wednesday:[
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
+      null,
+      null,
+      null,
       {sub:"Play & Learn",  teacher:"Shirley"}
     ],
     Thursday:[
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Love Reading",  teacher:"นพวรรณ"}
+      null,
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
+      null,
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"}
     ],
     Friday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Science",       teacher:"Daisy"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null
     ]
   },
-
-  // ── KG2 MLP ───────────────────────────────────────────────────────────────
+    // ── KG2 MLP ───────────────────────────────────────────────────────────────
   K2A:{
     Monday:[
       {sub:"English",       teacher:"New Teacher"},
       {sub:"Science",       teacher:"Iana"},
       {sub:"Play & Learn",  teacher:"Jayne"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Phonics",       teacher:"Inessa"},
       {sub:"Integration",   teacher:"Inessa"}
     ],
@@ -268,31 +266,31 @@ const TIMETABLE={
       {sub:"English",       teacher:"New Teacher"},
       {sub:"Phonics",       teacher:"Inessa"},
       {sub:"Play & Learn",  teacher:"Jayne"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null,
+      {sub:"STREAMSS",      teacher:"Svitlana"}
     ],
     Wednesday:[
       {sub:"Math",          teacher:"Iana"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Movement",      teacher:"กาญธิรา"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      null,
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
       {sub:"Integration",   teacher:"Inessa"}
     ],
     Thursday:[
       {sub:"Swimming",      teacher:"นิราภร"},
       {sub:"Integration",   teacher:"Inessa"},
       {sub:"Math",          teacher:"Iana"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null
     ],
     Friday:[
       {sub:"Integration",   teacher:"Inessa"},
       {sub:"Science",       teacher:"Iana"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"Integration",   teacher:"Inessa"}
     ]
@@ -301,7 +299,7 @@ const TIMETABLE={
     Monday:[
       {sub:"Science",       teacher:"Iana"},
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Phonics",       teacher:"Inessa"},
       {sub:"Integration",   teacher:"New Teacher"},
       {sub:"Play & Learn",  teacher:"Jayne"}
@@ -309,245 +307,243 @@ const TIMETABLE={
     Tuesday:[
       {sub:"Play & Learn",  teacher:"Jayne"},
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      null,
       {sub:"Phonics",       teacher:"Inessa"},
       {sub:"Integration",   teacher:"New Teacher"}
     ],
     Wednesday:[
-      {sub:"Movement",      teacher:"กาญธิรา"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
       {sub:"Math",          teacher:"Iana"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
       {sub:"Integration",   teacher:"New Teacher"}
     ],
     Thursday:[
       {sub:"Math",          teacher:"Iana"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      null,
       {sub:"Integration",   teacher:"New Teacher"},
       {sub:"Chinese",       teacher:"Li Yan"}
     ],
     Friday:[
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      null,
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"Science",       teacher:"Iana"},
-      {sub:"Skill Building",teacher:"มยุรา"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
       {sub:"Integration",   teacher:"New Teacher"}
     ]
   },
-
-  // ── KG2 IEP ───────────────────────────────────────────────────────────────
+    // ── KG2 IEP ───────────────────────────────────────────────────────────────
   "K2/1":{
     Monday:[
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Math",          teacher:"Jussill"},
       {sub:"Science",       teacher:"Daisy"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null
     ],
     Tuesday:[
-      {sub:"Music",         teacher:"อัครินทร์"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Math",          teacher:"Jussill"},
       {sub:"Science",       teacher:"Daisy"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null,
+      null
     ],
     Wednesday:[
       {sub:"English",       teacher:"New Teacher"},
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null,
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null
     ],
     Thursday:[
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      null,
+      null,
+      null,
+      null
     ],
     Friday:[
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   },
   "K2/2":{
     Monday:[
       {sub:"Math",          teacher:"Jussill"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
+      null,
+      null,
+      null,
       {sub:"Science",       teacher:"Daisy"}
     ],
     Tuesday:[
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Science",       teacher:"Daisy"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null
     ],
     Wednesday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"English",       teacher:"New Teacher"},
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Movement",      teacher:"กาญธิรา"}
+      {sub:"Movement",      teacher:"มิสกาญธิรา"}
     ],
     Thursday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""}
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
+      null
     ],
     Friday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
+      null,
+      null,
+      null
     ]
   },
   "K2/3":{
     Monday:[
       {sub:"Play & Learn",  teacher:"Shirley"},
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null,
+      null,
+      null
     ],
     Tuesday:[
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"STREAMSS",      teacher:""},
+      null,
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      null
     ],
     Wednesday:[
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"English",       teacher:"New Teacher"},
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null
     ],
     Thursday:[
-      {sub:"Movement",      teacher:"กาญธิรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      null,
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null
     ],
     Friday:[
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null,
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
+      null
     ]
   },
-
-  // ── KG3 MLP ───────────────────────────────────────────────────────────────
+    // ── KG3 MLP ───────────────────────────────────────────────────────────────
   K3A:{
     Monday:[
       {sub:"Integration",   teacher:"Jayne"},
-      {sub:"Skill Building",teacher:"มยุรา"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Science",       teacher:"Iana"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null
     ],
     Tuesday:[
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      null,
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
-      {sub:"Skill Building",teacher:"มยุรา"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
       {sub:"Integration",   teacher:"Jayne"}
     ],
     Wednesday:[
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Math",          teacher:"Iana"},
       {sub:"Phonics",       teacher:"Inessa"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
+      null
     ],
     Thursday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"Play & Learn",  teacher:"Jayne"},
       {sub:"Math",          teacher:"Iana"},
       {sub:"Phonics",       teacher:"Inessa"},
-      {sub:"STREAMSS",      teacher:""},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
       {sub:"Integration",   teacher:"Jayne"}
     ],
     Friday:[
       {sub:"Integration",   teacher:"Jayne"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
       {sub:"Swimming",      teacher:"นิราภร"},
       {sub:"Integration",   teacher:"Jayne"},
       {sub:"Science",       teacher:"Iana"},
       {sub:"Play & Learn",  teacher:"Jayne"},
-      {sub:"Skill Building",teacher:"มยุรา"}
+      null
     ]
   },
   K3B:{
     Monday:[
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
       {sub:"Science",       teacher:"Iana"},
       {sub:"Swimming",      teacher:"นิราภร"},
       {sub:"Integration",   teacher:"Iana"},
-      {sub:"Skill Building",teacher:"มยุรา"},
+      null,
       {sub:"English",       teacher:"New Teacher"}
     ],
     Tuesday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      null,
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"English",       teacher:"New Teacher"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Integration",   teacher:"Iana"},
-      {sub:"Skill Building",teacher:"มยุรา"}
+      {sub:"Skill Building",teacher:"มิสมยุรา"}
     ],
     Wednesday:[
-      {sub:"Music",         teacher:"อัครินทร์"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Phonics",       teacher:"Inessa"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Math",          teacher:"Iana"},
       {sub:"Play & Learn",  teacher:"Jayne"},
       {sub:"Integration",   teacher:"Iana"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"}
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"}
     ],
     Thursday:[
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
       {sub:"Play & Learn",  teacher:"Jayne"},
       {sub:"Math",          teacher:"Iana"},
       {sub:"Phonics",       teacher:"Inessa"},
@@ -555,205 +551,205 @@ const TIMETABLE={
     ],
     Friday:[
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"STREAMSS",      teacher:""},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
       {sub:"Science",       teacher:"Iana"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"Iana"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
       {sub:"Integration",   teacher:"Iana"}
     ]
   },
-
-  // ── KG3 IEP ───────────────────────────────────────────────────────────────
+    // ── KG3 IEP ───────────────────────────────────────────────────────────────
   "K3/1":{
     Monday:[
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      null,
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"English",       teacher:"Jayne"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Skill Building",teacher:"มยุรา"}
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      null
     ],
     Tuesday:[
       {sub:"Math",          teacher:"Jussill"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null
     ],
     Wednesday:[
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Skill Building",teacher:"มยุรา"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
       {sub:"Play & Learn",  teacher:"Shirley"},
       {sub:"English",       teacher:"Jayne"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      null
     ],
     Thursday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Math",          teacher:"Jussill"},
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
+      null
     ],
     Friday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null,
+      null,
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
+      null,
+      null
     ]
   },
   "K3/2":{
     Monday:[
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      null,
       {sub:"English",       teacher:"Jayne"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Movement",      teacher:"กาญธิรา"}
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      null,
+      {sub:"Movement",      teacher:"มิสกาญธิรา"}
     ],
     Tuesday:[
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      null,
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Skill Building",teacher:"มยุรา"}
+      null,
+      null
     ],
     Wednesday:[
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null,
       {sub:"English",       teacher:"Jayne"},
       {sub:"Math",          teacher:"Jussill"}
     ],
     Thursday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"STREAMSS",      teacher:""}
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null
     ],
     Friday:[
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
+      null,
+      null,
+      null
     ]
   },
   "K3/3":{
     Monday:[
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Music",         teacher:"อัครินทร์"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null
     ],
     Tuesday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
+      null,
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
       {sub:"English",       teacher:"Jayne"},
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      null
     ],
     Wednesday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
       {sub:"Science",       teacher:"Daisy"},
       {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"STREAMSS",      teacher:""},
+      null,
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      null,
       {sub:"English",       teacher:"Jayne"}
     ],
     Thursday:[
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      null,
+      null,
+      null,
       {sub:"Play & Learn",  teacher:"Shirley"},
       {sub:"Math",          teacher:"Jussill"},
       {sub:"Science",       teacher:"Daisy"}
     ],
     Friday:[
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"Skill Building",teacher:"มยุรา"}
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
     ]
   },
   "K3/4":{
     Monday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Outdoor",       teacher:"ณัฐพงศ์"},
-      {sub:"Movement",      teacher:"กาญธิรา"},
+      null,
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Movement",      teacher:"มิสกาญธิรา"},
       {sub:"Math",          teacher:"Jussill"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Integration",   teacher:"ประจำชั้น"}
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      null
     ],
     Tuesday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Love Reading",  teacher:"นพวรรณ"},
-      {sub:"Skill Building",teacher:"มยุรา"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      null,
+      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      null,
       {sub:"English",       teacher:"Jayne"},
       {sub:"Play & Learn",  teacher:"Shirley"}
     ],
     Wednesday:[
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"Play & Learn",  teacher:"Shirley"},
-      {sub:"Music",         teacher:"อัครินทร์"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
+      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      null,
       {sub:"Science",       teacher:"Daisy"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null
     ],
     Thursday:[
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      {sub:"English",       teacher:"Jayne"},
+      null,
+      {sub:"Swimming",      teacher:"นิราภร"},
+      null,
+      {sub:"Science",       teacher:"Daisy"},
+      null,
+      null
     ],
     Friday:[
-      {sub:"English",       teacher:"Jayne"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Swimming",      teacher:"นิราภร"},
-      {sub:"Integration",   teacher:"ประจำชั้น"},
-      {sub:"Science",       teacher:"Daisy"},
-      {sub:"STREAMSS",      teacher:""},
-      {sub:"STREAMSS",      teacher:""}
+      null,
+      null,
+      null,
+      null,
+      {sub:"Math",          teacher:"Jussill"},
+      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      null
     ]
   }
 };;
+
 
 // Period times for KG1 (อนุบาล 1 schedule)
 // K1 (อนุบาล 1): long lunch+nap break 10:50–13:10, P4 starts 13:10
@@ -801,20 +797,154 @@ const BREAKS_K3=[
   {label:"🍱 Lunch & Rest",start:"12:10",end:"14:00"}
 ];
 
+// Nursery (Pre School) periods — same times as K1
+const PERIODS_NURSERY=[
+  {label:"P1",start:"08:30",end:"09:10"},
+  {label:"P2",start:"09:10",end:"09:50"},
+  {label:"P3",start:"10:10",end:"10:50"},
+  {label:"P4",start:"13:10",end:"13:50"},
+  {label:"P5",start:"14:00",end:"14:40"},
+  {label:"P6",start:"14:40",end:"15:20"}
+];
+const BREAKS_NURSERY=[
+  {label:"🥛 Milk & Break",start:"09:50",end:"10:10"},
+  {label:"🍱 Lunch & Rest",start:"10:50",end:"13:10"},
+  {label:"🥛 Milk Break",  start:"13:50",end:"14:00"}
+];
+// Nursery timetable (Pre School 1=N1, Pre School 2=N2) — S1/2026
+const TIMETABLE_NURSERY={
+  "N1":{
+    Monday:[
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      {sub:"English",       teacher:"Janet"},
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null,
+      null
+    ],
+    Tuesday:[
+      {sub:"English",       teacher:"Janet"},
+      null,
+      {sub:"English",       teacher:"Inessa"},
+      {sub:"English",       teacher:"Janet"},
+      null,
+      null
+    ],
+    Wednesday:[
+      {sub:"Play & Learn",  teacher:"Jayne"},
+      {sub:"English",       teacher:"Janet"},
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null,
+      null
+    ],
+    Thursday:[
+      {sub:"English",       teacher:"Inessa"},
+      {sub:"English",       teacher:"Janet"},
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null,
+      null
+    ],
+    Friday:[
+      {sub:"English",       teacher:"New Teacher"},
+      {sub:"English",       teacher:"Janet"},
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null,
+      null
+    ]
+  },
+  "N2":{
+    Monday:[
+      {sub:"English",       teacher:"Janet"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      null,
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null
+    ],
+    Tuesday:[
+      {sub:"Integration",   teacher:"Iana"},
+      {sub:"English",       teacher:"Janet"},
+      null,
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null
+    ],
+    Wednesday:[
+      {sub:"English",       teacher:"Janet"},
+      null,
+      null,
+      null,
+      {sub:"English",       teacher:"New Teacher"},
+      null
+    ],
+    Thursday:[
+      {sub:"English",       teacher:"Janet"},
+      {sub:"STREAMSS",      teacher:"Svitlana"},
+      null,
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null
+    ],
+    Friday:[
+      {sub:"English",       teacher:"Janet"},
+      {sub:"English",       teacher:"Inessa"},
+      null,
+      null,
+      {sub:"English",       teacher:"Janet"},
+      null
+    ]
+  }
+};
+// Help assignments — teacher supports another class for specific periods
+// Source: รวม sheet S1/2026
+const TIMETABLE_HELP={
+  "Daisy":{
+    Monday:[{period:"P5",cls:"K1/2",sub:"Integration"}],
+    Tuesday:[{period:"P6",cls:"K1/2",sub:"Math"}],
+    Wednesday:[{period:"P6",cls:"K1/2",sub:"Love Reading"}],
+    Thursday:[],
+    Friday:[{period:"P6",cls:"K1/2",sub:"STREAMSS"}]
+  },
+  "Jussill":{
+    Monday:[],
+    Tuesday:[],
+    Wednesday:[{period:"P4",cls:"K2/2",sub:"Integration"}],
+    Thursday:[{period:"P4",cls:"K2/2",sub:"Love Reading"}],
+    Friday:[{period:"P5",cls:"K2/2",sub:"STREAMSS"},{period:"P6",cls:"K2/2",sub:"STREAMSS"}]
+  },
+  "Shirley":{
+    Monday:[],
+    Tuesday:[{period:"P1",cls:"K3/4",sub:"Integration"}],
+    Wednesday:[],
+    Thursday:[{period:"P1",cls:"K3/4",sub:"English"}],
+    Friday:[{period:"P6",cls:"K3/4",sub:"Outdoor"},{period:"P7",cls:"K3/4",sub:"Skill Building"}]
+  },
+  "Inessa":{
+    Monday:[{period:"P1",cls:"K3A",sub:"Integration"}],
+    Tuesday:[],Wednesday:[],Thursday:[],Friday:[]
+  }
+};
 // Helper — returns correct PERIODS/BREAKS for the selected class
+// Handles MLP, IEP slash-format (K2/1, K3/1 etc), and Nursery (N1/N2)
 function getPeriodsForCls(cls){
-  if(cls==="K3A"||cls==="K3B"||cls.startsWith("KG3"))return PERIODS_K3;
-  if(cls==="K2A"||cls==="K2B"||cls.startsWith("KG2"))return PERIODS_K2;
+  if(cls==="N1"||cls==="N2")return PERIODS_NURSERY;
+  if(cls==="K3A"||cls==="K3B"||cls.startsWith("K3/"))return PERIODS_K3;
+  if(cls==="K2A"||cls==="K2B"||cls.startsWith("K2/"))return PERIODS_K2;
   return PERIODS_K1;
 }
 function getBreaksForCls(cls){
-  if(cls==="K3A"||cls==="K3B"||cls.startsWith("KG3"))return BREAKS_K3;
-  if(cls==="K2A"||cls==="K2B"||cls.startsWith("KG2"))return BREAKS_K2;
+  if(cls==="N1"||cls==="N2")return BREAKS_NURSERY;
+  if(cls==="K3A"||cls==="K3B"||cls.startsWith("K3/"))return BREAKS_K3;
+  if(cls==="K2A"||cls==="K2B"||cls.startsWith("K2/"))return BREAKS_K2;
   return BREAKS_K1;
 }
-// Get the right timetable object for a class (MLP vs IEP)
+// All classes are in TIMETABLE except Nursery
 function getTimetableForCls(cls){
-  return cls.startsWith("KG")?TIMETABLE_IEP:TIMETABLE;
+  if(cls==="N1"||cls==="N2")return TIMETABLE_NURSERY;
+  return TIMETABLE;
 }
 
 // Keep backward-compat aliases (used in non-timetable code)
@@ -1024,8 +1154,287 @@ function isSchoolHoliday(dateStr){
   return getCalendarDay(dateStr).some(e=>e.type==="holiday"||e.type==="break");
 }
 
-// Per-subject per-week topic mapping — sourced from K1/K2/K3 Course Outline spreadsheets
-// Math for K2/K3 is not yet in the spreadsheets so those keys are omitted.
+// Per-subject per-week topic mapping — sourced from S1/2026 Course Outlines spreadsheet
+
+
+// Get topic for current week + subject
+// Routes to K2/K3 prefixed keys for those classes, falls back to K1 keys
+// K2 MLP Course Outline data — S1/2026
+// Applies to K2A and K2B only
+// Source: K2_Course_Outline.xlsx
+const K2_TOPICS={
+  "English":[
+    {unit:1,topic:"Hello!",vocab:"Characters, clothes, colours, nature, objects, school, toys. Letter sounds: a, e, i, o, u.",structs:"I/m (Kim). I'm a (girl). I like books."},
+    {unit:1,topic:"Hello!",vocab:"Black, grey, orange, purple, white.",structs:"Draw (a butterfly). Color/Paint (purple)."},
+    {unit:1,topic:"Review: Hello!",vocab:"Characters, clothes, colours, nature, objects, school, toys. Letter sounds: a, e, i, o, u. Black, grey, orange, purple, white.",structs:"I/m (Kim). I'm a (girl). I like books. Draw (a butterfly). Color/Paint (purple)."},
+    {unit:2,topic:"My family",vocab:"Aunt, uncle, cousin, grandma, grandpa. Letter sounds: d, m.",structs:"Who's that? He's my (grandpa). She's my (grandma)."},
+    {unit:2,topic:"My family",vocab:"Funny, old, short, tall, young.",structs:"She's/He's/I'm (old). She isn't/He isn't/I'm not (young)."},
+    {unit:2,topic:"Review: My family",vocab:"Aunt, uncle, cousin, grandma, grandpa. Letter sounds: d, m. Funny, old, short, tall, young.",structs:"Who's that? He's my (grandpa). She's my (grandma). She's/He's/I'm (old). She isn't/He isn't/I'm not (young)."},
+    {unit:3,topic:"My home",vocab:"Bathroom, bedroom, dining room, kitchen, living room. Letter sound: b, k.",structs:"Where's (Kim/Dan/Dan's mummy? She's/He's in the (kitchen)."},
+    {unit:3,topic:"My home",vocab:"Cooking, eating, playing, sleeping, washing.",structs:"What's she/he doing? She's/He's (sleeping)."},
+    {unit:3,topic:"Review: My home",vocab:"Bathroom, bedroom, dining room, kitchen, living room. Letter sound: b, k.Cooking, eating, playing, sleeping, washing.",structs:"Where's (Kim/Dan/Dan's mummy? She's/He's in the (kitchen).What's she/he doing? She's/He's (sleeping)."},
+    {unit:4,topic:"My body",vocab:"Fingers, head, neck, shoulders, toes. Letter sounds: t, n.",structs:"She's/He's/It's got (a neck)."},
+    {unit:4,topic:"My body",vocab:"Blondy, curly, long, short, straight, (hair).",structs:"She's/He's/It's got (long) hair. She's/He's/It's got (short) hair."},
+    {unit:4,topic:"Review: My body",vocab:"Fingers, head, neck, shoulders, toes. Letter sounds: t, n. Blondy, curly, long, short, straight, (hair).",structs:"She's/He's/It's got (a neck). She's/He's/It's got (long) hair. She's/He's/It's got (short) hair."},
+    {unit:5,topic:"Outdoors",vocab:"Cold, hot, rainy, sunny, windy. Letter sound: s, h.",structs:"What's the weather like? It's (hot)."},
+    {unit:5,topic:"Outdoors",vocab:"Boots, jumper, raincoat, sandals, sunglasses.",structs:"I'm wearing a (raincoat)."},
+    {unit:5,topic:"Review: Outdoors",vocab:"Cold, hot, rainy, sunny, windy. Letter sound: s, h. Boots, jumper, raincoat, sandals, sunglasses.",structs:"What's the weather like? It's (hot). I'm wearing a (raincoat)."},
+    {unit:1,topic:"Review: Hello!",vocab:"Characters, clothes, colours, nature, objects, school, toys. Letter sounds: a, e, i, o, u. Black, grey, orange, purple, white.",structs:"I/m (Kim). I'm a (girl). I like books. Draw (a butterfly). Color/Paint (purple)."},
+    {unit:2,topic:"Review: My family.",vocab:"Aunt, uncle, cousin, grandma, grandpa. Letter sounds: d, m. Funny, old, short, tall, young.",structs:"Who's that? He's my (grandpa). She's my (grandma). She's/He's/I'm (old). She isn't/He isn't/I'm not (young)."},
+    {unit:3,topic:"Review: My home.",vocab:"Bathroom, bedroom, dining room, kitchen, living room. Letter sound: b, k.Cooking, eating, playing, sleeping, washing.",structs:"Where's (Kim/Dan/Dan's mummy? She's/He's in the (kitchen).What's she/he doing? She's/He's (sleeping)."},
+    {unit:4,topic:"Review: My body.",vocab:"Fingers, head, neck, shoulders, toes. Letter sounds: t, n. Blondy, curly, long, short, straight, (hair).",structs:"She's/He's/It's got (a neck). She's/He's/It's got (long) hair. She's/He's/It's got (short) hair."},
+    {unit:5,topic:"Review: Outdoors.",vocab:"Cold, hot, rainy, sunny, windy. Letter sound: s, h.Boots, jumper, raincoat, sandals, sunglasses.",structs:"What's the weather like? It's (hot). I'm wearing a (raincoat)."},
+  ],
+  "Math":[
+    {unit:1,topic:"Greetings & Classroom Rules",vocab:"Hello, Teacher, School, Bag, Book, Pencil, Sit down, Stand up",structs:"\"Hello, my name is...\" / \"This is my bag.\""},
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  "Science":[
+    {unit:1,topic:"Things to wear. Clothes",vocab:"Types of clothes and body parts",structs:"Clothes protect us from the sun/ the rain/ the cold."},
+    {unit:1,topic:"What are clothes made of?",vocab:"cotton, wool, animal skin",structs:"What are clothes made of? Clothes are made of cotton/wool/animal skin"},
+    {unit:1,topic:"Mirror",vocab:"mirror, image",structs:"We can see our image in the mirror.  How does it look like in the mirror?"},
+    {unit:2,topic:"My birthday. Water",vocab:"shape, taste, colour, healthy",structs:"Water has no shape of its own. Water has no color or taste. Water helps to keep our body healthy."},
+    {unit:2,topic:"Uses of water",vocab:"living things, cook, wash",structs:"Living things need water to live. We use water to cook. We use water to wash things."},
+    {unit:2,topic:"Water, ice and steam",vocab:"turn into, become, cold, hot, steam",structs:"Water turns into ice when it becomes very cold. Ice turns into water when it is not cold enough. Water turns into steam when it becomes very hot."},
+    {unit:2,topic:"Float and sink",vocab:"float, sink",structs:"Some things float on water. Some things sink in water."},
+    {unit:3,topic:"On the farm. Farm animals",vocab:"hen, goose, duck, goat, sheep, turkey, cow, horse",structs:"Hen/ goose/ duck/ goat/ sheep/ turkey/ cow/ horse is a farm animal."},
+    {unit:3,topic:"Farm animals and their young",vocab:"duckling, chick, foal, lamb, kid, calf",structs:"Duckling is a young of a duck. Chick is a young of a hen. Foal is a young of a horse. Lamb is a young of a sheep. Kid is a young of a goat. Calf is a young of a cow."},
+    {unit:3,topic:"How do animals grow? Animals and their uses",vocab:"give, food, material",structs:"Cows give us milk. Hens give us eggs. Sheep give us wool."},
+    {unit:4,topic:"To the beach. Air",vocab:"air, balloon, ball, rubber ring",structs:"Balloon/ ball/ rubber ring is filled with air."},
+    {unit:4,topic:"Wind",vocab:"wind, move, strong",structs:"Wind is air that moves. Wind is moving the kite. Wind is strong."},
+    {unit:4,topic:"Sea animals",vocab:"dolphin, shark, jellyfish, turtle, squid, starfish, sea horse",structs:"Dolphin/ shark/ jellyfish/ turtle/ squid/ starfish/ sea horse is a sea animal."},
+    {unit:4,topic:"Parts of a fish",vocab:"eye, scales, tail, mouth, gill, fin",structs:"Fish has eyes/ scales/ a tail/ a mouth/ a gill/ a fin"},
+    {unit:1,topic:"Review unit 1: Things to wear.",vocab:"cotton, wool, animal skin",structs:"Clothes are made of cotton/wool/animal skin."},
+    {unit:2,topic:"Review unit 2: My birthday.",vocab:"float, sink",structs:"Some things float on water. Some things sink in water."},
+    {unit:3,topic:"Review unit 3: On the farm. Farm animals",vocab:"hen, goose, duck, goat, sheep, turkey, cow, horse",structs:"Hen/ goose/ duck/ goat/ sheep/ turkey/ cow/ horse is a farm animal."},
+    {unit:3,topic:"Review unit 3: Farm animals and their young",vocab:"duckling, chick, foal, lamb, kid, calf",structs:"Duckling is a young of a duck. Chick is a young of a hen. Foal is a young of a horse. Lamb is a young of a sheep. Kid is a young of a goat. Calf is a young of a cow."},
+    {unit:4,topic:"Review unit 4: To the beach. Air. Wind",vocab:"air, balloon, ball, rubber ring;wind, move, strong",structs:"Balloon/ ball/ rubber ring is filled with air."},
+    {unit:4,topic:"Review unit 4: To the beach. Sea animals",vocab:"dolphin, shark, jellyfish, turtle, squid, starfish, sea horse",structs:"Dolphin/ shark/ jellyfish/ turtle/ squid/ starfish/ sea horse is a sea animal."},
+  ],
+  "Play & Learn":[
+    {unit:1,topic:"First Name",vocab:"First name, friend, teacher",structs:"What's your name? My name is ______. I am ______. Hello, I am ______."},
+    {unit:2,topic:"My Body / Physical Appearance",vocab:"Eyes, nose, mouth, ears, hair, face",structs:"This is my nose. I have black hair."},
+    {unit:3,topic:"Personal Hygiene / Healthy Habits",vocab:"Wash hands, brush teeth, take a bath, clean, healthy",structs:"I brush my teeth everyday. I wash my hands before eating. I am clean."},
+    {unit:4,topic:"Family Background",vocab:"Family, mother, father, brother, sister",structs:"This is my mother. I have a brother."},
+    {unit:5,topic:"My Happy School",vocab:"School, teacher, student, book, bag",structs:"I go to school. This is my teacher."},
+    {unit:6,topic:"Playing",vocab:"Play, toy, ball, blocks, puzzle",structs:"I like to play. This is my toy."},
+    {unit:7,topic:"Good Kids",vocab:"Kind, help, share, sorry",structs:"I am kind. I share."},
+    {unit:8,topic:"My Pride",vocab:"Proud, brave, calm, strong",structs:"I can do it. I am proud."},
+    {unit:9,topic:"Saint Louis Marie",vocab:"Saint, pray, love, help",structs:"He helps people. He prays."},
+    {unit:10,topic:"God Alone",vocab:"God, love, pray, church",structs:"God loves me. I pray."},
+    {unit:11,topic:"Emotions and Feelings",vocab:"Happy, sad, angry, scared",structs:"I am happy. I am sad."},
+    {unit:12,topic:"Senses",vocab:"Red, blue, yellow, green",structs:"It is red. I see blue."},
+    {unit:13,topic:"Safety First",vocab:"Safe, stop, careful, help",structs:"Stop. Be careful."},
+    {unit:14,topic:"Community",vocab:"Market, hospital, temple, school",structs:"I go to the market. This is a hospital."},
+    {unit:15,topic:"Community Helpers",vocab:"Doctor, nurse, teacher, police officer",structs:"She is a doctor. He is a teacher."},
+    {unit:16,topic:"Our Nation",vocab:"Thailand, Thai flag, temple, king",structs:"I live in Thailand. This is the Thai flag."},
+    null,
+    null,
+    null,
+    null,
+  ],
+  "Phonics":[
+    {unit:1,topic:"Greetings & Classroom Rules",vocab:"Hello, Teacher, School, Bag, Book, Pencil, Sit down, Stand up",structs:"\"Hello, my name is...\" / \"This is my bag.\""},
+    {unit:1,topic:"Short \"a\" sound",vocab:"Cat;ant;ax;yak;jam;dam;ram",structs:"I see an ant and an ax."},
+    {unit:1,topic:"Short \"a\" sound & story",vocab:"Fan, man, ant, pan, jam, van, dam",structs:"A man with a van is at the dam."},
+    {unit:2,topic:"Short \"a\" sound(ad;ag;ap;at)",vocab:"Dad;pad;bag;rag;nap;tap;map;cap",structs:"Is that your cap on the map?"},
+    {unit:2,topic:"Short \"a\" sound & story",vocab:"Mad;tag;lap;pat;dad;map;bag",structs:"This is my dad! He has a hat, a bad, and a map."},
+    {unit:null,topic:"Short \"a\"(a;am;an;ad;ag;ap;at)",vocab:"Bag, yak, dam, can, cat, rat, map",structs:"A girl with a bag - a man with a map"},
+    {unit:null,topic:"Short \"a\"(a;am;an;ad;ag;ap;at)",vocab:"Bag, yak, dam, can, cat, rat, map",structs:"CVC words game"},
+    {unit:3,topic:"Short \"e\" sound",vocab:"Vet;web;egg;ten;jet;net;wet",structs:"The vet has ten big eggs"},
+    {unit:3,topic:"Short e sound(e;et;en;ed)",vocab:"Hen;pen;red;bed",structs:"The red pen is on the bed"},
+    {unit:null,topic:"Short e Story",vocab:"Hen;pen;red;bed",structs:"The red hen is wet"},
+    {unit:4,topic:"Short i sound",vocab:"Sip;lip;zip;ink;lid",structs:"I like to sip with my lips"},
+    {unit:4,topic:"Short i",vocab:"The kid can use ink",structs:""},
+    {unit:null,topic:"Short e & short i sounds",vocab:"Egg;ink;bib;vet;lip;pen;ten",structs:""},
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  "Integration":[
+    {theme:"Myself",topics:["First name and Last name","Personal background","Human names"],vocab:"nickname (ชื่อเล่น), name (ชื่อจริง), surname (นามสกุล), teacher (คุณครู), friend (เพื่อน)"},
+    {theme:"Mybody",topics:["Physical appearance","Human characteristics","Human changes and relationships","Body organs and their functions","Parts of the human body"],vocab:"short (เตี้ย), tall (สูง) thin (ผอม), fat (อ้วน), eye (ตา), nose (จมูก), ear (หู), hair (ผม), head (ศีรษะ), lip (ริมฝีปาก), teeth (ฟัน) neck (คอ), mouth (ปาก), face (ใบหน้า)"},
+    {theme:"Good Hygiene",topics:["Personal hygiene","Good health and hygiene habits","Eating healthy and nutritious food","Rest and relaxation","Physical exercise"],vocab:"body (ร่างกาย), healthy (สุขภาพดี), wash hand (ล้างมือ), wash hair (สระ ผม) takes a baht (อาบน ้า), get dressed (แต่งตัว), food (อาหาร), fruit (ผลไม้), milk (นม), fish (ปลา), pork (เนื ้อหมู), beef (เนื ้อวัว), chicken (ไก่), egg (ไข่), bread (ขนมปัง), cake (ขนมเค้ก), bean (ถั ่ว), cherry (เชอร์รี่), apple (แอปเปิ ้ล), banana (กล้วย), grape (องุ ่น), lemon (มะนาว), orange (ส้ม), papaya (มะละกอ), p"},
+    {theme:"My Family",topics:["Family background","Being a good member of the family","The child’s immediate family","Family members the child interacts with daily"],vocab:"family (ครอบครัว), father (พ่อ), mother (แม่), son (ลูกชาย), daughter (ลูก สาว), brother (พี่ชายน้องชาย), sister (พี่สาวน้องสาว), uncle (ลุง อา น้า(ช)), aunt (ป้ า น้า อา(ญ)), grandmother (ย่า ยาย), grandfather (ปู่ ตา) nice (หลานสาว), nephew (หลานชาย)"},
+    {theme:"My Happy School",topics:["Being a good member of the school","People in school the child is close to","Places in school the child interacts with daily"],vocab:"school (โรงเรียน) teacher (ครู) student (นักเรียน)"},
+    {theme:"Playing",topics:["Individual play and self-reliance activities","Cooperative play and working with others"],vocab:"Take care of yourself (ดูแลตัวเอง) play (การเล่น) toy (ของเล่น), together (ร่วมกัน)"},
+    {theme:"Good Kids",topics:["Respecting one’s own rights","Respecting the rights of others","Expressing one’s own opinions","Listening to others' opinions"],vocab:""},
+    {theme:"My Pride",topics:["Self-regulation","Self-awareness","Self-esteem"],vocab:""},
+    {theme:"Saint Louis Marie",topics:["His Biography"],vocab:""},
+    {theme:"God Alone",topics:["His Biography","Good manners","Morals"],vocab:""},
+    {theme:"Emotions and Feelings",topics:["one’s own emotions and feelings","others’ emotions and feelings","Empathy","Reflecting others' feelings"],vocab:"happy (ดี ใจ) sad (เสียใจ) playful (สนุก) mood (อารมณ์) in love (รัก) angry (โกรธ) shy (อาย) bored (เบื่อ) feeling (ความรู ้สึก)"},
+    {theme:"Senses",topics:["Colours of objects around us","Textures of objects around us","Patterns and relationships of objects"],vocab:"red (สีแดง), yellow (สีเหลือง), green (สีเขียว), blue (สีฟ้ า), black (สีด า), white (สี ขาว), orange (สีส้ม), violet (สีม่วง), pink (สีชมพู), brown (สีน ้าตาล), gray (สีเทา), rough (ขรุขระ), smooth (ผิวรื่น), hot (ร้อน), cool (เย็น)/"},
+    {theme:"Safety firse",topics:["Protecting oneself from contagious diseases","Protecting oneself from emerging diseases","Personal safety and boundaries with others","Treating others safely and respectfully","Stranger danger Hidden hazards Accidents Disasters"],vocab:"Take care of yourself. (ดูแลตัวเอง), safety (ความปลอดภัย), cautious (ระมัดระวัง)"},
+    {theme:"Community",topics:["The child’s immediate community","The community in the child’s daily life","Key places in the community","Community cultural centers"],vocab:"** hospital (โรงพยาบาล), temple (วัด), market (ตลาด), post office (ที่ท าการ ไปรษณีย์), supermarket (ซุปมาร์เก็ต), farm (ไร่นา), port (ท่าเรือ),  airport (สนามบิน)"},
+    {theme:"Community Helpers",topics:["People in the child’s close circle","People the child interacts with daily","Community helpers","Personal needs, interests, and abilities"],vocab:"** farmer (ชาวนา), fisherman (ชาวประมง), gardener (คนสวน), carpenter (ช่าง ไม้), merchant (พ่อค้า), fruit seller (คนขายผลไม้), cook (พ่อครัว),  policeman (ต ารวจ), soldier (ทหาร), postman (บุรุษไปรษณีย์), lawyer  (ทนายความ), engineer (วิศวกร), doctor (หมอ), nurse (พยาบาล),  dentist (ทันตแพทย์), pilot (นักบิน), air-hostess (พนักงานต้อนรับ หญิง), guide (มัคคุเทศก์)"},
+    {theme:"Our nation",topics:["Religion","Cultural diversity","National symbols of Thailand","Practicing local culture and Thai way of life","Learning resources from other local wisdoms"],vocab:""},
+    null,
+    null,
+    null,
+    null,
+  ]
+};
+
+// K3 MLP Course Outline data — S1/2026
+// Applies to K3A and K3B only (not IEP classes K3/1–K3/4)
+// Source: K3_Course_Outline.xlsx
+const K3_TOPICS={
+  "English":[
+    {unit:1,topic:"Me! Introdaction.",vocab:"Name, Numbers 1-20. Review letter sounds: b, m, t, g, p, d, k, n, s, h.",structs:"Hello! What's your name? I'm (Kim). How old are you? I'm (five). I like books. What's her/his name? She's (Kim). He's (Dan). How old is he/she? She's/He's (eight)."},
+    {unit:1,topic:"Me!",vocab:"Angry, bored, excited, scared, sleepy, surprised.",structs:"He's/She's/I'm bored. He isn't/She isn't/ I'm not (bored)."},
+    {unit:2,topic:"My day",vocab:"Brush my hair, brush my teeth, get dressed, have breakfast, wake up, wash my face",structs:"I (wake up) (in the morning/every day)."},
+    {unit:2,topic:"My day.",vocab:"Go to bed, have a bath, have dinner, have a snack, listen to a story, play with friends.",structs:"They/We (play with friends) (after school/in the evening). We/They don't (have a bath)."},
+    {unit:null,topic:"Review: Me. My Day.",vocab:"Brush my hair, brush my teeth, get dressed, have breakfast, wake up, wash my face.Go to bed, have a bath, have dinner, have a snack, listen to a story, play with friends. Name, Numbers 1-20. Review letter sounds: b, m, t, g, p, d, k, n, s, h. Angry, bored, excited, scared, sleepy, surprised.",structs:"Hello! What's your name? I'm (Kim). How old are you? I'm (five). I like books. What's her/his name? She's (Kim). He's (Dan). How old is he/she? She's/He's (eight). He's/She's/I'm bored. He isn't/She isn't/ I'm not (bored). I (wake up) (in the morning/every day). They/We (play with friends) (after sc"},
+    {unit:3,topic:"My home.",vocab:"Make the bed, pick up the toys, set the table, sweep the floor, wash the clothes, wash the dishes.",structs:"He/She (washes the dishes). I (sweep the floor)."},
+    {unit:3,topic:"My home.",vocab:"Bed, bookcase, cupboard, lamp, rug, toy box.",structs:"It's (under/in/on/next to) the (bed)."},
+    {unit:4,topic:"My sports",vocab:"Badminton, baseball, basketball, football, hockey, tennis. Letter sound (ng).",structs:"They're/She's/He's playing football."},
+    {unit:4,topic:"My sports",vocab:"Bouncing, catching, hitting, kicking, rolling, throwing.",structs:"She's/He's/I'm (throwing) a ball."},
+    {unit:5,topic:"My free time",vocab:"Cooking dinner, drawing pictures, listening to music, playing video games, reading books, and watching TV. Tetter sound (short oo), (long oo).",structs:"I like (reading books)."},
+    {unit:5,topic:"My free time",vocab:"Go roller skating, go swimming, play a board game, play with building blocks, play hide-and-seek, play outside.",structs:"Let's (go swimming)/play a board game/). Can I (come and play?)."},
+    {unit:6,topic:"My food",vocab:"Cake, chocolate, crisps, grapes, pineapple, sweets. letter sound (ch).",structs:"Would you like some (chocolate)? Yes, please./No, thank you. I'd like some (sweets), please."},
+    {unit:6,topic:"My food",vocab:"Beans, cereal, fruit, meat, rice, vegetable.",structs:"I/We have (meat and rice) for (breakfast/lunch/dinner)."},
+    {unit:7,topic:"Animals",vocab:"Crocodile, elephant, hippo, monkey, snake, tiger.",structs:"There's (a monkey). There are (three monkeys). There are (lots of snakes)."},
+    {unit:7,topic:"Animals",vocab:"Duck, giraffe, lizard, parrot, spider, zebra.",structs:"They are giraves. They have got long necks/long legs/stripes/ short legs/big feet/long tails/sharp teeth. They are fast."},
+    {unit:8,topic:"Plants",vocab:"Garden, plants, rain, seeds, soil, sun, beautiful, clean, dirty, new, old, ugly.",structs:"What do plants need? Plants need (sun/rain/soil). What beautiful flowers. What a dirty nose."},
+    {unit:9,topic:"My town",vocab:"Hospital, playground, restaurant, school, shop, supermarket.",structs:"Where are you/we going? I'm/We are going to the supermarket."},
+    {unit:9,topic:"My town",vocab:"Doctor, farmer, nurse, shop, assistant, teacher, waiter.",structs:"A teacher works in a school. He/She works on the farm. Where does a teacher work? Does a nurse work in a hospital? Yes, he/she does. No, he/she doesn't."},
+    {unit:null,topic:"Review: Topic 3,4,5,6.",vocab:"All the vocabulaty topics 3,4,5,6.",structs:"All the sentence structures topics 3,4,5,6."},
+    {unit:null,topic:"Review: Topics 7,8,9.",vocab:"All the vocabulary topics 7.8.9.",structs:"All the sentence structures topics 7,8,9."},
+  ],
+  "Math":[
+    {unit:1,topic:"Greetings & Classroom Rules",vocab:"Hello, Teacher, School, Bag, Book, Pencil, Sit down, Stand up",structs:"\"Hello, my name is...\" / \"This is my bag.\""},
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  "Science":[
+    {unit:1,topic:"Around town. Wheels.",vocab:"wheels, bike, car, train, truck, motorcycle, train, cart",structs:"Bike/ car/ train/ truck/ motorcycle/ train/ cart has 2/4/6/16 wheels."},
+    {unit:1,topic:"Fuel",vocab:"petrol station, fuel, airplane, ship, motorcycle, car",structs:"Airplane/ ship/ motorcycle/ car needs fuel to move."},
+    {unit:1,topic:"Light. Shadows.",vocab:"the sun, torch, lamp, candle",structs:"The sun, torch, lamp, candle gives us light."},
+    {unit:1,topic:"Review unit 1: Around town.",vocab:"wheels, bike, car, train, truck, motorcycle, train, cart; petrol station, fuel, airplane, ship, motorcycle, car; The sun, torch, lamp, candle",structs:"Bike/ car/ train/ truck/ motorcycle/ train/ cart has 2/4/6/16 wheels. Airplane/ ship/ motorcycle/ car needs fuel to move. The sun, torch, lamp, candle gives us light."},
+    {unit:2,topic:"Going shopping. Metal",vocab:"metal, pan, can, key",structs:"Pan/ can/ key is made of metal."},
+    {unit:2,topic:"Wood and glass",vocab:"wood, glass, table chair, chopsticks, bottle, jug, bowl",structs:"Table/ chair/ chopsticks is/are made of wood. Bottle/ jug/ bowl is made of glass."},
+    {unit:2,topic:"Plastic and rubber",vocab:"plastic, rubber, container, fork, spoon, plate, balloon, wheel, gloves, eraser",structs:"Container/ fork/ spoon/ plate is made of plastic. Balloon/ wheel/ gloves/ eraser is/are made of rubber."},
+    {unit:2,topic:"Review unit 2: Going shopping.",vocab:"metal, pan, can, key; wood, glass, table chair, chopsticks, bottle, jug, bowl; plastic, rubber, container, fork, spoon, plate, balloon, wheel, gloves, eraser",structs:"Pan/ can/ key is made of metal. Table/ chair/ chopsticks is/are made of wood. Bottle/ jug/ bowl is made of glass. Container/ fork/ spoon/ plate is made of plastic. Balloon/ wheel/ gloves/ eraser is/are made of rubber."},
+    {unit:3,topic:"To the Zoo. Where do animals live?",vocab:"ostrich, elephant, zebra, dolphin, shark, fish, frog, turtle, salamander",structs:"Ostrich/ elephant/ zebra lives on land. Dolphin/ shark/ fish lives in water. Frog/ turtle/ salamander lives on land and in water."},
+    {unit:3,topic:"What do animals eat?",vocab:"deer, hippopotamus, giraffe, tiger, lion, crocodile, bear, racoon, chimpanzee",structs:"Deer/ hippopotamus/ giraffe eats plants. Tiger/ lion/ crocodile eats meat. Bear/ racoon/ chimpanzee eats plants and meat."},
+    {unit:3,topic:"How do animals move?",vocab:"walk, crawl, hop, fly, swim, slither",structs:"Camels walk. Crabs crawl. Kangaroos hop. Birds fly. Dolphins swim. Snakes slither."},
+    {unit:3,topic:"Review unit 3: To the Zoo.",vocab:"ostrich, elephant, zebra, dolphin, shark, fish, frog, turtle, salamander; deer, hippopotamus, giraffe, tiger, lion, crocodile, bear, racoon, chimpanzee; walk, crawl, hop, fly, swim, slither",structs:"Ostrich/ elephant/ zebra lives on land. Dolphin/ shark/ fish lives in water. Frog/ turtle/ salamander lives on land and in water. Deer/ hippopotamus/ giraffe eats plants. Tiger/ lion/ crocodile eats meat. Bear/ racoon/ chimpanzee eats plants and meat. Camels walk. Crabs crawl. Kangaroos hop. Birds f"},
+    {unit:4,topic:"People at work. Does it absorb water?",vocab:"absorb, toilet paper, sponge, towel, raincoat, pan, gloves",structs:"Toilet paper/ sponge/ towel absorbs water. Raincoat/ pan/ gloves does not/ do not absorb water."},
+    {unit:4,topic:"Does it dissolve in water?",vocab:"dissolve, salt, beans, rice, honey, sugar, flour",structs:"Salt/ honey/ sugar dissolves in water. Beans/ rice/ flour does not/ do not dissolve in water."},
+    {unit:4,topic:"Uses of magnets",vocab:"magnet, pencil case,refrigerator, whiteboard",structs:"Magnets help to keep the pencil case shut/ keep the door of the refrigerator shut/ keep the paper on the whiteboard."},
+    {unit:4,topic:"Review unit 4: People at work.",vocab:"absorb, toilet paper, sponge, towel, raincoat, pan, gloves; dissolve, salt, beans, rice, honey, sugar, flour; magnet, pencil case,refrigerator, whiteboard",structs:"Toilet paper/ sponge/ towel absorbs water. Raincoat/ pan/ gloves does not/ do not absorb water. Salt/ honey/ sugar dissolves in water. Beans/ rice/ flour does not/ do not dissolve in water. Magnets help to keep the pencil case shut/ keep the door of the refrigerator shut/ keep the paper on the white"},
+    {unit:1,topic:"Review unit 1: Around town.",vocab:"wheels, bike, car, train, truck, motorcycle, train, cart; petrol station, fuel, airplane, ship, motorcycle, car; The sun, torch, lamp, candle",structs:"Bike/ car/ train/ truck/ motorcycle/ train/ cart has 2/4/6/16 wheels. Airplane/ ship/ motorcycle/ car needs fuel to move. The sun, torch, lamp, candle gives us light."},
+    {unit:2,topic:"Review unit 2: Going shopping.",vocab:"metal, pan, can, key; wood, glass, table chair, chopsticks, bottle, jug, bowl; plastic, rubber, container, fork, spoon, plate, balloon, wheel, gloves, eraser",structs:"Pan/ can/ key is made of metal. Table/ chair/ chopsticks is/are made of wood. Bottle/ jug/ bowl is made of glass. Container/ fork/ spoon/ plate is made of plastic. Balloon/ wheel/ gloves/ eraser is/are made of rubber."},
+    {unit:3,topic:"Review unit 3: To the Zoo.",vocab:"ostrich, elephant, zebra, dolphin, shark, fish, frog, turtle, salamander; deer, hippopotamus, giraffe, tiger, lion, crocodile, bear, racoon, chimpanzee; walk, crawl, hop, fly, swim, slither",structs:"Ostrich/ elephant/ zebra lives on land. Dolphin/ shark/ fish lives in water. Frog/ turtle/ salamander lives on land and in water. Deer/ hippopotamus/ giraffe eats plants. Tiger/ lion/ crocodile eats meat. Bear/ racoon/ chimpanzee eats plants and meat. Camels walk. Crabs crawl. Kangaroos hop. Birds f"},
+    {unit:4,topic:"Review unit 4: People at work.",vocab:"absorb, toilet paper, sponge, towel, raincoat, pan, gloves; dissolve, salt, beans, rice, honey, sugar, flour; magnet, pencil case,refrigerator, whiteboard",structs:"Toilet paper/ sponge/ towel absorbs water. Raincoat/ pan/ gloves does not/ do not absorb water. Salt/ honey/ sugar dissolves in water. Beans/ rice/ flour does not/ do not dissolve in water. Magnets help to keep the pencil case shut/ keep the door of the refrigerator shut/ keep the paper on the white"},
+  ],
+  "Play & Learn":[
+    {unit:1,topic:"First Name",vocab:"First name, nickname, friend, teacher",structs:"What's your name? My name is ______. I am ______. Hello, I am ______."},
+    {unit:2,topic:"My Body / Physical Appearance",vocab:"Eyes, nose, mouth, ears, hair, face, tall, short",structs:"My hair is black. I am tall/short. She has long hair. We are different."},
+    {unit:3,topic:"Personal Hygiene / Healthy Habits",vocab:"Wash hands, brush teeth, take a bath, toothbrush, clean, healthy",structs:"I wash my hands. I brush my teeth. I am clean."},
+    {unit:4,topic:"Family Background",vocab:"Family, mother, father, brother, sister, grandmother, grandfather, baby, parents",structs:"This is my mother. I have a brother. There are four people in my family."},
+    {unit:5,topic:"My Happy School",vocab:"School, classroom, teacher, student, desk, chair, book, bag, rules, library",structs:"I am a good student. I follow classroom rules."},
+    {unit:6,topic:"Playing",vocab:"Play, toy, ball, blocks, puzzle, share, together, build",structs:"I like to play. I share my toys."},
+    {unit:7,topic:"Good Kids",vocab:"Kind, gentle, help, share, wait, listen, respect, sorry, thank you",structs:"I wait for my turn. I respect my friends. I can say sorry/thank you."},
+    {unit:8,topic:"My Pride",vocab:"Proud, brave, calm, careful, independent, confident, strong",structs:"I can do it by myself. I feel proud of myself."},
+    {unit:9,topic:"Saint Louis Marie",vocab:"Saint, priest, church, prayer, faith, love, help, God",structs:"Saint Louis Marie loved God. He helped many people."},
+    {unit:10,topic:"God Alone",vocab:"God, prayer, faith, love, heart, church, cross",structs:"God is always with me. I pray every day."},
+    {unit:11,topic:"Emotions and Feelings",vocab:"Happy, sad, angry, scared, excited, shy, tired, bored, worried",structs:"How do you feel? I feel really happy today."},
+    {unit:12,topic:"Senses",vocab:"Red, blue, yellow, green, orange, purple, pink, brown, black, white",structs:"The apple is red. I can see many colors."},
+    {unit:13,topic:"Safety First",vocab:"Safe, careful, danger, stranger, hospital, doctor, emergency",structs:"I do not talk to strangers. I ask for help."},
+    {unit:14,topic:"Community",vocab:"Market, hospital, temple, post office, supermarket, airport, farm",structs:"My community has many places. The doctor works at the hospital."},
+    {unit:15,topic:"Community Helpers",vocab:"Doctor, nurse, teacher, police officer, dentist, farmer, cook, pilot",structs:"A doctor helps sick people. A teacher teaches students."},
+    {unit:16,topic:"Our Nation",vocab:"Thailand, Thai flag, king, culture, religion, temple, Thai people",structs:"Thailand is my country. We respect Thai culture."},
+    null,
+    null,
+    null,
+    null,
+  ],
+  "Phonics":[
+    {unit:1,topic:"Greetings & Classroom Rules",vocab:"Hello, Teacher, School, Bag, Book, Pencil, Sit down, Stand up",structs:"\"Hello, my name is...\" / \"This is my bag.\""},
+    {unit:1,topic:"Magic \"e\" (Long \"a\" sound)",vocab:"Tape;cane;cape;mane",structs:"The man has tape and a cane"},
+    {unit:1,topic:"Magic \"e\" (Long \"a\" sound)",vocab:"Gate;wave;skate;cave",structs:"My name is on the cake!"},
+    {unit:2,topic:"Magic \"e\"(Long \"I\" sound)",vocab:"Kite;pine;ripe;fine",structs:"My kite is fine in the pine."},
+    {unit:2,topic:"Magic \"e\"(Long \"I\" sound)",vocab:"Bike;hike;nine;line",structs:"My name is Mike I ride my bike at nine o clock"},
+    {unit:null,topic:"Long a/long i sounds",vocab:"Lake;tape;fine;five;cake",structs:"Do you like your bike?"},
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ],
+  "Integration":[
+    {theme:"Myself",topics:["First name and Last name","Personal background","Human names"],vocab:"nickname (ชื่อเล่น), name (ชื่อจริง), surname (นามสกุล), teacher (คุณครู), friend (เพื่อน)"},
+    {theme:"Mybody",topics:["Physical appearance","Human characteristics","Human changes and relationships","Body organs and their functions","Parts of the human body"],vocab:"short (เตี้ย), tall (สูง) thin (ผอม), fat (อ้วน), eye (ตา), nose (จมูก), ear (หู), hair (ผม), head (ศีรษะ), lip (ริมฝีปาก), teeth (ฟัน) neck (คอ), mouth (ปาก), face (ใบหน้า)"},
+    {theme:"Good Hygiene",topics:["Personal hygiene","Good health and hygiene habits","Eating healthy and nutritious food","Rest and relaxation","Physical exercise"],vocab:"body (ร่างกาย), healthy (สุขภาพดี), wash hand (ล้างมือ), wash hair (สระ ผม) takes a baht (อาบน ้า), get dressed (แต่งตัว), food (อาหาร), fruit (ผลไม้), milk (นม), fish (ปลา), pork (เนื ้อหมู), beef (เนื ้อวัว), chicken (ไก่), egg (ไข่), bread (ขนมปัง), cake (ขนมเค้ก), bean (ถั ่ว), cherry (เชอร์รี่), apple (แอปเปิ ้ล), banana (กล้วย), grape (องุ ่น), lemon (มะนาว), orange (ส้ม), papaya (มะละกอ), p"},
+    {theme:"My Family",topics:["Family background","Being a good member of the family","The child’s immediate family","Family members the child interacts with daily"],vocab:"family (ครอบครัว), father (พ่อ), mother (แม่), son (ลูกชาย), daughter (ลูก สาว), brother (พี่ชายน้องชาย), sister (พี่สาวน้องสาว), uncle (ลุง อา น้า(ช)), aunt (ป้ า น้า อา(ญ)), grandmother (ย่า ยาย), grandfather (ปู่ ตา) nice (หลานสาว), nephew (หลานชาย)"},
+    {theme:"My Happy School",topics:["Being a good member of the school","People in school the child is close to","Places in school the child interacts with daily"],vocab:"school (โรงเรียน) teacher (ครู) student (นักเรียน)"},
+    {theme:"Playing",topics:["Individual play and self-reliance activities","Cooperative play and working with others"],vocab:"Take care of yourself (ดูแลตัวเอง) play (การเล่น) toy (ของเล่น), together (ร่วมกัน)"},
+    {theme:"Good Kids",topics:["Respecting one’s own rights","Respecting the rights of others","Expressing one’s own opinions","Listening to others' opinions"],vocab:""},
+    {theme:"My Pride",topics:["Self-regulation","Self-awareness","Self-esteem"],vocab:""},
+    {theme:"Saint Louis Marie",topics:["His Biography"],vocab:""},
+    {theme:"God Alone",topics:["His Biography","Good manners","Morals"],vocab:""},
+    {theme:"Emotions and Feelings",topics:["one’s own emotions and feelings","others’ emotions and feelings","Empathy","Reflecting others' feelings"],vocab:"happy (ดี ใจ) sad (เสียใจ) playful (สนุก) mood (อารมณ์) in love (รัก) angry (โกรธ) shy (อาย) bored (เบื่อ) feeling (ความรู ้สึก)"},
+    {theme:"Senses",topics:["Colours of objects around us","Textures of objects around us","Patterns and relationships of objects"],vocab:"red (สีแดง), yellow (สีเหลือง), green (สีเขียว), blue (สีฟ้ า), black (สีด า), white (สี ขาว), orange (สีส้ม), violet (สีม่วง), pink (สีชมพู), brown (สีน ้าตาล), gray (สีเทา), rough (ขรุขระ), smooth (ผิวรื่น), hot (ร้อน), cool (เย็น)/"},
+    {theme:"Safety firse",topics:["Protecting oneself from contagious diseases","Protecting oneself from emerging diseases","Personal safety and boundaries with others","Treating others safely and respectfully","Stranger danger Hidden hazards Accidents Disasters"],vocab:"Take care of yourself. (ดูแลตัวเอง), safety (ความปลอดภัย), cautious (ระมัดระวัง)"},
+    {theme:"Community",topics:["The child’s immediate community","The community in the child’s daily life","Key places in the community","Community cultural centers"],vocab:"** hospital (โรงพยาบาล), temple (วัด), market (ตลาด), post office (ที่ท าการ ไปรษณีย์), supermarket (ซุปมาร์เก็ต), farm (ไร่นา), port (ท่าเรือ),  airport (สนามบิน)"},
+    {theme:"Community Helpers",topics:["People in the child’s close circle","People the child interacts with daily","Community helpers","Personal needs, interests, and abilities"],vocab:"** farmer (ชาวนา), fisherman (ชาวประมง), gardener (คนสวน), carpenter (ช่าง ไม้), merchant (พ่อค้า), fruit seller (คนขายผลไม้), cook (พ่อครัว),  policeman (ต ารวจ), soldier (ทหาร), postman (บุรุษไปรษณีย์), lawyer  (ทนายความ), engineer (วิศวกร), doctor (หมอ), nurse (พยาบาล),  dentist (ทันตแพทย์), pilot (นักบิน), air-hostess (พนักงานต้อนรับ หญิง), guide (มัคคุเทศก์)"},
+    {theme:"Our nation",topics:["Religion","Cultural diversity","National symbols of Thailand","Practicing local culture and Thai way of life","Learning resources from other local wisdoms"],vocab:""},
+    null,
+    null,
+    null,
+    null,
+  ]
+};
+
 const WEEK_TOPICS={
 
   // ── K1 subjects (Phonics = dedicated A–L letter programme) ──────────────
@@ -1392,49 +1801,56 @@ const WEEK_TOPICS={
 
 
 // Get all calendar entries for a date
-function getCalendarDay(dateStr){
-  const monthKey=dateStr.slice(0,7);
-  const month=SCHOOL_CALENDAR[monthKey];
-  if(!month)return[];
-  return[...(month.holidays||[]),...(month.events||[])].filter(e=>e.date===dateStr);
-}
 
-// Check if a date is a holiday/break (no school)
-function isSchoolHoliday(dateStr){
-  return getCalendarDay(dateStr).some(e=>e.type==="holiday"||e.type==="break");
-}
-
-// Per-subject per-week topic mapping — sourced from S1/2026 Course Outlines spreadsheet
-
-
-// Get topic for current week + subject
-// Routes to K2/K3 prefixed keys for those classes, falls back to K1 keys
 function getWeekTopic(subject,weekNum,cls){
   if(!weekNum||!subject)return null;
+  const isMLP_K3=cls==='K3A'||cls==='K3B';
   const isK2=cls==='K2A'||cls==='K2B'||cls==='K2/1'||cls==='K2/2'||cls==='K2/3';
   const isK3=cls==='K3A'||cls==='K3B'||cls==='K3/1'||cls==='K3/2'||cls==='K3/3'||cls==='K3/4';
+
+  // K2A/K2B MLP — use K2_TOPICS
+  if(cls==='K2A'||cls==='K2B'){
+    const normSub=subject==='Play'?'Play & Learn':subject;
+    const arr=K2_TOPICS[normSub];
+    if(arr){const entry=arr[weekNum-1];if(entry)return entry;}
+    return null;
+  }
+  // K3A/K3B MLP — use K3_TOPICS
+  if(isMLP_K3){
+    const normSub=subject==='Play'?'Play & Learn':subject;
+    const arr=K3_TOPICS[normSub];
+    if(arr){const entry=arr[weekNum-1];if(entry)return entry;}
+    return null;
+  }
+
   const prefix=isK3?'K3 ':isK2?'K2 ':null;
-  // Try class-specific prefixed key first
   if(prefix){
     const prefKey=prefix+subject;
     if(WEEK_TOPICS[prefKey]&&WEEK_TOPICS[prefKey][weekNum])return WEEK_TOPICS[prefKey][weekNum];
-    // Also try "Play & Learn" normalisation (spreadsheet uses "Play & Learn", timetable uses "Play")
     if(subject==='Play & Learn'||subject==='Play'){
       const plKey=prefix+'Play & Learn';
       if(WEEK_TOPICS[plKey]&&WEEK_TOPICS[plKey][weekNum])return WEEK_TOPICS[plKey][weekNum];
     }
   }
-  // Exact match (K1 keys)
   if(WEEK_TOPICS[subject]&&WEEK_TOPICS[subject][weekNum])return WEEK_TOPICS[subject][weekNum];
-  // Play & Learn normalisation for K1
   if(subject==='Play'&&WEEK_TOPICS['Play & Learn']&&WEEK_TOPICS['Play & Learn'][weekNum])
     return WEEK_TOPICS['Play & Learn'][weekNum];
-  // Substring fallback
   for(const key of Object.keys(WEEK_TOPICS)){
     if(!key.startsWith('K2 ')&&!key.startsWith('K3 ')&&subject.includes(key)&&WEEK_TOPICS[key][weekNum])
       return WEEK_TOPICS[key][weekNum];
   }
   return null;
+}
+
+// Helper: get compact topic string from a getWeekTopic result (works for both string and K3 object)
+function getTopicLabel(topicData,isIntegration){
+  if(!topicData)return null;
+  if(typeof topicData==='string')return topicData;
+  if(isIntegration||topicData.theme){
+    return topicData.theme||(topicData.topics&&topicData.topics[0])||null;
+  }
+  const u=topicData.unit?'U'+topicData.unit+' · ':'';
+  return topicData.topic?(u+topicData.topic):null;
 }
 
 const SUBJECT_COLORS={
@@ -1518,32 +1934,52 @@ const SUBJECTS_ALL=["All","English","Math","Science","STREAMSS","Phonics","Chine
 
 const ONEDRIVE_SRC="https://1drv.ms/p/c/c7815a9a8eb70b9d/IQRoHp8pKDGNTJBsh_VMCzw5AfB_ROWKAhyt5jjQNtmvjb0?wdAr=1.3580786026200873";
 const DEFAULT_RESOURCES=[
-  {id:4,  name:"K1 English Lesson Slides",          url:ONEDRIVE_SRC,embedSrc:ONEDRIVE_SRC,                                                                                                                                         subject:"English", type:"Slides", note:"K1 English - OneDrive PowerPoint"},
-  {id:10, name:"K1 English Lesson Plans",            url:"https://drive.google.com/drive/folders/1fCgym7iO_VX3Zk4aCIor0Iir-_KkS9f5?usp=sharing&view=grid",                                                                               subject:"English", type:"Doc",    note:"K1 English lesson plans folder — Google Drive"},
-  {id:6,  name:"Pippa & Pop L1 – Activity Book",     url:"https://drive.google.com/file/d/1eodJgCS5sLCWS5M4HCSz4FkgCLrOWhU-/view",embedSrc:"https://drive.google.com/file/d/1eodJgCS5sLCWS5M4HCSz4FkgCLrOWhU-/preview",         subject:"English", type:"PDF",    note:"Cambridge Pippa and Pop Level 1 – full activity book (Units 1–9)"},
-  {id:7,  name:"Pippa & Pop L1 – Colouring Worksheet",url:"https://drive.google.com/file/d/1MnqTlPuEncYcH8RB-8MWzK1qgyHKfBqh/view",embedSrc:"https://drive.google.com/file/d/1MnqTlPuEncYcH8RB-8MWzK1qgyHKfBqh/preview",       subject:"English", type:"PDF",    note:"Character colouring sheets: Pippa, Pop, Kim, Dan, Tinks"},
-  {id:8,  name:"Pippa & Pop L1 – Mini Flashcards",   url:"https://drive.google.com/file/d/1gOeMbMqg7RbblOD6BeVz_b8D4x7euUOu/view",embedSrc:"https://drive.google.com/file/d/1gOeMbMqg7RbblOD6BeVz_b8D4x7euUOu/preview",         subject:"English", type:"PDF",    note:"Cut-out flashcards for Units 1–9 vocabulary"},
-  {id:9,  name:"Pippa & Pop L1 – Word Cards",        url:"https://drive.google.com/file/d/1TLI2mmd9GuoU3QTLUqWqg3L1bPLMIsBS/view",embedSrc:"https://drive.google.com/file/d/1TLI2mmd9GuoU3QTLUqWqg3L1bPLMIsBS/preview",         subject:"English", type:"PDF",    note:"Cut-out word cards for Units 1–9"},
-  {id:5,  name:"Phonics World 1 – Flipbook",           url:"https://online.flipbuilder.com/xtrvf/dsfl/",embedSrc:"https://online.flipbuilder.com/xtrvf/dsfl/",                                                                       subject:"Phonics",  type:"Slides", note:"Phonics World 1 interactive flipbook"},
-  {id:11, name:"Oxford Phonics World 1 – Flashcards",  url:"https://drive.google.com/file/d/1S__dFtPYzvgXsrVCsMmpSAYSB__Qg4hM/view",embedSrc:"https://drive.google.com/file/d/1S__dFtPYzvgXsrVCsMmpSAYSB__Qg4hM/preview",                                subject:"Phonics",  type:"PDF",    note:"A–Z flashcards: 4 picture cards per letter"},
-  {id:1,  name:"KG1 Math Songs Playlist",            url:"https://drive.google.com/drive/folders/",                                                                                                                                  subject:"Math",    type:"Video",  note:"Counting & number songs"},
-  {id:12, name:"Doodle Town 1 – Student Book",       url:"https://drive.google.com/file/d/1CsF3wTZvBjBfMdrTqrudn8S5f7_eGv6T/view",embedSrc:"https://drive.google.com/file/d/1CsF3wTZvBjBfMdrTqrudn8S5f7_eGv6T/preview",         subject:"Math",    type:"PDF",    note:"Doodle Town 1 student book — Math"},
-  {id:2,  name:"Phonics Flashcards Set A",           url:"https://docs.google.com/presentation/",                                                                                                                                   subject:"Phonics",  type:"Slides", note:"Letters A-M"},
-  {id:3,  name:"Science Activity Book 2",             url:"https://drive.google.com/file/d/1ppEOE04Yf_vul-79NbetE5Ru-u79y8D5/view",embedSrc:"https://drive.google.com/file/d/1ppEOE04Yf_vul-79NbetE5Ru-u79y8D5/preview",subject:"Science",type:"PDF",note:"Science House K1 activity book"},
-  {id:13, name:"Science Pupils Book 2",               url:"https://drive.google.com/file/d/1KINDBTTnfLcwxUWET-A05HcN7-Rrxcgh/view",embedSrc:"https://drive.google.com/file/d/1KINDBTTnfLcwxUWET-A05HcN7-Rrxcgh/preview",subject:"Science",type:"PDF",note:"Science House K1 pupils book"},
+  // ── MLP · K1 ──────────────────────────────────────────────────────────────
+  {id:4,  prog:"MLP",level:"K1",name:"K1 English Lesson Slides",           url:ONEDRIVE_SRC,embedSrc:ONEDRIVE_SRC,                                                                                                                  subject:"English", type:"Slides", note:"K1 English - OneDrive PowerPoint"},
+  {id:10, prog:"MLP",level:"K1",name:"K1 English Lesson Plans",             url:"https://drive.google.com/drive/folders/1fCgym7iO_VX3Zk4aCIor0Iir-_KkS9f5?usp=sharing&view=grid",                                                   subject:"English", type:"Doc",    note:"K1 English lesson plans folder — Google Drive"},
+  {id:6,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Activity Book",      url:"https://drive.google.com/file/d/1eodJgCS5sLCWS5M4HCSz4FkgCLrOWhU-/view",embedSrc:"https://drive.google.com/file/d/1eodJgCS5sLCWS5M4HCSz4FkgCLrOWhU-/preview",         subject:"English", type:"PDF",    note:"Cambridge Pippa and Pop Level 1 – full activity book (Units 1–9)"},
+  {id:7,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Colouring Worksheet",url:"https://drive.google.com/file/d/1MnqTlPuEncYcH8RB-8MWzK1qgyHKfBqh/view",embedSrc:"https://drive.google.com/file/d/1MnqTlPuEncYcH8RB-8MWzK1qgyHKfBqh/preview",         subject:"English", type:"PDF",    note:"Character colouring sheets: Pippa, Pop, Kim, Dan, Tinks"},
+  {id:8,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Mini Flashcards",    url:"https://drive.google.com/file/d/1gOeMbMqg7RbblOD6BeVz_b8D4x7euUOu/view",embedSrc:"https://drive.google.com/file/d/1gOeMbMqg7RbblOD6BeVz_b8D4x7euUOu/preview",         subject:"English", type:"PDF",    note:"Cut-out flashcards for Units 1–9 vocabulary"},
+  {id:9,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Word Cards",         url:"https://drive.google.com/file/d/1TLI2mmd9GuoU3QTLUqWqg3L1bPLMIsBS/view",embedSrc:"https://drive.google.com/file/d/1TLI2mmd9GuoU3QTLUqWqg3L1bPLMIsBS/preview",         subject:"English", type:"PDF",    note:"Cut-out word cards for Units 1–9"},
+  {id:5,  prog:"MLP",level:"K1",name:"Phonics World 1 – Flipbook",          url:"https://online.flipbuilder.com/xtrvf/dsfl/",embedSrc:"https://online.flipbuilder.com/xtrvf/dsfl/",                                                subject:"Phonics",  type:"Slides", note:"Phonics World 1 interactive flipbook"},
+  {id:11, prog:"MLP",level:"K1",name:"Oxford Phonics World 1 – Flashcards", url:"https://drive.google.com/file/d/1S__dFtPYzvgXsrVCsMmpSAYSB__Qg4hM/view",embedSrc:"https://drive.google.com/file/d/1S__dFtPYzvgXsrVCsMmpSAYSB__Qg4hM/preview",          subject:"Phonics",  type:"PDF",    note:"A–Z flashcards: 4 picture cards per letter"},
+  {id:1,  prog:"MLP",level:"K1",name:"KG1 Math Songs Playlist",             url:"https://drive.google.com/drive/folders/",                                                                                                         subject:"Math",    type:"Video",  note:"Counting & number songs"},
+  {id:12, prog:"MLP",level:"K1",name:"Doodle Town 1 – Student Book",        url:"https://drive.google.com/file/d/1CsF3wTZvBjBfMdrTqrudn8S5f7_eGv6T/view",embedSrc:"https://drive.google.com/file/d/1CsF3wTZvBjBfMdrTqrudn8S5f7_eGv6T/preview",         subject:"Math",    type:"PDF",    note:"Doodle Town 1 student book — Math"},
+  {id:2,  prog:"MLP",level:"K1",name:"Phonics Flashcards Set A",            url:"https://docs.google.com/presentation/",                                                                                                           subject:"Phonics",  type:"Slides", note:"Letters A-M"},
+  {id:3,  prog:"MLP",level:"K1",name:"Science Activity Book 2",             url:"https://drive.google.com/file/d/1ppEOE04Yf_vul-79NbetE5Ru-u79y8D5/view",embedSrc:"https://drive.google.com/file/d/1ppEOE04Yf_vul-79NbetE5Ru-u79y8D5/preview",          subject:"Science", type:"PDF",    note:"Science House K1 activity book"},
+  {id:13, prog:"MLP",level:"K1",name:"Science Pupils Book 2",               url:"https://drive.google.com/file/d/1KINDBTTnfLcwxUWET-A05HcN7-Rrxcgh/view",embedSrc:"https://drive.google.com/file/d/1KINDBTTnfLcwxUWET-A05HcN7-Rrxcgh/preview",          subject:"Science", type:"PDF",    note:"Science House K1 pupils book"},
+  // ── MLP · K2 ──────────────────────────────────────────────────────────────
+  {id:30, prog:"MLP",level:"K2",name:"Oxford Phonics World 2 – Student Book", url:"https://online.fliphtml5.com/rerhx/tjdv/",embedSrc:"https://online.fliphtml5.com/rerhx/tjdv/", subject:"Phonics",  type:"Slides", note:"Oxford Phonics World 2 interactive flipbook"},
+  {id:32, prog:"MLP",level:"K2",name:"Pippa and Pop 2 – Activity Book",       url:"https://drive.google.com/file/d/1DML2ResaqOtGLwYTqKM4jRVowfe34OHb/view",embedSrc:"https://drive.google.com/file/d/1DML2ResaqOtGLwYTqKM4jRVowfe34OHb/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 2 activity book"},
+  {id:33, prog:"MLP",level:"K2",name:"Pippa and Pop 2 – Teacher's Book",      url:"https://drive.google.com/file/d/15KVz2xfgRE_vjNX6kJF_fBsgsC_5sC42/view",embedSrc:"https://drive.google.com/file/d/15KVz2xfgRE_vjNX6kJF_fBsgsC_5sC42/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 2 teacher's book"},
+  // ── MLP · K3 ──────────────────────────────────────────────────────────────
+  {id:31, prog:"MLP",level:"K3",name:"Oxford Phonics World 3 – Flipbook",     url:"https://online.flipbuilder.com/jivyr/gfri/",embedSrc:"https://online.flipbuilder.com/jivyr/gfri/", subject:"Phonics",  type:"Slides", note:"Oxford Phonics World 3 interactive flipbook"},
+  {id:34, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Activity Book",       url:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/view",embedSrc:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 activity book"},
+  {id:35, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Teacher's Book",      url:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/view",embedSrc:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 teacher's book"},
+  // ── IEP · K1 ──────────────────────────────────────────────────────────────
+  {id:36, prog:"IEP",level:"K1",name:"Super Safari SB Level 1 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/slkt/",embedSrc:"https://online.flipbuilder.com/sdtta/slkt/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 1 – interactive flipbook"},
+  {id:37, prog:"IEP",level:"K1",name:"Super Safari WB Level 1 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/lpsw/",embedSrc:"https://online.flipbuilder.com/sdtta/lpsw/", subject:"English", type:"Slides", note:"Super Safari Workbook Level 1 – interactive flipbook"},
+  // ── IEP · K2 ──────────────────────────────────────────────────────────────
+  {id:20, prog:"IEP",level:"K2",name:"Super Safari SB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/nyep/",embedSrc:"https://online.flipbuilder.com/sdtta/nyep/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 2 – interactive flipbook"},
+  {id:21, prog:"IEP",level:"K2",name:"Super Safari WB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/ciat/",embedSrc:"https://online.flipbuilder.com/sdtta/ciat/", subject:"English", type:"Slides", note:"Super Safari Workbook Level 2 – interactive flipbook"},
+  // ── IEP · K3 ──────────────────────────────────────────────────────────────
+  {id:22, prog:"IEP",level:"K3",name:"Super Safari WB Level 3 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/imbf/",embedSrc:"https://online.flipbuilder.com/sdtta/imbf/", subject:"English", type:"Slides", note:"Super Safari Workbook Level 3 – interactive flipbook"},
+  {id:23, prog:"IEP",level:"K3",name:"Super Safari SB Level 3 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/ijpc/",embedSrc:"https://online.flipbuilder.com/sdtta/ijpc/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 3 – interactive flipbook"},
 ];
 
 // Foreign teachers — each gets their own tab
 const TEACHERS=[
   // MLP teachers
-  {id:"gary",        name:"T. Gary",        full:"Gary",         classes:["K1A"],                                          color:"#2563eb", prog:"MLP"},
-  {id:"iuliia",      name:"T. Iuliia",      full:"Iuliia",       classes:["K1B"],                                          color:"#7c3aed", prog:"MLP"},
-  {id:"inessa",      name:"T. Inessa",      full:"Inessa",       classes:["K2A","K2B","K3A","K3B","K1/1","K1/2","K1/3"],color:"#0891b2", prog:"Both"},
-  {id:"iana",        name:"T. Iana",        full:"Iana",         classes:["K2A","K2B","K3A","K3B"],                        color:"#059669", prog:"MLP"},
-  {id:"jayne",       name:"T. Jayne",       full:"Jayne",        classes:["K2A","K2B","K3A","K3B","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"], color:"#d97706", prog:"Both"},
-  {id:"newteacher",  name:"T. New",         full:"New Teacher",  classes:["K2A","K2B","K3A","K3B","K2/1","K2/2","K2/3"],color:"#be185d", prog:"Both"},
+  {id:"gary",        name:"T. Gary",        full:"Gary",         classes:["K1A"],                                                                          color:"#2563eb", prog:"MLP"},
+  {id:"iuliia",      name:"T. Iuliia",      full:"Iuliia",       classes:["K1B"],                                                                          color:"#7c3aed", prog:"MLP"},
+  {id:"inessa",      name:"T. Inessa",      full:"Inessa",       classes:["K2A","K2B","K3A","K3B","K1/1","K1/2","K1/3","N1","N2"],                        color:"#0891b2", prog:"Both"},
+  {id:"iana",        name:"T. Iana",        full:"Iana",         classes:["K2A","K2B","K3A","K3B","N1","N2"],                                              color:"#059669", prog:"MLP"},
+  {id:"jayne",       name:"T. Jayne",       full:"Jayne",        classes:["K2A","K2B","K3A","K3B","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4","N1","N2"], color:"#d97706", prog:"Both"},
+  {id:"newteacher",  name:"T. New",         full:"New Teacher",  classes:["K2A","K2B","K3A","K3B","K2/1","K2/2","K2/3","N1","N2"],                        color:"#be185d", prog:"Both"},
+  {id:"svitlana",    name:"T. Svitlana",    full:"Svitlana",     classes:["K2A","K2B","K3A","K3B","N1","N2"],                                              color:"#9333ea", prog:"MLP"},
+  {id:"janet",       name:"T. Janet",       full:"Janet",        classes:["N1","N2"],                                                                      color:"#16a34a", prog:"Nursery"},
   // IEP teachers
-  {id:"jussill",     name:"T. Jussill",     full:"Jussill",      classes:["K1/1","K1/2","K1/3","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"], color:"#0e7490", prog:"IEP"},
-  {id:"daisy",       name:"T. Daisy",       full:"Daisy",        classes:["K1/1","K1/2","K1/3","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"], color:"#7c3aed", prog:"IEP"},
-  {id:"shirley",     name:"T. Shirley",     full:"Shirley",      classes:["K1/1","K1/2","K1/3","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"], color:"#9d174d", prog:"IEP"},
+  {id:"jussill",     name:"T. Jussill",     full:"Jussill",      classes:["K1/1","K1/2","K1/3","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"],         color:"#0e7490", prog:"IEP"},
+  {id:"daisy",       name:"T. Daisy",       full:"Daisy",        classes:["K1/1","K1/2","K1/3","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"],         color:"#e11d48", prog:"IEP"},
+  {id:"shirley",     name:"T. Shirley",     full:"Shirley",      classes:["K1/1","K1/2","K1/3","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"],         color:"#9d174d", prog:"IEP"},
 ];
