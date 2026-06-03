@@ -572,27 +572,12 @@ function renderTimetable(){
           if(r.note)h.push('<div style="font-size:0.65rem;color:#94a3b8">'+r.note+'</div>');
           h.push('</div>');
           h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
-          if(r.embedSrc)h.push('<button class="btn-sm" style="background:#f1f5f9;color:#64748b;flex-shrink:0" onclick="S.popup={type:\'resourcePreview\',resource:DB.resources.find(x=>x.id==='+r.id+')};render()">&#128065;</button>');
           h.push('</div>');
         });
         h.push('</div>');
       }
     }
     h.push('</div>');
-
-    // Embed preview (if there's a single embeddable resource)
-    const embedRes=res.find(r=>r.embedSrc);
-    if(embedRes&&S.tmShowEmbed){
-      h.push('<div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.09)">');
-      h.push('<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:#f8fafc;border-bottom:1px solid #e2e8f0">');
-      h.push('<div style="font-weight:700;font-size:0.78rem;color:#111827">'+embedRes.name+'</div>');
-      h.push('<button class="btn-sm" style="background:#fee2e2;color:#dc2626" onclick="S.tmShowEmbed=false;render()">&#10005; Close</button>');
-      h.push('</div>');
-      h.push('<iframe src="'+embedRes.embedSrc+'" style="width:100%;height:420px;border:none;display:block" title="'+embedRes.name+'"></iframe>');
-      h.push('</div>');
-    } else if(embedRes&&!S.tmShowEmbed){
-      h.push('<button class="btn" style="width:100%;background:#eff6ff;color:#2563eb;border:2px dashed #bfdbfe" onclick="S.tmShowEmbed=true;render()">&#128065; Preview: '+embedRes.name+'</button>');
-    }
   }
 
   // ── BREAK CARD ──────────────────────────────────────────────────────────────
@@ -970,6 +955,28 @@ function renderTeacherTab(teacher){
     h.push('<div style="text-align:right;flex-shrink:0"><div style="font-size:1.1rem;font-weight:800;color:'+col+'">'+minsLeft+'m</div><div style="font-size:0.62rem;color:#94a3b8">remaining</div></div>');
     h.push('</div>');
     h.push('<div style="background:#e2e8f0;border-radius:4px;height:6px"><div style="background:'+col+';border-radius:4px;height:6px;width:'+pct+'%;transition:width 1s"></div></div>');
+    // Resources for active lesson
+    const activeRes=getTeacherResources(activeLesson.cls,activeLesson.sub);
+    if(activeRes.length>0){
+      h.push('<button onclick="S.nowResOpen=!S.nowResOpen;render()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.4rem 0.65rem;cursor:pointer;font-family:\'Nunito\',sans-serif;margin-top:0.6rem">');
+      h.push('<span style="font-size:0.75rem;font-weight:700;color:#64748b">&#128206; '+activeRes.length+' Resource'+(activeRes.length>1?'s':'')+' available</span>');
+      h.push('<span style="font-size:0.7rem;color:#94a3b8">'+(S.nowResOpen?'&#9650; Hide':'&#9660; Show')+'</span>');
+      h.push('</button>');
+      if(S.nowResOpen){
+        h.push('<div style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.35rem">');
+        activeRes.forEach(r=>{
+          const ti=typeInfo(r.type);
+          h.push('<div style="display:flex;align-items:center;gap:0.5rem;background:#f8fafc;border-radius:8px;padding:0.45rem 0.6rem;border-left:3px solid '+ti.color+'">');
+          h.push('<span>'+ti.icon+'</span>');
+          h.push('<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.78rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.name+'</div>');
+          if(r.note)h.push('<div style="font-size:0.65rem;color:#94a3b8">'+r.note+'</div>');
+          h.push('</div>');
+          h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
+          h.push('</div>');
+        });
+        h.push('</div>');
+      }
+    }
     h.push('</div>');
   }
 
@@ -1061,10 +1068,23 @@ function renderTeacherTab(teacher){
       const lessonRes=getTeacherResources(lesson.cls,lesson.sub);
       if(lessonRes.length>0){
         const resKey='tres_'+lesson.cls+'_'+label;
-        h.push('<div class="extra_'+resKey+'" style="display:none;margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid #F3F4F6">');
-        lessonRes.forEach(r=>{const ti=typeInfo(r.type);h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="display:inline-block;margin:2px;background:'+ti.color+'22;color:'+ti.color+';text-decoration:none">'+ti.icon+' '+r.name+'</a>');});
-        h.push('</div>');
-        h.push('<div style="font-size:0.62rem;color:#9CA3AF;margin-top:3px;cursor:pointer" onclick="var e=this.previousElementSibling;e.style.display=e.style.display===\'none\'?\'block\':\'none\'">'+lessonRes.length+' resource'+(lessonRes.length>1?'s':'')+' — tap to expand</div>');
+        const resOpen=S.openRes===resKey;
+        h.push('<button onclick="S.openRes=S.openRes===\''+resKey+'\'?null:\''+resKey+'\';render()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:0.3rem 0.55rem;cursor:pointer;font-family:\'Nunito\',sans-serif;margin-top:0.35rem">');
+        h.push('<span style="font-size:0.72rem;font-weight:700;color:#64748b">&#128206; '+lessonRes.length+' Resource'+(lessonRes.length>1?'s':'')+' available</span>');
+        h.push('<span style="font-size:0.65rem;color:#94a3b8">'+(resOpen?'&#9650; Hide':'&#9660; Show')+'</span>');
+        h.push('</button>');
+        if(resOpen){
+          h.push('<div style="display:flex;flex-direction:column;gap:0.25rem;margin-top:0.3rem">');
+          lessonRes.forEach(r=>{
+            const ti=typeInfo(r.type);
+            h.push('<div style="display:flex;align-items:center;gap:0.4rem;background:#f8fafc;border-radius:6px;padding:0.35rem 0.5rem;border-left:3px solid '+ti.color+'">');
+            h.push('<span style="font-size:0.85rem">'+ti.icon+'</span>');
+            h.push('<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.75rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.name+'</div></div>');
+            h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
+            h.push('</div>');
+          });
+          h.push('</div>');
+        }
       }
     } else {
       h.push('<div style="font-size:0.82rem;color:#D1D5DB;font-style:italic">Free</div>');
@@ -1284,7 +1304,6 @@ function renderResources(){
         h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:#FEF2F2;color:#B91C1C;text-decoration:none">&#128279; Open</a>');
       else
         h.push('<span class="btn-sm" style="background:#fef9c3;color:#92400e;cursor:default">&#128206; '+r.url+'</span>');
-      if(r.embedSrc)h.push('<button class="btn-sm" style="background:#f1f5f9;color:#64748b" onclick="openResourcePreview('+globalIdx+')">&#128065; Preview</button>');
       h.push('</div></div></div>');
     });
     h.push('</div>');

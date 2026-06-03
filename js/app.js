@@ -62,6 +62,8 @@ let S={
   anCls:"K1A",
   anRange:14,
   resSub:"All",
+  nowResOpen:false,
+  openRes:null,
 };
 
 // Bump this number any time DEFAULT_RESOURCES changes — forces Firestore to update
