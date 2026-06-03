@@ -556,22 +556,27 @@ function renderTimetable(){
     h.push('<div style="background:'+col+';border-radius:4px;height:6px;width:'+pct+'%;transition:width 1s"></div>');
     h.push('</div>');
 
-    // Resources for this subject
+    // Resources for this subject — collapsible
     if(res.length>0){
-      h.push('<div style="font-size:0.7rem;font-weight:700;color:#64748b;margin-bottom:0.4rem">&#128206; RESOURCES</div>');
-      h.push('<div style="display:flex;flex-direction:column;gap:0.35rem">');
-      res.forEach(r=>{
-        const ti=typeInfo(r.type);
-        h.push('<div style="display:flex;align-items:center;gap:0.5rem;background:#f8fafc;border-radius:8px;padding:0.45rem 0.6rem;border-left:3px solid '+ti.color+'">');
-        h.push('<span>'+ti.icon+'</span>');
-        h.push('<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.78rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.name+'</div>');
-        if(r.note)h.push('<div style="font-size:0.65rem;color:#94a3b8">'+r.note+'</div>');
+      h.push('<button onclick="S.nowResOpen=!S.nowResOpen;render()" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.4rem 0.65rem;cursor:pointer;font-family:\'Nunito\',sans-serif;margin-top:0.25rem">');
+      h.push('<span style="font-size:0.75rem;font-weight:700;color:#64748b">&#128206; '+res.length+' Resource'+(res.length>1?'s':'')+' available</span>');
+      h.push('<span style="font-size:0.7rem;color:#94a3b8">'+(S.nowResOpen?'&#9650; Hide':'&#9660; Show')+'</span>');
+      h.push('</button>');
+      if(S.nowResOpen){
+        h.push('<div style="display:flex;flex-direction:column;gap:0.3rem;margin-top:0.35rem">');
+        res.forEach(r=>{
+          const ti=typeInfo(r.type);
+          h.push('<div style="display:flex;align-items:center;gap:0.5rem;background:#f8fafc;border-radius:8px;padding:0.45rem 0.6rem;border-left:3px solid '+ti.color+'">');
+          h.push('<span>'+ti.icon+'</span>');
+          h.push('<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.78rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.name+'</div>');
+          if(r.note)h.push('<div style="font-size:0.65rem;color:#94a3b8">'+r.note+'</div>');
+          h.push('</div>');
+          h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
+          if(r.embedSrc)h.push('<button class="btn-sm" style="background:#f1f5f9;color:#64748b;flex-shrink:0" onclick="S.popup={type:\'resourcePreview\',resource:DB.resources.find(x=>x.id==='+r.id+')};render()">&#128065;</button>');
+          h.push('</div>');
+        });
         h.push('</div>');
-        h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
-        if(r.embedSrc)h.push('<button class="btn-sm" style="background:#f1f5f9;color:#64748b;flex-shrink:0" onclick="S.popup={type:\'resourcePreview\',resource:DB.resources.find(x=>x.id==='+r.id+')};render()">&#128065;</button>');
-        h.push('</div>');
-      });
-      h.push('</div>');
+      }
     }
     h.push('</div>');
 
