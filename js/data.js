@@ -34,7 +34,7 @@ function todayDayColors(){
 }
 
 // Semester 1 / 2026 timetable — sourced from ตารางสอน.xlsx (Sheet: ตารางสอน)
-// K1A = อ.1A (Gary), K1B = อ.1B (Iuliia)
+// K1A = อ.1A (Gary), K1B = อ.1B (Yulia)
 // K2A = อ.2A, K2B = อ.2B
 // K3A = อ.3A, K3B = อ.3B (อนุบาล 3 MLP — 7 periods per day)
 // Periods for อนุบาล 1: P1 08:30-09:10, P2 09:10-09:50, P3 10:10-10:50,
@@ -86,43 +86,43 @@ const TIMETABLE={
   K1B:{
     Monday:[
       null,
-      {sub:"Integration",   teacher:"Iuliia"},
+      {sub:"Integration",   teacher:"Yulia"},
       {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
       {sub:"Movement",      teacher:"มิสกาญธิรา"},
-      {sub:"English",       teacher:"Iuliia"},
-      {sub:"Math",          teacher:"Iuliia"}
+      {sub:"English",       teacher:"Yulia"},
+      {sub:"Math",          teacher:"Yulia"}
     ],
     Tuesday:[
       null,
-      {sub:"Integration",   teacher:"Iuliia"},
+      {sub:"Integration",   teacher:"Yulia"},
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"STREAMSS",      teacher:"Iuliia"},
-      {sub:"English",       teacher:"Iuliia"},
-      {sub:"Math",          teacher:"Iuliia"}
+      {sub:"STREAMSS",      teacher:"Yulia"},
+      {sub:"English",       teacher:"Yulia"},
+      {sub:"Math",          teacher:"Yulia"}
     ],
     Wednesday:[
       null,
-      {sub:"Integration",   teacher:"Iuliia"},
+      {sub:"Integration",   teacher:"Yulia"},
       {sub:"Skill Building",teacher:"มิสมยุรา"},
-      {sub:"STREAMSS",      teacher:"Iuliia"},
-      {sub:"Phonics",       teacher:"Iuliia"},
-      {sub:"Science",       teacher:"Iuliia"}
+      {sub:"STREAMSS",      teacher:"Yulia"},
+      {sub:"Phonics",       teacher:"Yulia"},
+      {sub:"Science",       teacher:"Yulia"}
     ],
     Thursday:[
       {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
-      {sub:"Play & Learn",  teacher:"Iuliia"},
+      {sub:"Play & Learn",  teacher:"Yulia"},
       null,
-      {sub:"Phonics",       teacher:"Iuliia"},
-      {sub:"Science",       teacher:"Iuliia"},
-      {sub:"Integration",   teacher:"Iuliia"}
+      {sub:"Phonics",       teacher:"Yulia"},
+      {sub:"Science",       teacher:"Yulia"},
+      {sub:"Integration",   teacher:"Yulia"}
     ],
     Friday:[
-      {sub:"STREAMSS",      teacher:"Iuliia"},
+      {sub:"STREAMSS",      teacher:"Yulia"},
       {sub:"Swimming",      teacher:"นิราภร"},
       null,
       {sub:"Music",         teacher:"ม.อัครินทร์"},
-      {sub:"Play & Learn",  teacher:"Iuliia"},
-      {sub:"Integration",   teacher:"Iuliia"}
+      {sub:"Play & Learn",  teacher:"Yulia"},
+      {sub:"Integration",   teacher:"Yulia"}
     ]
   },
     // ── KG1 IEP ───────────────────────────────────────────────────────────────
@@ -1005,7 +1005,7 @@ const MORNING_DUTY_ROTA=[
       {pos:"บันได",staff:["Miss Yuphin"]},
       {pos:"ใต้ต้นไทร",staff:["Ms. Shirley"]},
       {pos:"วอกเวย์",staff:["Ms. Jussill"]},
-      {pos:"คัดกรองประตูสนาม",staff:["Miss Rungtiva","Ms. Iuliia"]},
+      {pos:"คัดกรองประตูสนาม",staff:["Miss Rungtiva","Ms. Yulia"]},
       {pos:"รับส่งเด็กประตูสนาม",staff:["Miss Ariyaporn","Miss Srassaya (Joy)","Miss Paphawarin"]}
     ],
     lateduty:{pos:"ประตูหน้าตึกยอห์น",staff:["Miss Mayura","Miss Nopwan"]}
@@ -1957,8 +1957,7 @@ const DEFAULT_RESOURCES=[
   {id:34, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Activity Book",       url:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/view",embedSrc:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 activity book"},
   {id:35, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Teacher's Book",      url:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/view",embedSrc:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 teacher's book"},
   // ── IEP · K1 ──────────────────────────────────────────────────────────────
-  {id:36, prog:"IEP",level:"K1",name:"Super Safari SB Level 1 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/slkt/",embedSrc:"https://online.flipbuilder.com/sdtta/slkt/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 1 – interactive flipbook"},
-  {id:37, prog:"IEP",level:"K1",name:"Super Safari WB Level 1 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/lpsw/",embedSrc:"https://online.flipbuilder.com/sdtta/lpsw/", subject:"English", type:"Slides", note:"Super Safari Workbook Level 1 – interactive flipbook"},
+  // (add K1 IEP resources here)
   // ── IEP · K2 ──────────────────────────────────────────────────────────────
   {id:20, prog:"IEP",level:"K2",name:"Super Safari SB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/nyep/",embedSrc:"https://online.flipbuilder.com/sdtta/nyep/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 2 – interactive flipbook"},
   {id:21, prog:"IEP",level:"K2",name:"Super Safari WB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/ciat/",embedSrc:"https://online.flipbuilder.com/sdtta/ciat/", subject:"English", type:"Slides", note:"Super Safari Workbook Level 2 – interactive flipbook"},
@@ -1971,7 +1970,7 @@ const DEFAULT_RESOURCES=[
 const TEACHERS=[
   // MLP teachers
   {id:"gary",        name:"T. Gary",        full:"Gary",         classes:["K1A"],                                                                          color:"#2563eb", prog:"MLP"},
-  {id:"iuliia",      name:"T. Iuliia",      full:"Iuliia",       classes:["K1B"],                                                                          color:"#7c3aed", prog:"MLP"},
+  {id:"yulia",      name:"T. Yulia",      full:"Yulia",       classes:["K1B"],                                                                          color:"#7c3aed", prog:"MLP"},
   {id:"inessa",      name:"T. Inessa",      full:"Inessa",       classes:["K2A","K2B","K3A","K3B","K1/1","K1/2","K1/3","N1","N2"],                        color:"#0891b2", prog:"Both"},
   {id:"iana",        name:"T. Iana",        full:"Iana",         classes:["K2A","K2B","K3A","K3B","N1","N2"],                                              color:"#059669", prog:"MLP"},
   {id:"jayne",       name:"T. Jayne",       full:"Jayne",        classes:["K2A","K2B","K3A","K3B","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4","N1","N2"], color:"#d97706", prog:"Both"},
