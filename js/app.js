@@ -64,6 +64,7 @@ let S={
   resSub:"All",
   nowResOpen:false,
   openRes:null,
+  tmCalOpen:true,
 };
 
 // Bump this number any time DEFAULT_RESOURCES changes — forces Firestore to update

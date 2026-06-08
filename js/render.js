@@ -9,7 +9,7 @@ function render(){
     ${renderHeader()}
     ${renderTabs()}
     ${S.tab==="timetable"?renderTimetableNav():""}
-    <div id="tab-body" style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;position:relative">
+    <div id="tab-body" style="flex:1;overflow:visible;position:relative">
       ${S.tab==="timetable"?renderTimetable():""}
 
       ${S.tab==="resources"?renderResources():""}
@@ -68,38 +68,27 @@ function renderTopicDetail(topicData,col,expandKey){
 function renderHeader(){
   const sw=getCurrentSchoolWeek();
   const now=new Date();
-  const dayName=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][now.getDay()];
-  const dateStr=now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+  const dayName=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][now.getDay()];
+  const dateStr=now.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
   const dc=todayDayColors();
   const syncCls=S.syncStatus==='ok'?'sync-ok':S.syncStatus==='ing'?'sync-ing':'sync-err';
   return`<div style="flex-shrink:0">
-    <!-- ACS red top line -->
-    <div style="height:4px;background:#B91C1C"></div>
-    <!-- Row 1: logo + school name + clock -->
-    <div style="background:#fff;padding:0.5rem 1rem;display:flex;align-items:center;gap:0.85rem;border-bottom:1px solid #F3F4F6">
-      <img src="${SCHOOL_LOGO}" style="height:46px;width:auto;border-radius:6px;flex-shrink:0" alt="ACS">
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:900;font-size:1.05rem;color:#111827;letter-spacing:-0.3px;line-height:1.15">Assumption College Sriracha</div>
-        <div style="font-size:0.68rem;color:#6B7280;font-style:italic;margin-top:1px">Labor Omnia Vincit &nbsp;·&nbsp; Kindergarten Department &nbsp;·&nbsp; Teacher Hub</div>
+    <div style="height:3px;background:#B91C1C"></div>
+    <div style="background:${dc.bg};border-bottom:2px solid ${dc.border};padding:0.3rem 0.75rem;display:flex;align-items:center;gap:0.55rem">
+      <img src="${SCHOOL_LOGO}" style="height:32px;width:auto;border-radius:4px;flex-shrink:0" alt="ACS">
+      <div style="flex:1;min-width:0;display:flex;align-items:center;gap:0.45rem;overflow:hidden">
+        <div style="font-weight:900;font-size:0.9rem;color:${dc.text};white-space:nowrap;letter-spacing:-0.2px">ACS KG Hub</div>
+        <div style="width:1px;height:13px;background:${dc.border};opacity:0.6;flex-shrink:0"></div>
+        <div style="font-weight:800;font-size:0.88rem;color:${dc.text};white-space:nowrap">${dayName} ${dateStr}</div>
+        ${sw?`<div style="width:1px;height:13px;background:${dc.border};opacity:0.6;flex-shrink:0"></div>
+        <div style="font-weight:900;font-size:0.88rem;color:${dc.text};white-space:nowrap">Wk ${sw.week}</div>
+        <div style="font-size:0.72rem;color:${dc.text};opacity:0.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">${sw.sem}</div>`:''}
       </div>
-      <div style="display:flex;align-items:center;gap:0.6rem;flex-shrink:0">
-        <div id="header-clock" style="font-size:2rem;font-weight:900;color:#111827;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1">${nowTimeStr()}</div>
-        <div class="sync-dot ${syncCls}" title="Sync: ${S.syncStatus}"></div>
-      </div>
-    </div>
-    <!-- Row 2: day band — coloured by Thai day -->
-    <div style="background:${dc.bg};border-bottom:1px solid ${dc.border};padding:0.45rem 1rem;display:flex;align-items:center;gap:1rem">
-      <div style="font-weight:900;font-size:1.1rem;color:${dc.text};letter-spacing:-0.3px">${dayName}</div>
-      <div style="width:1px;height:18px;background:${dc.border};opacity:0.5"></div>
-      <div style="font-weight:700;font-size:0.9rem;color:${dc.text}">${dateStr}</div>
-      ${sw?`<div style="width:1px;height:18px;background:${dc.border};opacity:0.5"></div>
-      <div style="display:flex;align-items:center;gap:0.6rem">
-        <span style="font-weight:900;font-size:1rem;color:${dc.text}">Wk ${sw.week}</span>
-        <span style="font-weight:700;font-size:0.78rem;color:${dc.text};opacity:0.75">${sw.sem}</span>
-        <span style="font-weight:600;font-size:0.75rem;color:${dc.text};opacity:0.65;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px">${sw.unit}</span>
-      </div>`:''}
-      <div style="margin-left:auto">
+      <div style="display:flex;align-items:center;gap:0.4rem;flex-shrink:0">
         <div id="period-progress"></div>
+        <button onclick="S.popup={type:'dutyRota'};render()" style="height:30px;padding:0 0.55rem;border-radius:8px;border:1px solid ${dc.border};background:rgba(0,0,0,0.08);cursor:pointer;font-size:0.75rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif" title="Morning Duty Rota">&#128205; Duty</button>
+        <div id="header-clock" style="font-size:1.45rem;font-weight:900;color:${dc.text};font-variant-numeric:tabular-nums;letter-spacing:-0.5px;line-height:1">${nowTimeStr()}</div>
+        <div class="sync-dot ${syncCls}" title="Sync: ${S.syncStatus}"></div>
       </div>
     </div>
   </div>`;
@@ -108,7 +97,7 @@ function renderHeader(){
 // ── TABS ──
 // ── TABS ──────────────────────────────────────────────────────────────────────
 function renderTabs(){
-  return`<div class="scrl" style="background:#fff;padding:0 0.75rem;display:flex;gap:1px;flex-shrink:0;border-bottom:2px solid #E5E7EB">
+  return`<div class="scrl" style="background:#fff;padding:0 0.5rem;display:flex;gap:1px;flex-shrink:0;border-bottom:1px solid #E5E7EB">
     ${TABS.map(t=>{
       const active=S.tab===t.id;
       const resetTm=t.id!=="timetable"?"S.tmView='classes';":"";
@@ -129,19 +118,13 @@ function renderTabs(){
 
 // ── TIMETABLE SHELL (teacher view wrapper) ────────────────────────────────────
 function renderTimetableShell(innerHtml){
-  const h=[];
-  h.push('<div style="padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.75rem">');
-
-  // Inner content (teacher timetable)
-  h.push(innerHtml);
-  h.push('</div>');
-  return h.join('');
+  return innerHtml;
 }
 
 function renderTeacherPicker(){
   return '<div style="padding:2rem;text-align:center;color:#9CA3AF;font-style:italic">Select a teacher above to view their timetable</div>';
 }
-// ── TIMETABLE STICKY SUB-NAV ──────────────────────────────────────────────────
+// ── TIMETABLE STICKY SUB-NAV ─────────────────────────────────────────────
 function renderTimetableNav(){
   const MLP_CLS=["K1A","K1B","K2A","K2B","K3A","K3B"];
   const IEP_CLS=["K1/1","K1/2","K1/3","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4"];
@@ -150,145 +133,32 @@ function renderTimetableNav(){
   const clsList=curProg==="IEP"?IEP_CLS:curProg==="Nursery"?NURSERY_CLS:MLP_CLS;
   const inTeachers=S.tmView==="teachers";
   const h=[];
-
-  h.push('<div style="background:#fff;border-bottom:2px solid #E5E7EB;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.06)">');
-
-  // ── MORNING DUTY ROTA (above nav) ────────────────────────────────────────
-  {
-    const _sw=getSchoolWeekForOffset(S.tmWeekOffset||0);
-    const _weekNum=_sw?_sw.week:null;
-    const _today=todayDayName();
-    const rota=getDutyRota(_weekNum);
-    const isGaryOnDuty=_weekNum&&GARY_DUTY_WEEKS.has(_weekNum);
-    const todayLateDuty=LATE_DUTY_BY_DAY[_today]||[];
-    const foreignOnDuty=getForeignDutyTeachers(rota);
-    const dutyNames=foreignOnDuty.join(', ');
-    const headerBg=isGaryOnDuty?'background:linear-gradient(135deg,#B91C1C,#991B1B);color:#fff':'background:#FEF2F2;color:var(--red)';
-    h.push('<div style="border-bottom:1px solid #F3F4F6">');
-    h.push('<div style="'+headerBg+';padding:0.45rem 0.85rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer" onclick="S.dutyOpen=!S.dutyOpen;render()">');
-    h.push('<div style="font-weight:800;font-size:0.82rem;display:flex;align-items:center;gap:0.5rem">');
-    h.push('&#128205; Morning Duty Rota');
-    if(_weekNum&&rota){
-      h.push('<span style="font-weight:600;font-size:0.75rem;opacity:0.85">· Wk '+_weekNum+' · Rota '+rota.rota+'</span>');
-      if(dutyNames)h.push('<span style="font-weight:800;font-size:0.78rem;'+(isGaryOnDuty?'':'opacity:0.9')+'">'+(isGaryOnDuty?'🔴':'👤')+' '+dutyNames+'</span>');
-    }
-    h.push('</div>');
-    h.push('<div style="font-size:0.72rem;opacity:0.7">'+(S.dutyOpen?'▲':'▼')+'</div>');
-    h.push('</div>');
-    if(S.dutyOpen){
-      h.push('<div style="padding:0.55rem 0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;background:#fff">');
-      h.push('<div>');
-      h.push('<div style="font-size:0.7rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.35rem">07:00–07:55 Positions (Rota '+(rota?rota.rota:'?')+')</div>');
-      if(rota){
-        rota.positions.forEach(p=>{
-          const isGaryPos=p.staff.some(s=>s.includes('Gary'));
-          h.push('<div style="margin-bottom:0.3rem;padding:0.3rem 0.45rem;border-radius:6px;background:'+(isGaryPos?'#FEF2F2':'#F9FAFB')+';border:1px solid '+(isGaryPos?'#FECACA':'#F3F4F6')+'">');
-          h.push('<div style="font-size:0.7rem;font-weight:700;color:'+(isGaryPos?'var(--red)':'#374151')+'">'+p.pos+'</div>');
-          h.push('<div style="font-size:0.65rem;color:#6B7280">'+p.staff.join(', ')+'</div>');
-          h.push('</div>');
-        });
-      } else { h.push('<div style="font-size:0.75rem;color:#9CA3AF;font-style:italic">No week selected</div>'); }
-      h.push('</div>');
-      h.push('<div>');
-      h.push('<div style="font-size:0.7rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.35rem">07:55–08:25 Gate Duty</div>');
-      if(rota){
-        h.push('<div style="padding:0.3rem 0.45rem;border-radius:6px;background:#F9FAFB;border:1px solid #F3F4F6;margin-bottom:0.4rem">');
-        h.push('<div style="font-size:0.7rem;font-weight:700;color:#374151">'+rota.lateduty.pos+'</div>');
-        h.push('<div style="font-size:0.65rem;color:#6B7280">'+rota.lateduty.staff.join(', ')+'</div>');
-        h.push('</div>');
-      }
-      if(todayLateDuty.length>0){
-        h.push('<div style="font-size:0.7rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.35rem;margin-top:0.4rem">Today ('+_today+')</div>');
-        h.push('<div style="padding:0.3rem 0.45rem;border-radius:6px;background:#F9FAFB;border:1px solid #F3F4F6">');
-        h.push('<div style="font-size:0.65rem;color:#6B7280">'+todayLateDuty.join(', ')+'</div>');
-        h.push('</div>');
-      }
-      if(rota){
-        h.push('<div style="font-size:0.7rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.35rem;margin-top:0.4rem">Rota Weeks</div>');
-        MORNING_DUTY_ROTA.forEach(r=>{
-          const isCurrent=_weekNum&&r.weeks.includes(_weekNum);
-          h.push('<div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.2rem">');
-          h.push('<span style="font-size:0.68rem;font-weight:700;color:'+(isCurrent?'var(--red)':'#9CA3AF')+'">Rota '+r.rota+(r.rota===3?' 🔴':'')+'</span>');
-          h.push('<span style="font-size:0.65rem;color:#9CA3AF">Wks '+r.weeks.join(', ')+'</span>');
-          h.push('</div>');
-        });
-      }
-      h.push('</div>');
-      h.push('</div>'); // end duty grid
-    }
-    h.push('</div>'); // end duty panel
-  }
-
-  // Row 1: Classes / Teachers — tall touch targets
-  h.push('<div style="display:flex;align-items:stretch;border-bottom:1px solid #F3F4F6">');
-  [["classes","📋 Classes"],["teachers","👩\u200d🏫 Teachers"]].forEach(([v,lbl])=>{
-    const act=inTeachers?(v==="teachers"):(v==="classes");
-    const bg=act?"#FEF2F2":"#fff";
-    const clr=act?"var(--red)":"#6B7280";
-    const bb=act?"2px solid var(--red)":"2px solid transparent";
-    const fw=act?800:700;
-    h.push('<button onclick="S.tmView=\''+v+'\';if(\''+v+'\'===\'teachers\'&&!S.tmTeacher)S.tmTeacher=TEACHERS[0].id;render()" style="flex:1;padding:0.65rem 0.75rem;border:none;border-bottom:'+bb+';margin-bottom:-1px;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:'+fw+';font-size:1rem;background:'+bg+';color:'+clr+';transition:all 0.15s;min-height:48px">'+lbl+'</button>');
+  h.push('<div style="background:#fff;border-bottom:1px solid #E5E7EB;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.05)">');
+  // Single nav row: view toggle | programme + class/teacher pills (all scrollable)
+  h.push('<div class="scrl" style="padding:0.3rem 0.6rem;display:flex;align-items:center;gap:0.3rem;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap">');
+  // Classes / Teachers pill toggle -- same style as class pills
+  ['classes','teachers'].forEach(v=>{
+    const act=inTeachers?(v==='teachers'):(v==='classes');
+    const lbl=v==='classes'?'&#128203; Classes':'&#128105;&#8205;&#127979; Teachers';
+    h.push('<button onclick="S.tmView=\''+v+'\';if(\''+v+'\'===\'teachers\'&&!S.tmTeacher)S.tmTeacher=TEACHERS[0].id;render()" style="padding:0.3rem 0.75rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#6B7280')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+lbl+'</button>');
   });
-  h.push('</div>');
-
-  // Row 2: Week selector + Day buttons — sticky, always visible
-  {
-    const _sw2=getSchoolWeekForOffset(S.tmWeekOffset||0);
-    const _wo=S.tmWeekOffset||0;
-    const _today2=S.tmDay&&S.tmDay!=='null'?S.tmDay:todayDayName();
-    const _realToday=todayDayName();
-    h.push('<div style="display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;border-bottom:1px solid #F3F4F6;background:#FAFAFA">');
-    // Day buttons
-    h.push('<div style="display:flex;gap:0.3rem;flex-wrap:nowrap">');
-    ["Monday","Tuesday","Wednesday","Thursday","Friday"].forEach(d=>{
-      const isSel=_today2===d;
-      const isReal=_realToday===d;
-      const dc2=THAI_DAY_COLORS[d]||{bg:"#e2e8f0",text:"#1e3a5f",border:"#94a3b8"};
-      const _outline=isReal&&!isSel?'outline:2px solid '+dc2.border+';outline-offset:-2px;':'';
-      h.push('<button onclick="S.tmDay=\''+( isSel&&S.tmDay?'null':d)+'\';render()" style="padding:0.4rem 0.7rem;border-radius:8px;border:none;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:'+(isSel?800:700)+';font-size:0.85rem;background:'+(isSel?dc2.bg:'#fff')+';color:'+(isSel?dc2.text:isReal?dc2.text:'#9CA3AF')+';'+_outline+'">'+d.slice(0,3)+'</button>');
-    });
-    if(S.tmDay&&S.tmDay!=='null'){
-      h.push('<button onclick="S.tmDay=null;render()" style="padding:0.4rem 0.6rem;border-radius:8px;border:2px solid #f59e0b;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;background:#fef9c3;color:#92400e">Today</button>');
-    }
-    h.push('</div>');
-    // Week selector
-    h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.4rem;flex-shrink:0">');
-    h.push('<button onclick="S.tmWeekOffset='+(_wo-1)+';render()" style="width:34px;height:34px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:1.2rem;line-height:1;font-weight:700;color:#374151">&lsaquo;</button>');
-    if(_sw2){
-      h.push('<div style="text-align:center;min-width:90px;padding:0.2rem 0.5rem;background:#fff;border-radius:8px;border:1px solid #E5E7EB">');
-      h.push('<div style="font-size:1rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+_sw2.week+'</div>');
-      h.push('<div style="font-size:0.65rem;color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px">'+_sw2.unit+'</div>');
-      h.push('</div>');
-    } else {
-      h.push('<div style="min-width:90px;text-align:center;font-size:0.8rem;color:#9CA3AF;padding:0.3rem">No week</div>');
-    }
-    h.push('<button onclick="S.tmWeekOffset='+(_wo+1)+';render()" style="width:34px;height:34px;border-radius:8px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:1.2rem;line-height:1;font-weight:700;color:#374151">&rsaquo;</button>');
-    if(_wo!==0)h.push('<button onclick="S.tmWeekOffset=0;render()" style="padding:0.3rem 0.7rem;border-radius:8px;border:1px solid #E5E7EB;background:#FEF2F2;cursor:pointer;font-size:0.8rem;font-weight:800;color:var(--red)">Now</button>');
-    h.push('</div>');
-    h.push('</div>'); // end week+day row
-  }
-
-  // Row 3: pills — horizontally scrollable, large touch targets (min 42px height)
-  h.push('<div class="scrl" style="padding:0.5rem 0.75rem;display:flex;align-items:center;gap:0.45rem;overflow-x:auto;-webkit-overflow-scrolling:touch">');
-
+  h.push('<div style="width:1px;height:20px;background:#E5E7EB;flex-shrink:0;margin:0 0.1rem"></div>');
   if(!inTeachers){
-    // Programme group buttons
     [["MLP","K1A"],["IEP","K1/1"],["Nursery","N1"]].forEach(([prog,defCls])=>{
       const act=curProg===prog;
-      h.push('<button onclick="S.tmProg=\''+prog+'\';S.cls=\''+defCls+'\';render()" style="padding:0.45rem 0.9rem;border-radius:20px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#6B7280')+';font-family:\'Nunito\',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:42px;transition:all 0.15s">'+prog+'</button>');
+      h.push('<button onclick="S.tmProg=\''+prog+'\';S.cls=\''+defCls+'\';render()" style="padding:0.3rem 0.65rem;border-radius:20px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#6B7280')+';font-family:\'Nunito\',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+prog+'</button>');
     });
-    h.push('<div style="width:1px;height:22px;background:#E5E7EB;flex-shrink:0"></div>');
+    h.push('<div style="width:1px;height:20px;background:#E5E7EB;flex-shrink:0;margin:0 0.1rem"></div>');
     clsList.forEach(c=>{
       const act=S.cls===c;
-      h.push('<button onclick="S.cls=\''+c+'\';S.tmView=\'classes\';render()" style="padding:0.45rem 0.75rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.92rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:42px;transition:all 0.15s">'+c+'</button>');
+      h.push('<button onclick="S.cls=\''+c+'\';S.tmView=\'classes\';render()" style="padding:0.3rem 0.65rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+c+'</button>');
     });
   } else {
     TEACHERS.forEach(t=>{
       const act=S.tmTeacher===t.id;
-      h.push('<button onclick="S.tmTeacher=\''+t.id+'\';render()" style="padding:0.45rem 0.9rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.92rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:42px;transition:all 0.15s">'+t.full+'</button>');
+      h.push('<button onclick="S.tmTeacher=\''+t.id+'\';render()" style="padding:0.3rem 0.75rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+t.full+'</button>');
     });
   }
-
   h.push('</div></div>');
   return h.join('');
 }
@@ -308,17 +178,18 @@ function renderCalendarCard(h){
   const calData=SCHOOL_CALENDAR[monthKey];
   const availableMonths=Object.keys(SCHOOL_CALENDAR);
 
-  h.push('<div style="background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(26,43,74,0.06);border:1px solid #E4E8EE;overflow:hidden">');
-  // Month switcher header
-  h.push('<div style="display:flex;align-items:center;padding:0.6rem 0.9rem;border-bottom:1px solid #f1f5f9;gap:0.4rem;flex-wrap:wrap">');
+  const calOpen=S.tmCalOpen!==false;
+  h.push('<div style="background:#fff;box-shadow:0 1px 4px rgba(26,43,74,0.06);border-top:1px solid #E4E8EE;border-bottom:1px solid #E4E8EE;overflow:hidden">');
+  h.push('<div style="display:flex;align-items:center;padding:0.4rem 0.75rem;border-bottom:1px solid #f1f5f9;gap:0.4rem;flex-wrap:wrap;cursor:pointer" onclick="S.tmCalOpen=S.tmCalOpen===false?true:false;render()">');
   h.push('<div style="font-weight:800;font-size:0.82rem;color:#111827;margin-right:0.25rem">&#128197; School Calendar</div>');
-  availableMonths.forEach(mk=>{
+  h.push('<div style="margin-left:auto;font-size:0.7rem;color:#9CA3AF;flex-shrink:0">'+(calOpen?'&#9650; Hide':'&#9660; Show')+'</div>');
+  if(calOpen)availableMonths.forEach(mk=>{
     const isActive=mk===monthKey;
     const mn=SCHOOL_CALENDAR[mk].name.split(" ")[0];
-    h.push('<button onclick="S.tmCalMonth=\''+mk+'\';render()" style="padding:0.25rem 0.6rem;border-radius:20px;border:none;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;background:'+(isActive?"var(--red)":"#f1f5f9")+';color:'+(isActive?"#fff":"#64748b")+'">'+mn+'</button>');
+    h.push('<button onclick="event.stopPropagation();S.tmCalMonth=\''+mk+'\';render()" style="padding:0.25rem 0.6rem;border-radius:20px;border:none;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;background:'+(isActive?"var(--red)":"#f1f5f9")+';color:'+(isActive?"#fff":"#64748b")+'">'+mn+'</button>');
   });
   h.push('</div>');
-  if(calData){
+  if(calOpen&&calData){
     const monthDate=new Date(monthKey+"-01T12:00:00");
     const year=monthDate.getFullYear(),month=monthDate.getMonth();
     const firstDay=new Date(year,month,1).getDay();
@@ -431,10 +302,7 @@ function renderTimetable(){
   }
 
   const h=[];
-  h.push('<div style="padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.65rem">');
-
-
-  // ── FULL DAY PROGRESS BAR ────────────────────────────────────────────────────
+  h.push('<div style="padding:0.75rem 0;display:flex;flex-direction:column;gap:0.65rem">');
   (()=>{
     const dc=THAI_DAY_COLORS[realToday]||{bg:"#e2e8f0",text:"#1e3a5f",light:"#f8fafc",border:"#94a3b8"};
     // Build the full day timeline: duty + all periods + all breaks
@@ -469,7 +337,7 @@ function renderTimetable(){
     const nowM=nowMins;
     const nowPct=Math.min(100,Math.max(0,((nowM-DAY_START)/DAY_TOTAL)*100));
 
-    h.push('<div style="background:'+dc.light+';border-radius:14px;padding:0.75rem 0.9rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border-top:4px solid '+dc.border+'">');
+    h.push('<div style="background:'+dc.light+';border-radius:14px;padding:0.75rem 0.9rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border-top:4px solid '+dc.border+';margin:0 1rem">');
     h.push('<div style="font-size:0.68rem;font-weight:700;color:'+dc.text+';margin-bottom:0.5rem;display:flex;justify-content:space-between"><span>07:00</span><span>'+realToday+'</span><span>15:30</span></div>');
 
     // The bar itself
@@ -527,6 +395,27 @@ function renderTimetable(){
     h.push('</div>');
   })();
 
+  // ── AFTER SCHOOL / SCHOOL'S OUT — full width, directly below progress bar ──
+  if(isAfterSchool&&!S.tmDay){
+    const tomorrow=DAYS[(DAYS.indexOf(realToday)+1)%DAYS.length]||DAYS[0];
+    const tomorrowPeriods=tt[tomorrow]||[];
+    h.push('<div style="background:#F0F9FF;border-radius:12px;padding:0.75rem 1rem;border:1px solid #BAE6FD;border-left:4px solid #0284C7;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:0 1rem">');
+    h.push('<div style="font-weight:800;font-size:1rem;color:#0369A1;white-space:nowrap">&#127769; School\'s out!</div>');
+    h.push('<div style="font-size:0.78rem;color:#0369A1;font-weight:700;white-space:nowrap">Tomorrow: '+tomorrow+'</div>');
+    h.push('<div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap">');
+    PERIODS.slice(0,3).forEach((p,i)=>{
+      const period=tomorrowPeriods[i];
+      if(!period)return;
+      const col=subColor(period.sub);
+      h.push('<div style="display:flex;align-items:center;gap:0.3rem">');
+      h.push('<span style="font-size:0.65rem;color:#94a3b8;font-weight:700">'+p.label+'</span>');
+      h.push('<span style="font-weight:700;font-size:0.78rem;color:'+col+'">'+period.sub+'</span>');
+      h.push('</div>');
+    });
+    h.push('</div>');
+    h.push('</div>');
+  }
+
 
   // ── LESSON FOCUS (during a period) ──────────────────────────────────────────
   if(activePeriod&&activePeriodIdx>=0&&(!S.tmDay||S.tmDay===realToday)){
@@ -538,7 +427,7 @@ function renderTimetable(){
     const pct=activeP?Math.min(100,Math.round((nowMins-timeToMins(activeP.start))/(timeToMins(activeP.end)-timeToMins(activeP.start))*100)):0;
     const minsLeft=activeP?timeToMins(activeP.end)-nowMins:0;
 
-    h.push('<div style="background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 12px rgba(185,28,28,0.12);border-top:4px solid '+col+'">');
+    h.push('<div style="background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 12px rgba(185,28,28,0.12);border-top:4px solid '+col+';margin:0 1rem">');
     h.push('<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;margin-bottom:0.5rem">');
     h.push('<div>');
     h.push('<div style="font-size:0.68rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.5px">NOW &mdash; '+PERIODS[activePeriodIdx].label+'</div>');
@@ -589,7 +478,7 @@ function renderTimetable(){
       const nextSub=nextIdx>=0?(todayPeriods[nextIdx]?.sub||""):"";
       const nextTopic=nextSub?getWeekTopic(nextSub,weekNum,cls):null;
       const nextRes=nextSub?getResources(nextSub):[];
-      h.push('<div style="background:#FFFBEB;border-radius:12px;padding:0.9rem 1rem;border:1px solid #FDE68A;border-left:4px solid #D97706">');
+      h.push('<div style="background:#FFFBEB;border-radius:12px;padding:0.9rem 1rem;border:1px solid #FDE68A;border-left:4px solid #D97706;margin:0 1rem">');
       h.push('<div style="display:flex;align-items:center;justify-content:space-between">');
       h.push('<div><div style="font-weight:800;font-size:0.95rem;color:#92400e">'+breakInfo.label+'</div>');
       h.push('<div style="font-size:0.72rem;color:#b45309">'+breakInfo.start+' &ndash; '+breakInfo.end+'</div></div>');
@@ -620,8 +509,35 @@ function renderTimetable(){
     const viewPeriods=tt[viewDay]||[];
     const isViewingToday=viewDay===realToday;
 
+    // ── TWO-COLUMN LAYOUT: Period list + Week grid side by side ────────────────
+    const gridsOpen=S.tmGridOpen!==false;
+    const _wo=S.tmWeekOffset||0;
+    const _sw=getSchoolWeekForOffset(_wo);
+    // Grid header bar: day buttons + week selector + collapse toggle
+    h.push('<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px 10px 0 0;padding:0.3rem 0.6rem;display:flex;align-items:center;gap:0.25rem;overflow-x:auto;margin:0 1rem">');
+    ["Monday","Tuesday","Wednesday","Thursday","Friday"].forEach(d=>{
+      const isSel=viewDay===d;
+      const isReal=realToday===d;
+      const dc2=THAI_DAY_COLORS[d]||{bg:'#e2e8f0',text:'#1e3a5f',border:'#94a3b8'};
+      const outline=isReal&&!isSel?'box-shadow:inset 0 0 0 2px '+dc2.border+';':'';
+      h.push('<button onclick="S.tmDay=\''+(isSel&&S.tmDay?'null':d)+'\';render()" style="padding:0.25rem 0.5rem;border-radius:6px;border:none;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:'+(isSel?800:600)+';font-size:0.8rem;background:'+(isSel?dc2.bg:'#fff')+';color:'+(isSel?dc2.text:isReal?dc2.text:'#9CA3AF')+';flex-shrink:0;'+outline+'">'+d.slice(0,3)+'</button>');
+    });
+    if(S.tmDay&&S.tmDay!=='null')h.push('<button onclick="S.tmDay=null;render()" style="padding:0.25rem 0.4rem;border-radius:6px;border:1px solid #f59e0b;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.7rem;background:#fef9c3;color:#92400e;flex-shrink:0">Today</button>');
+    h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.2rem;flex-shrink:0">');
+    h.push('<button onclick="S.tmWeekOffset='+(_wo-1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&lsaquo;</button>');
+    if(_sw){
+      h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+_sw.week+'</div></div>');
+    } else {
+      h.push('<div style="min-width:44px;text-align:center;font-size:0.72rem;color:#9CA3AF">&mdash;</div>');
+    }
+    h.push('<button onclick="S.tmWeekOffset='+(_wo+1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&rsaquo;</button>');
+    if(_wo!==0)h.push('<button onclick="S.tmWeekOffset=0;render()" style="padding:0.2rem 0.4rem;border-radius:5px;border:1px solid #E5E7EB;background:#FEF2F2;cursor:pointer;font-size:0.7rem;font-weight:800;color:var(--red)">Now</button>');
+    h.push('</div>');
+    h.push('<button onclick="S.tmGridOpen=S.tmGridOpen===false?true:false;render()" style="padding:0.25rem 0.45rem;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.72rem;font-weight:700;color:#9CA3AF;flex-shrink:0;margin-left:0.15rem">'+(gridsOpen?'&#9650;':'&#9660;')+'</button>');
+    h.push('</div>'); // end grid header bar
+    if(gridsOpen){
     // Open two-column wrapper
-    h.push('<div class="two-col">');
+    h.push('<div class="two-col" style="border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;margin:0 1rem 0.75rem;align-items:start">');
 
     // ── LEFT: Period list ────────────────────────────────────────────────────
     h.push('<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
@@ -681,12 +597,8 @@ function renderTimetable(){
 
     // ── RIGHT: Week grid ─────────────────────────────────────────────────────
     h.push('<div class="week-grid-collapse" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
-    h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.55rem 0.85rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;user-select:none" onclick="S.tmGridOpen=!S.tmGridOpen;render()">');
-    h.push('<div style="font-weight:800;font-size:0.88rem;color:#B91C1C">📅 Week Grid'+(weekNum?' <span style="font-size:0.72rem;color:#9CA3AF;font-weight:600">· Wk '+weekNum+(sw?' — '+sw.unit:'')+'</span>':'')+'</div>');
-    h.push('<div style="margin-left:auto;font-size:0.72rem;color:#9CA3AF">'+(S.tmGridOpen?'▲':'▼')+'</div>');
-    h.push('</div>');
-    if(S.tmGridOpen){
-      h.push('<div style="overflow-x:auto;padding:0.65rem 0.75rem">');
+    h.push('<div style="background:#fff;overflow:hidden">');
+    h.push('<div style="overflow-x:auto;padding:0.5rem 0.6rem">');
       h.push('<table style="border-collapse:collapse;width:100%;font-size:0.82rem"><thead><tr>');
       h.push('<th style="padding:5px 8px;color:#9CA3AF;font-weight:700;text-align:left;font-size:0.75rem;white-space:nowrap">Period</th>');
       DAYS.forEach(d=>{
@@ -723,34 +635,16 @@ function renderTimetable(){
         h.push('</tr>');
       });
       h.push('</tbody></table></div>');
-    }
     h.push('</div>'); // end right col
 
     h.push('</div>'); // end two-column grid
+    } // end if(gridsOpen)
   }
 
-
-  // ── AFTER SCHOOL SUMMARY ─────────────────────────────────────────────────────
-  if(isAfterSchool&&!S.tmDay){
-    const tomorrow=DAYS[(DAYS.indexOf(realToday)+1)%DAYS.length]||DAYS[0];
-    const tomorrowPeriods=tt[tomorrow]||[];
-    h.push('<div style="background:#F9FAFB;border-radius:12px;padding:0.8rem 1rem;border:1px solid #E5E7EB;border-top:3px solid #9CA3AF">');
-    h.push('<div style="font-weight:800;color:#475569;margin-bottom:0.5rem">&#127769; School&apos;s out! Tomorrow: '+tomorrow+'</div>');
-    const firstTwo=PERIODS.slice(0,3);
-    firstTwo.forEach((p,i)=>{
-      const period=tomorrowPeriods[i];
-      if(!period)return;
-      const col=subColor(period.sub);
-      h.push('<div style="display:flex;align-items:center;gap:0.4rem;padding:0.25rem 0;border-top:1px solid #e2e8f0">');
-      h.push('<div style="font-size:0.65rem;color:#94a3b8;width:26px">'+p.label+'</div>');
-      h.push('<div style="font-weight:700;font-size:0.78rem;color:'+col+'">'+period.sub+'</div>');
-      h.push('</div>');
-    });
-    h.push('</div>');
-  }
-
-  // ── School Calendar
+  h.push('</div>'); // end padded content wrapper
+  // ── School Calendar — full width, outside padded wrapper
   renderCalendarCard(h);
+  h.push('<div style="height:0.75rem"></div>'); // bottom spacing
 
   h.push('</div>'); // end scroll container
   return h.join('');
@@ -834,7 +728,7 @@ function renderTeacherTab(teacher){
   const isAfterSchool=nowMins>=schoolEnd||!isWeekday;
 
   const h=[];
-  h.push('<div style="padding:0.75rem 1rem;display:flex;flex-direction:column;gap:0.65rem">');
+  h.push('<div style="padding:0.75rem 0;display:flex;flex-direction:column;gap:0.65rem">');
 
   // ── DAY PROGRESS BAR ─────────────────────────────────────────────────────
   (()=>{
@@ -863,7 +757,7 @@ function renderTeacherTab(teacher){
     segments.sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
     segments.push({label:"",start:"15:30",end:"15:30",color:"#dcfce7",type:"end"});
 
-    h.push('<div style="background:'+dc.light+';border-radius:14px;padding:0.75rem 0.9rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border-top:4px solid '+dc.border+'">');
+    h.push('<div style="background:'+dc.light+';border-radius:14px;padding:0.75rem 0.9rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border-top:4px solid '+dc.border+';margin:0 1rem">');
     h.push('<div style="font-size:0.68rem;font-weight:700;color:'+dc.text+';margin-bottom:0.5rem;display:flex;justify-content:space-between"><span>07:00</span><span>'+realToday+' — '+teacher.full+'</span><span>15:30</span></div>');
     h.push('<div style="position:relative;height:36px;border-radius:10px;overflow:hidden;display:flex;border:1px solid #e2e8f0">');
     segments.forEach(seg=>{
@@ -909,43 +803,12 @@ function renderTeacherTab(teacher){
     h.push('</div>');
   })();
 
-  // ── DAY + WEEK SWITCHER ───────────────────────────────────────────────────
-  h.push('<div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">');
-  h.push('<div style="display:flex;gap:0.25rem;flex-wrap:wrap">');
-  WDAYS.forEach(d=>{
-    const isSelected=today===d;
-    const isReal=realToday===d;
-    const dc=THAI_DAY_COLORS[d]||{bg:"#e2e8f0",text:"#1e3a5f",border:"#94a3b8"};
-    const cnt=getTodayLessons(d).length;
-    h.push('<button onclick="S.tmDay=\''+d+'\';render()" style="padding:0.3rem 0.55rem;border-radius:7px;border:none;cursor:pointer;font-weight:700;font-size:0.72rem;background:'+(isSelected?dc.bg:'#F9FAFB')+';color:'+(isSelected?dc.text:isReal?dc.text:'#94A3B8')+';'+(isReal&&!isSelected?'outline:2px solid '+dc.border+';outline-offset:-2px':'')+'">'
-      +d.slice(0,3)+' <span style="font-size:0.62rem;opacity:0.75">('+cnt+')</span></button>');
-  });
-  if(S.tmDay&&S.tmDay!=="null"){
-    h.push('<button onclick="S.tmDay=null;render()" style="padding:0.3rem 0.55rem;border-radius:7px;border:2px solid #f59e0b;cursor:pointer;font-weight:700;font-size:0.68rem;background:#fef9c3;color:#92400e">Today</button>');
-  }
-  h.push('</div>');
-  // Week selector
-  h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.35rem;flex-shrink:0">');
-  h.push('<button onclick="S.tmWeekOffset='+(wo-1)+';render()" style="width:26px;height:26px;border-radius:6px;border:1px solid #E5E7EB;background:#F9FAFB;cursor:pointer;font-size:1rem;line-height:1;font-weight:700;color:#374151">&lsaquo;</button>');
-  if(sw){
-    h.push('<div style="text-align:center;min-width:80px">');
-    h.push('<div style="font-size:0.78rem;font-weight:800;color:var(--red)">Wk '+sw.week+'</div>');
-    h.push('<div style="font-size:0.6rem;color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px">'+sw.unit+'</div>');
-    h.push('</div>');
-  } else {
-    h.push('<div style="min-width:80px;text-align:center;font-size:0.7rem;color:#9CA3AF">No week</div>');
-  }
-  h.push('<button onclick="S.tmWeekOffset='+(wo+1)+';render()" style="width:26px;height:26px;border-radius:6px;border:1px solid #E5E7EB;background:#F9FAFB;cursor:pointer;font-size:1rem;line-height:1;font-weight:700;color:#374151">&rsaquo;</button>');
-  if(wo!==0)h.push('<button onclick="S.tmWeekOffset=0;render()" style="padding:0.2rem 0.5rem;border-radius:6px;border:1px solid #E5E7EB;background:#FEF2F2;cursor:pointer;font-size:0.65rem;font-weight:700;color:var(--red)">Now</button>');
-  h.push('</div>');
-  h.push('</div>');
-
   // ── ACTIVE LESSON FOCUS ───────────────────────────────────────────────────
   if(activeLesson&&today===realToday){
     const col=subColor(activeLesson.sub);
     const pct=Math.min(100,Math.round((nowMins-timeToMins(activeLesson.p.start))/(timeToMins(activeLesson.p.end)-timeToMins(activeLesson.p.start))*100));
     const minsLeft=timeToMins(activeLesson.p.end)-nowMins;
-    h.push('<div style="background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 12px rgba(185,28,28,0.12);border-top:4px solid '+col+'">');
+    h.push('<div style="background:#fff;border-radius:12px;padding:1rem;box-shadow:0 2px 12px rgba(185,28,28,0.12);border-top:4px solid '+col+';margin:0 1rem">');
     h.push('<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;margin-bottom:0.5rem">');
     h.push('<div>');
     h.push('<div style="font-size:0.68rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.5px">NOW — '+activeLesson.p.label+' &nbsp;·&nbsp; '+activeLesson.cls+'</div>');
@@ -992,7 +855,34 @@ function renderTeacherTab(teacher){
   }
 
   // ── TWO-COL: Period list + Week grid ─────────────────────────────────────
-  h.push('<div class="two-col">');
+  const teacherGridsOpen=S.tmGridOpen!==false;
+  const _tchrWo=S.tmWeekOffset||0;
+  const _tchrSw=getSchoolWeekForOffset(_tchrWo);
+  h.push('<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px 10px 0 0;padding:0.3rem 0.6rem;display:flex;align-items:center;gap:0.25rem;overflow-x:auto;margin:0 1rem">');
+  h.push('<div style="font-weight:800;font-size:0.8rem;color:#374151;white-space:nowrap;flex-shrink:0">'+teacher.full+'</div>');
+  h.push('<div style="width:1px;height:16px;background:#E5E7EB;flex-shrink:0"></div>');
+  ['Monday','Tuesday','Wednesday','Thursday','Friday'].forEach(d=>{
+    const isSel=today===d;
+    const isReal=realToday===d;
+    const dc2=THAI_DAY_COLORS[d]||{bg:'#e2e8f0',text:'#1e3a5f',border:'#94a3b8'};
+    const outline=isReal&&!isSel?'box-shadow:inset 0 0 0 2px '+dc2.border+';':'';
+    h.push('<button onclick="S.tmDay=\''+(isSel&&S.tmDay?'null':d)+'\';render()" style="padding:0.25rem 0.5rem;border-radius:6px;border:none;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:'+(isSel?800:600)+';font-size:0.8rem;background:'+(isSel?dc2.bg:'#fff')+';color:'+(isSel?dc2.text:isReal?dc2.text:'#9CA3AF')+';flex-shrink:0;'+outline+'">'+d.slice(0,3)+'</button>');
+  });
+  if(S.tmDay&&S.tmDay!=='null')h.push('<button onclick="S.tmDay=null;render()" style="padding:0.25rem 0.4rem;border-radius:6px;border:1px solid #f59e0b;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.7rem;background:#fef9c3;color:#92400e;flex-shrink:0">Today</button>');
+  h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.2rem;flex-shrink:0">');
+  h.push('<button onclick="S.tmWeekOffset='+(_tchrWo-1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&lsaquo;</button>');
+  if(_tchrSw){
+    h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+_tchrSw.week+'</div></div>');
+  } else {
+    h.push('<div style="min-width:44px;text-align:center;font-size:0.72rem;color:#9CA3AF">&mdash;</div>');
+  }
+  h.push('<button onclick="S.tmWeekOffset='+(_tchrWo+1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&rsaquo;</button>');
+  if(_tchrWo!==0)h.push('<button onclick="S.tmWeekOffset=0;render()" style="padding:0.2rem 0.4rem;border-radius:5px;border:1px solid #E5E7EB;background:#FEF2F2;cursor:pointer;font-size:0.7rem;font-weight:800;color:var(--red)">Now</button>');
+  h.push('</div>');
+  h.push('<button onclick="S.tmGridOpen=S.tmGridOpen===false?true:false;render()" style="padding:0.25rem 0.45rem;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.72rem;font-weight:700;color:#9CA3AF;flex-shrink:0;margin-left:0.15rem">'+(teacherGridsOpen?'&#9650;':'&#9660;')+'</button>');
+  h.push('</div>'); // end teacher grid header bar
+  if(teacherGridsOpen){
+  h.push('<div class="two-col" style="border:1px solid #E5E7EB;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;margin:0 1rem 0.75rem;align-items:start">');
 
   // LEFT: Today's period list
   h.push('<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
@@ -1096,12 +986,11 @@ function renderTeacherTab(teacher){
   }
   h.push('</div></div>');
   // RIGHT: Week grid (uses MAX_PERIODS, getDayLessonMap, getDayPeriodTime defined above)
-  h.push('<div class="week-grid-collapse" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
-  h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.55rem 0.85rem;display:flex;align-items:center;justify-content:space-between">');
-  h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">📅 Week Grid'+(weekNum?' · Wk '+weekNum:'')+'</div>');
-  h.push('<div style="font-size:0.68rem;color:#9CA3AF;font-weight:700;cursor:pointer" onclick="S.tmGridOpen=!S.tmGridOpen;render()">'+(S.tmGridOpen?'▲ collapse':'▼ expand')+'</div>');
+  h.push('<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
+  h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.45rem 0.85rem;display:flex;align-items:center;justify-content:space-between">');
+  h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">&#128197; Week Grid'+(weekNum?' &middot; Wk '+weekNum:'')+'</div>');
   h.push('</div>');
-  if(S.tmGridOpen!==false){
+  if(teacherGridsOpen){
     h.push('<div style="overflow-x:auto;padding:0.5rem 0.65rem">');
     h.push('<table style="border-collapse:collapse;width:100%;font-size:0.82rem"><thead><tr>');
     h.push('<th style="padding:5px 8px;color:#9CA3AF;font-weight:700;text-align:left;font-size:0.72rem;white-space:nowrap">Period</th>');
@@ -1144,11 +1033,14 @@ function renderTeacherTab(teacher){
   h.push('</div>');
 
   h.push('</div>'); // end two-col
+  } // end if(teacherGridsOpen)
 
-  // ── School Calendar
+  h.push('</div>'); // end padded content wrapper
+  // ── School Calendar — full width, outside padded wrapper
   renderCalendarCard(h);
+  h.push('<div style="height:0.75rem"></div>'); // bottom spacing
 
-  h.push('</div>'); // end outer padding
+  h.push('</div>'); // end outer scroll container
   return h.join('');
 }
 
@@ -1157,7 +1049,66 @@ function renderPopup(){
   if(!S.popup)return"";
   if(S.popup.type==="period")return renderPeriodPopup();
   if(S.popup.type==="resourcePreview")return renderResourcePreviewPopup();
+  if(S.popup.type==="dutyRota")return renderDutyRotaModal();
   return"";
+}
+
+function renderDutyRotaModal(){
+  const sw=getSchoolWeekForOffset(S.tmWeekOffset||0);
+  const weekNum=sw?sw.week:null;
+  const rota=getDutyRota(weekNum);
+  const isGaryOnDuty=weekNum&&GARY_DUTY_WEEKS.has(weekNum);
+  const today=todayDayName();
+  const todayLateDuty=LATE_DUTY_BY_DAY[today]||[];
+  const h=[];
+  h.push('<div class="modal-bg" onclick="if(event.target===this){S.popup=null;render()}">');
+  h.push('<div class="modal-box" style="max-width:480px">');
+  h.push('<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">');
+  h.push('<div style="font-weight:900;font-size:1.05rem;color:#111827">&#128205; Morning Duty Rota</div>');
+  h.push('<button onclick="S.popup=null;render()" style="padding:0.3rem 0.65rem;border-radius:8px;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer;font-size:0.85rem;font-weight:700;color:#6b7280">&#10005;</button>');
+  h.push('</div>');
+  if(weekNum&&rota){
+    h.push('<div style="background:'+(isGaryOnDuty?'#FEF2F2':'#F9FAFB')+';border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:0.75rem;border:1px solid '+(isGaryOnDuty?'#FECACA':'#E5E7EB')+'">');
+    h.push('<div style="font-weight:800;font-size:0.88rem;color:'+(isGaryOnDuty?'var(--red)':'#374151')+'">Wk '+weekNum+' &nbsp;&middot;&nbsp; Rota '+rota.rota+(isGaryOnDuty?' &nbsp;&#128308; Gary on duty':'')+'</div>');
+    h.push('</div>');
+  }
+  if(rota){
+    h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">07:00&ndash;07:55 &nbsp;Morning Positions</div>');
+    h.push('<div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem">');
+    rota.positions.forEach(p=>{
+      const isGaryPos=p.staff.some(s=>s.includes('Gary'));
+      h.push('<div style="display:flex;align-items:center;gap:0.6rem;padding:0.35rem 0.6rem;border-radius:8px;background:'+(isGaryPos?'#FEF2F2':'#F9FAFB')+';border:1px solid '+(isGaryPos?'#FECACA':'#E5E7EB')+'">');
+      h.push('<div style="font-size:0.78rem;font-weight:700;color:#6B7280;min-width:120px">'+p.pos+'</div>');
+      h.push('<div style="font-size:0.82rem;font-weight:'+(isGaryPos?800:600)+';color:'+(isGaryPos?'var(--red)':'#374151')+'">'+p.staff.join(', ')+'</div>');
+      h.push('</div>');
+    });
+    h.push('</div>');
+    h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">07:55&ndash;08:25 &nbsp;Gate Duty</div>');
+    h.push('<div style="padding:0.35rem 0.6rem;border-radius:8px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:0.75rem">');
+    h.push('<div style="font-size:0.78rem;font-weight:700;color:#6B7280">'+rota.lateduty.pos+'</div>');
+    h.push('<div style="font-size:0.82rem;font-weight:600;color:#374151">'+rota.lateduty.staff.join(', ')+'</div>');
+    h.push('</div>');
+    if(todayLateDuty.length>0){
+      h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">Today ('+today+')</div>');
+      h.push('<div style="padding:0.35rem 0.6rem;border-radius:8px;background:#F9FAFB;border:1px solid #E5E7EB;margin-bottom:0.75rem">');
+      h.push('<div style="font-size:0.82rem;font-weight:600;color:#374151">'+todayLateDuty.join(', ')+'</div>');
+      h.push('</div>');
+    }
+  } else {
+    h.push('<div style="color:#9CA3AF;font-style:italic;font-size:0.85rem;padding:0.5rem 0">No rota data for this week.</div>');
+  }
+  h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">Rota Schedule</div>');
+  h.push('<div style="display:flex;gap:0.4rem;flex-wrap:wrap">');
+  MORNING_DUTY_ROTA.forEach(r=>{
+    const isCurrent=weekNum&&r.weeks.includes(weekNum);
+    h.push('<div style="padding:0.3rem 0.6rem;border-radius:8px;background:'+(isCurrent?'#FEF2F2':'#F9FAFB')+';border:1px solid '+(isCurrent?'#FECACA':'#E5E7EB')+'">');
+    h.push('<div style="font-size:0.75rem;font-weight:'+(isCurrent?800:600)+';color:'+(isCurrent?'var(--red)':'#6B7280')+'">Rota '+r.rota+(r.rota===3?' &#128308;':'')+'</div>');
+    h.push('<div style="font-size:0.65rem;color:#9CA3AF">Wks '+r.weeks.join(', ')+'</div>');
+    h.push('</div>');
+  });
+  h.push('</div>');
+  h.push('</div></div>');
+  return h.join('');
 }
 
 function renderResourcePreviewPopup(){
@@ -1251,27 +1202,24 @@ function renderResources(){
   h.push('<div style="font-weight:800;font-size:1rem;color:#111827">&#128218; Resources</div>');
   h.push('<button class="btn btn-primary" style="margin-left:auto;font-size:0.72rem" onclick="openAddResourceModal()">+ Add</button>');
   h.push('</div>');
-  // Programme tabs
-  h.push('<div style="background:#fff;border-radius:10px;border:1px solid #E5E7EB;overflow:hidden;display:flex">');
+  // Programme pills
+  h.push('<div class="scrl" style="display:flex;align-items:center;gap:0.3rem;overflow-x:auto;-webkit-overflow-scrolling:touch">');
   ["MLP","IEP"].forEach(p=>{
     const act=prog===p;
-    h.push('<button onclick="S.resProg=\''+p+'\';S.resLevel=\'K1\';S.resSub=\'All\';render()" style="flex:1;padding:0.5rem;border:none;cursor:pointer;font-family:\'Nunito\',sans-serif;font-weight:'+(act?800:700)+';font-size:0.82rem;background:'+(act?'var(--red)':'#fff')+';color:'+(act?'#fff':'#6B7280')+';border-bottom:3px solid '+(act?'var(--red)':'transparent')+';transition:all 0.15s">'+p+'</button>');
+    h.push('<button onclick="S.resProg=\''+p+'\';S.resLevel=\'K1\';S.resSub=\'All\';render()" style="padding:0.3rem 0.75rem;border-radius:20px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#6B7280')+';font-family:\'Nunito\',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+p+'</button>');
   });
-  h.push('</div>');
+  h.push('<div style="width:1px;height:20px;background:#E5E7EB;flex-shrink:0;margin:0 0.1rem"></div>');
   // Level pills
-  h.push('<div style="display:flex;gap:0.4rem;flex-wrap:wrap">');
   ["K1","K2","K3"].forEach(lv=>{
     const act=level===lv;
     const count=byProg.filter(r=>(r.level||"K1")===lv).length;
-    const cntBadge=count?' <span style="opacity:0.75;font-size:0.68rem">('+count+')</span>':'';
-    h.push('<button onclick="S.resLevel=\''+lv+'\';S.resSub=\'All\';render()" style="padding:0.3rem 0.9rem;border-radius:20px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#fff')+';color:'+(act?'#fff':'#6B7280')+';font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;transition:all 0.15s">'+lv+cntBadge+'</button>');
+    h.push('<button onclick="S.resLevel=\''+lv+'\';S.resSub=\'All\';render()" style="padding:0.3rem 0.65rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+lv+(count?' <span style="font-size:0.68rem;opacity:0.75">('+count+')</span>':'')+'</button>');
   });
-  h.push('</div>');
+  h.push('<div style="width:1px;height:20px;background:#E5E7EB;flex-shrink:0;margin:0 0.1rem"></div>');
   // Subject pills
-  h.push('<div class="scrl" style="display:flex;gap:0.3rem;padding-bottom:2px">');
   subjsForLevel.forEach(s=>{
     const act=subj===s;
-    h.push('<button class="btn-sm" style="background:'+(act?'#2563eb':'#f1f5f9')+';color:'+(act?'#fff':'#64748b')+';white-space:nowrap;flex-shrink:0;transition:all 0.15s" onclick="S.resSub=\''+s+'\';render()">'+s+'</button>');
+    h.push('<button onclick="S.resSub=\''+s+'\';render()" style="padding:0.3rem 0.65rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+s+'</button>');
   });
   h.push('</div>');
   // Resource grid
