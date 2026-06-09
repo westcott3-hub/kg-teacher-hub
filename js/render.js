@@ -4,24 +4,56 @@ function render(){
     tab:S.tab,tmView:S.tmView,tmTeacher:S.tmTeacher,
     tmProg:S.tmProg,cls:S.cls,resProg:S.resProg,resLevel:S.resLevel,resSub:S.resSub
   }));}catch(e){}
+
+  // Guard: validate tmTeacher still exists — stale localStorage can hold a deleted ID
+  if(S.tmTeacher&&!TEACHERS.find(t=>t.id===S.tmTeacher)){
+    S.tmTeacher=TEACHERS[0].id;
+  }
+  // Guard: validate cls still exists
+  if(S.cls&&!getTimetableForCls(S.cls)[S.cls]){
+    S.cls="K1A";
+  }
+
   const root=document.getElementById("root");
-  root.innerHTML=`
-    ${renderHeader()}
-    ${renderTabs()}
-    ${S.tab==="timetable"?renderTimetableNav():""}
-    <div id="tab-body" style="flex:1;overflow:visible;position:relative">
-      ${S.tab==="timetable"?renderTimetable():""}
+  if(!root)return;
 
-      ${S.tab==="resources"?renderResources():""}
+  try{
+    S.clockStr=nowTimeStr();
+    root.innerHTML=`
+      ${renderHeader()}
+      ${renderTabs()}
+      ${S.tab==="timetable"?renderTimetableNav():""}
+      <div id="tab-body" style="flex:1;overflow:visible;position:relative">
+        ${S.tab==="timetable"?renderTimetable():""}
+        ${S.tab==="resources"?renderResources():""}
+      </div>
+      ${S.popup?renderPopup():""}
+    `;
+  }catch(err){
+    console.error("render() error:",err);
+    console.error("State at crash: tmView="+S.tmView+" tmTeacher="+S.tmTeacher+" cls="+S.cls);
+    // Recovery: reset to safe state and try once more
+    // Do NOT reset S.cls here — keep the user's class selection
+    S.tab="timetable"; S.tmView="classes"; S.popup=null;
+    if(!S.cls||!getTimetableForCls(S.cls)[S.cls])S.cls="K1A";
+    try{
+      root.innerHTML=`
+        ${renderHeader()}
+        ${renderTabs()}
+        ${renderTimetableNav()}
+        <div id="tab-body" style="flex:1;overflow:visible;position:relative">
+          ${renderTimetable()}
+        </div>
+      `;
+    }catch(e2){
+      root.innerHTML='<div style="padding:2rem;text-align:center;color:#B91C1C;font-weight:700">Dashboard error — please refresh the page.<br><small style="color:#9CA3AF">'+e2.message+'</small></div>';
+    }
+  }
 
-    </div>
-    ${S.popup?renderPopup():""}
-  `;
   // Post-render hooks
   if(S.tab==="timetable"){
     setTimeout(()=>{updatePeriodProgress();},50);
   }
-
 }
 
 
@@ -68,28 +100,57 @@ function renderTopicDetail(topicData,col,expandKey){
 function renderHeader(){
   const sw=getCurrentSchoolWeek();
   const now=new Date();
-  const dayName=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][now.getDay()];
-  const dateStr=now.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+  const dayName=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][now.getDay()];
+  const dateStr=now.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
   const dc=todayDayColors();
   const syncCls=S.syncStatus==='ok'?'sync-ok':S.syncStatus==='ing'?'sync-ing':'sync-err';
-  return`<div style="flex-shrink:0">
-    <div style="height:3px;background:#B91C1C"></div>
-    <div style="background:${dc.bg};border-bottom:2px solid ${dc.border};padding:0.3rem 0.75rem;display:flex;align-items:center;gap:0.55rem">
-      <img src="${SCHOOL_LOGO}" style="height:32px;width:auto;border-radius:4px;flex-shrink:0" alt="ACS">
-      <div style="flex:1;min-width:0;display:flex;align-items:center;gap:0.45rem;overflow:hidden">
-        <div style="font-weight:900;font-size:0.9rem;color:${dc.text};white-space:nowrap;letter-spacing:-0.2px">ACS KG Hub</div>
-        <div style="width:1px;height:13px;background:${dc.border};opacity:0.6;flex-shrink:0"></div>
-        <div style="font-weight:800;font-size:0.88rem;color:${dc.text};white-space:nowrap">${dayName} ${dateStr}</div>
-        ${sw?`<div style="width:1px;height:13px;background:${dc.border};opacity:0.6;flex-shrink:0"></div>
-        <div style="font-weight:900;font-size:0.88rem;color:${dc.text};white-space:nowrap">Wk ${sw.week}</div>
-        <div style="font-size:0.72rem;color:${dc.text};opacity:0.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">${sw.sem}</div>`:''}
+  return`<div style="flex-shrink:0;background:#fff;border-bottom:3px solid ${dc.border}">
+    <div style="height:4px;background:linear-gradient(90deg,#B91C1C 0%,${dc.border} 100%)"></div>
+    <div style="padding:0.5rem 0.85rem;display:flex;align-items:center;gap:0.75rem">
+
+      <!-- Logo + School identity -->
+      <img src="${SCHOOL_LOGO}" style="height:42px;width:auto;border-radius:5px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.12)" alt="ACS">
+      <div style="flex-shrink:0;border-right:1px solid #E5E7EB;padding-right:0.75rem;min-width:0">
+        <div style="font-weight:900;font-size:0.88rem;color:#111827;letter-spacing:-0.2px;line-height:1.2;white-space:nowrap">Assumption College Sriracha</div>
+        <div style="font-size:0.8rem;font-weight:700;color:#B91C1C;line-height:1.2;white-space:nowrap">KG Teacher Hub</div>
+        <div style="font-size:0.58rem;color:#9CA3AF;font-style:italic;line-height:1.2;white-space:nowrap">Labor Omnia Vincit</div>
       </div>
-      <div style="display:flex;align-items:center;gap:0.4rem;flex-shrink:0">
+
+      <!-- Day + Date + Week context -->
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:0.25rem">
+        <!-- Day pill — bold, day's own colour -->
+        <div style="display:flex;align-items:center;gap:0.5rem">
+          <div style="display:inline-flex;align-items:center;padding:0.22rem 0.75rem;border-radius:20px;background:${dc.bg};border:1.5px solid ${dc.border}">
+            <span style="font-weight:900;font-size:0.88rem;color:${dc.text};letter-spacing:0.2px">${dayName}</span>
+          </div>
+          <div style="font-weight:700;font-size:0.82rem;color:#374151;white-space:nowrap">${dateStr}</div>
+        </div>
+        <!-- Week + Semester chips -->
+        ${sw?`<div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap">
+          <div style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.12rem 0.55rem;border-radius:6px;background:#FEF2F2;border:1px solid #FECACA">
+            <span style="font-size:0.62rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.4px">WEEK</span>
+            <span style="font-size:0.85rem;font-weight:900;color:#B91C1C;line-height:1">${sw.week}</span>
+          </div>
+          <div style="display:inline-flex;align-items:center;padding:0.12rem 0.55rem;border-radius:6px;background:#F9FAFB;border:1px solid #E5E7EB">
+            <span style="font-size:0.75rem;font-weight:700;color:#6B7280">${sw.sem}</span>
+          </div>
+          ${sw.unit?`<div style="font-size:0.7rem;color:#9CA3AF;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px" title="${sw.unit}">${sw.unit}</div>`:''}
+        </div>`:''}
+      </div>
+
+      <!-- Clock + actions -->
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
         <div id="period-progress"></div>
-        <button onclick="S.popup={type:'dutyRota'};render()" style="height:30px;padding:0 0.55rem;border-radius:8px;border:1px solid ${dc.border};background:rgba(0,0,0,0.08);cursor:pointer;font-size:0.75rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif" title="Morning Duty Rota">&#128205; Duty</button>
-        <div id="header-clock" style="font-size:1.45rem;font-weight:900;color:${dc.text};font-variant-numeric:tabular-nums;letter-spacing:-0.5px;line-height:1">${nowTimeStr()}</div>
-        <div class="sync-dot ${syncCls}" title="Sync: ${S.syncStatus}"></div>
+        <button onclick="S.popup={type:'dutyRota'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Morning Duty Rota">&#128205; <span>Duty</span></button>
+        <div style="text-align:right">
+          <div id="header-clock" style="font-size:1.6rem;font-weight:900;color:#111827;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1">${nowTimeStr()}</div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:0.3rem;margin-top:1px">
+            <div class="sync-dot ${syncCls}" title="Sync: ${S.syncStatus}"></div>
+            <span style="font-size:0.55rem;color:#D1D5DB;font-weight:600">${S.syncStatus==='ok'?'LIVE':S.syncStatus==='ing'?'SYNC':'ERR'}</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>`;
 }
@@ -156,7 +217,7 @@ function renderTimetableNav(){
   } else {
     TEACHERS.forEach(t=>{
       const act=S.tmTeacher===t.id;
-      h.push('<button onclick="S.tmTeacher=\''+t.id+'\';render()" style="padding:0.3rem 0.75rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+t.full+'</button>');
+      h.push('<button onclick="S.tmTeacher=\''+t.id+'\';S.tmView=\'teachers\';render()" style="padding:0.3rem 0.75rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+t.full+'</button>');
     });
   }
   h.push('</div></div>');
@@ -1288,21 +1349,26 @@ function openResourcePreview(idx){
   },50);
 }
 
-// ── STUDENTS TAB ──────────────────────────────────────────────────────────────
 // ── BOOT ──────────────────────────────────────────────────────────────────────
-// Restore last nav position from localStorage
+// Restore last nav position from localStorage — validate all values
 try{
   const nav=JSON.parse(localStorage.getItem("navState")||"{}");
-  if(nav.tab)S.tab=nav.tab;
-  if(nav.tmView)S.tmView=nav.tmView;
-  if(nav.tmTeacher)S.tmTeacher=nav.tmTeacher;
-  if(nav.tmProg)S.tmProg=nav.tmProg;
+  if(nav.tab&&["timetable","resources"].includes(nav.tab))S.tab=nav.tab;
+  if(nav.tmView&&["classes","teachers"].includes(nav.tmView))S.tmView=nav.tmView;
+  // Only restore tmTeacher if the ID still exists
+  if(nav.tmTeacher&&TEACHERS.find(t=>t.id===nav.tmTeacher))S.tmTeacher=nav.tmTeacher;
+  if(nav.tmProg&&["MLP","IEP","Nursery"].includes(nav.tmProg))S.tmProg=nav.tmProg;
   if(nav.cls)S.cls=nav.cls;
   if(nav.resProg)S.resProg=nav.resProg;
   if(nav.resLevel)S.resLevel=nav.resLevel;
   if(nav.resSub)S.resSub=nav.resSub;
-}catch(e){}
+}catch(e){
+  // Corrupt localStorage — clear it and start fresh
+  try{localStorage.removeItem("navState");}catch(e2){}
+}
 auth.signInAnonymously().catch(()=>{});
 startSync();
 S.clockStr=nowTimeStr();
 render();
+// Update clock every minute
+setInterval(()=>{ S.clockStr=nowTimeStr(); render(); }, 60000);

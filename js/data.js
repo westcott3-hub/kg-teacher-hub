@@ -1086,7 +1086,8 @@ const SCHOOL_CALENDAR={
     ],
     events:[
       {date:"2026-06-11",label:"Teacher Appreciation Ceremony",type:"event"},
-      {date:"2026-06-20",label:"Academic Excellence Awards Ceremony",type:"event"}
+      {date:"2026-06-20",label:"Academic Excellence Awards Ceremony",type:"event"},
+      {date:"2026-06-27",label:"Apple Teacher Seminar",type:"event"}
     ]
   },
   "2026-07":{
