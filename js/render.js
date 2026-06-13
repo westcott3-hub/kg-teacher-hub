@@ -23,7 +23,7 @@ function render(){
       ${renderHeader()}
       ${renderTabs()}
       ${S.tab==="timetable"?renderTimetableNav():""}
-      <div id="tab-body" style="flex:1;overflow:visible;position:relative">
+      <div id="tab-body" style="flex:1;overflow:visible;position:relative;width:100%">
         ${S.tab==="timetable"?renderTimetable():""}
         ${S.tab==="resources"?renderResources():""}
       </div>
@@ -41,7 +41,7 @@ function render(){
         ${renderHeader()}
         ${renderTabs()}
         ${renderTimetableNav()}
-        <div id="tab-body" style="flex:1;overflow:visible;position:relative">
+        <div id="tab-body" style="flex:1;overflow:visible;position:relative;width:100%">
           ${renderTimetable()}
         </div>
       `;
@@ -521,7 +521,7 @@ function renderTimetable(){
           h.push('<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.78rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.name+'</div>');
           if(r.note)h.push('<div style="font-size:0.65rem;color:#94a3b8">'+r.note+'</div>');
           h.push('</div>');
-          h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
+          if(r.url)h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
           h.push('</div>');
         });
         h.push('</div>');
@@ -574,6 +574,17 @@ function renderTimetable(){
     const gridsOpen=S.tmGridOpen!==false;
     const _wo=S.tmWeekOffset||0;
     const _sw=getSchoolWeekForOffset(_wo);
+    // Compute observation date string for the viewed day (used by legend + period list)
+    const viewDateStr=(()=>{
+      if(!_sw)return null;
+      const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+      const off=days.indexOf(viewDay);
+      if(off<0)return null;
+      const d=new Date(_sw.start);
+      d.setDate(d.getDate()+off);
+      return d.toISOString().slice(0,10);
+    })();
+    const clsObs=viewDateStr?getObsForDateCls(viewDateStr,cls):[];
     // Grid header bar: day buttons + week selector + collapse toggle
     h.push('<div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px 10px 0 0;padding:0.3rem 0.6rem;display:flex;align-items:center;gap:0.25rem;overflow-x:auto;margin:0 1rem">');
     ["Monday","Tuesday","Wednesday","Thursday","Friday"].forEach(d=>{
@@ -595,6 +606,14 @@ function renderTimetable(){
     if(_wo!==0)h.push('<button onclick="S.tmWeekOffset=0;render()" style="padding:0.2rem 0.4rem;border-radius:5px;border:1px solid #E5E7EB;background:#FEF2F2;cursor:pointer;font-size:0.7rem;font-weight:800;color:var(--red)">Now</button>');
     h.push('</div>');
     h.push('<button onclick="S.tmGridOpen=S.tmGridOpen===false?true:false;render()" style="padding:0.25rem 0.45rem;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.72rem;font-weight:700;color:#9CA3AF;flex-shrink:0;margin-left:0.15rem">'+(gridsOpen?'&#9650;':'&#9660;')+'</button>');
+    // Obs legend — only show if any observation falls in the displayed week
+    if(viewDateStr){
+      const weekHasObs=getObsForCls(cls).some(o=>{
+        const sw6=getSchoolWeekForOffset(S.tmWeekOffset||0);
+        return sw6&&o.date>=sw6.start&&o.date<=sw6.end;
+      });
+      if(weekHasObs)h.push('<div style="display:flex;align-items:center;gap:0.3rem;padding:0.25rem 0.6rem;background:#FFFBEB;border-bottom:1px solid #FEF3C7;font-size:0.7rem;font-weight:700;color:#92400E">'+'<span style="font-size:0.75rem">👁</span> Observation lesson this week</div>');
+    }
     h.push('</div>'); // end grid header bar
     if(gridsOpen){
     // Open two-column wrapper
@@ -612,6 +631,8 @@ function renderTimetable(){
     PERIODS.forEach((p,i)=>{
       const period=viewPeriods[i];
       if(period===undefined)return;
+      const periodNum=i+1;
+      const isObserved=clsObs.some(o=>o.periods.includes(periodNum)||(o.periods.length===0));
       if(period===null){
         const col=subColor('Integration');
         const isPast=isViewingToday&&timeToMins(p.end)<nowMins;
@@ -632,8 +653,8 @@ function renderTimetable(){
       const isActive=isViewingToday&&cp&&cp.type==='period'&&cp.idx===i;
       const isPast=isViewingToday&&timeToMins(p.end)<nowMins;
       const rowOpacity=isPast&&!isActive?'0.4':'1';
-      const rowBg=isActive?col+'12':'transparent';
-      const rowBorder=isActive?'1px solid '+col+'44':'1px solid transparent';
+      const rowBg=isActive?col+'12':isObserved?'#FFFBEB':'transparent';
+      const rowBorder=isActive?'1px solid '+col+'44':isObserved?'2px solid #F59E0B':'1px solid transparent';
       h.push('<div class="period-row'+(isActive?' active-period':'')+(isPast&&!isActive?' past-period':'')+'" style="opacity:'+rowOpacity+';background:'+rowBg+';border:'+rowBorder+'" onclick="this.querySelector(\'.extra\').style.display=this.querySelector(\'.extra\').style.display===\'none\'?\'block\':\'none\'">');
       // Left: period label column
       h.push('<div class="period-label">'+p.label+'<div class="period-time-sm">'+p.start+'</div></div>');
@@ -641,7 +662,7 @@ function renderTimetable(){
       h.push('<div style="width:4px;background:'+col+';flex-shrink:0;align-self:stretch"></div>');
       // Main content
       h.push('<div style="flex:1;min-width:0;padding:0.6rem 0.7rem">');
-      h.push('<div style="font-weight:800;font-size:1rem;color:'+col+';line-height:1.2">'+period.sub+(isActive?' <span style="font-size:0.62rem;background:'+col+';color:#fff;border-radius:4px;padding:1px 6px;vertical-align:middle;margin-left:4px">NOW</span>':'')+'</div>');
+      h.push('<div style="font-weight:800;font-size:1rem;color:'+col+';line-height:1.2">'+period.sub+(isActive?' <span style="font-size:0.62rem;background:'+col+';color:#fff;border-radius:4px;padding:1px 6px;vertical-align:middle;margin-left:4px">NOW</span>':'')+(isObserved?' <span style="font-size:0.6rem;background:#F59E0B;color:#fff;border-radius:4px;padding:1px 5px;vertical-align:middle;margin-left:4px">👁 OBS</span>':'')+'</div>');
       if(period.teacher)h.push('<div class="period-tchr">👤 '+period.teacher+'</div>');
       if(topic){const clsPdKey='cpd_'+cls+'_'+i+'_'+viewDay;if(typeof topic==='object')h.push(renderTopicDetail(topic,col,clsPdKey));else h.push('<div class="period-topic">📖 '+topic+'</div>');}
       if(res.length>0){
@@ -678,11 +699,21 @@ function renderTimetable(){
           const col=subColor(subj);
           const isCurrent=d===realToday&&cp&&cp.type==='period'&&cp.idx===i;
           const cellTopic=period?getWeekTopic(period.sub,weekNum,cls):null;
-          const cellBg=isCurrent?col+'15':rowBg;
-          const cellBorder=isCurrent?'1px solid '+col+'44':'none';
+          // Observation check for week grid cell
+          const cellDateStr=(()=>{
+            const sw3=getSchoolWeekForOffset(S.tmWeekOffset||0);
+            if(!sw3)return null;
+            const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+            const dd=new Date(sw3.start); dd.setDate(dd.getDate()+days.indexOf(d));
+            return dd.toISOString().slice(0,10);
+          })();
+          const cellObs=cellDateStr?getObsForDateCls(cellDateStr,cls):[];
+          const isCellObs=cellObs.some(o=>o.periods.includes(i+1)||(o.periods.length===0));
+          const cellBg=isCurrent?col+'15':isCellObs?'#FFFBEB':rowBg;
+          const cellBorder=isCurrent?'1px solid '+col+'44':isCellObs?'2px solid #F59E0B':'none';
           h.push('<td style="padding:6px 10px;text-align:left;background:'+cellBg+';border-radius:6px;vertical-align:top;border:'+cellBorder+';min-width:90px">');
           if(period){
-            h.push('<div class="week-cell-subj" style="color:'+col+'">'+subj+'</div>');
+            h.push('<div class="week-cell-subj" style="color:'+col+'">'+subj+(isCellObs?' <span style="font-size:0.55rem;background:#F59E0B;color:#fff;border-radius:3px;padding:0 4px;vertical-align:middle">👁</span>':'')+'</div>');
             if(period.teacher)h.push('<div class="week-cell-tchr">'+period.teacher+'</div>');
             const clsTopicLabel=getTopicLabel(cellTopic,period.sub==='Integration');
             if(clsTopicLabel)h.push('<div class="week-cell-topic" title="'+(typeof cellTopic==='object'?(cellTopic.vocab||''):'')+'" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px">'+clsTopicLabel+'</div>');
@@ -895,7 +926,7 @@ function renderTeacherTab(teacher){
           h.push('<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.78rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.name+'</div>');
           if(r.note)h.push('<div style="font-size:0.65rem;color:#94a3b8">'+r.note+'</div>');
           h.push('</div>');
-          h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
+          if(r.url)h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
           h.push('</div>');
         });
         h.push('</div>');
@@ -990,6 +1021,15 @@ function renderTeacherTab(teacher){
     );
   }
   const todayLessonMap=getDayLessonMap(today);
+  // Observation data for this teacher + day
+  const teacherDateStr=(()=>{
+    const sw4=getSchoolWeekForOffset(S.tmWeekOffset||0);
+    if(!sw4)return null;
+    const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+    const dd=new Date(sw4.start); dd.setDate(dd.getDate()+days.indexOf(today));
+    return dd.toISOString().slice(0,10);
+  })();
+  const teacherDayObs=teacherDateStr?getObsForDateTeacher(teacherDateStr,teacher.id):[];
   for(let pi=0;pi<MAX_PERIODS;pi++){
     const label='P'+(pi+1);
     const lesson=todayLessonMap[label]||null;
@@ -997,7 +1037,9 @@ function renderTeacherTab(teacher){
     const isNow=today===realToday&&slot.start!=='—'&&timeToMins(slot.start)<=nowMins&&nowMins<timeToMins(slot.end);
     const isPast=today===realToday&&slot.end!=='—'&&timeToMins(slot.end)<nowMins;
     const col=lesson?subColor(lesson.sub):'#e2e8f0';
-    h.push('<div style="display:flex;align-items:stretch;border-radius:9px;margin-bottom:5px;border:1px solid '+(isNow?col+'44':'#F3F4F6')+';overflow:hidden;opacity:'+(isPast&&!isNow?'0.42':'1')+';background:'+(isNow?col+'0D':'#fff')+'">');
+    const periodObs=teacherDayObs.filter(o=>lesson&&o.cls===lesson.cls&&(o.periods.includes(pi+1)||o.periods.length===0));
+    const isTeacherObs=periodObs.length>0;
+    h.push('<div style="display:flex;align-items:stretch;border-radius:9px;margin-bottom:5px;border:'+(isNow?'1px solid '+col+'44':isTeacherObs?'2px solid #F59E0B':'1px solid #F3F4F6')+';overflow:hidden;opacity:'+(isPast&&!isNow?'0.42':'1')+';background:'+(isNow?col+'0D':isTeacherObs?'#FFFBEB':'#fff')+'">');
     // Period label + time
     h.push('<div style="width:3rem;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0.5rem 0;background:#F9FAFB;border-right:1px solid #F3F4F6">');
     h.push('<div style="font-weight:800;font-size:0.72rem;color:'+(lesson?col:'#D1D5DB')+'">'+label+'</div>');
@@ -1011,6 +1053,7 @@ function renderTeacherTab(teacher){
       h.push('<div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap">');
       h.push('<div style="font-weight:800;font-size:1.05rem;color:'+col+'">'+lesson.sub+'</div>');
       if(isNow)h.push('<span style="font-size:0.6rem;background:'+col+';color:#fff;border-radius:4px;padding:1px 6px;font-weight:700">NOW</span>');
+      if(isTeacherObs)h.push('<span style="font-size:0.6rem;background:#F59E0B;color:#fff;border-radius:4px;padding:1px 6px;font-weight:700">👁 OBS</span>');
       h.push('<span style="font-size:0.72rem;font-weight:700;background:'+teacher.color+'18;color:'+teacher.color+';border-radius:4px;padding:1px 5px">'+lesson.cls+'</span>'+(lesson.help?' <span style="font-size:0.65rem;background:#f1f5f9;color:#6B7280;border-radius:3px;padding:1px 5px;font-weight:700">help</span>':''));
       h.push('</div>');
       const tdKey='td_'+lesson.cls+'_'+label+'_'+today;
@@ -1031,7 +1074,7 @@ function renderTeacherTab(teacher){
             h.push('<div style="display:flex;align-items:center;gap:0.4rem;background:#f8fafc;border-radius:6px;padding:0.35rem 0.5rem;border-left:3px solid '+ti.color+'">');
             h.push('<span style="font-size:0.85rem">'+ti.icon+'</span>');
             h.push('<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:0.75rem;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+r.name+'</div></div>');
-            h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
+            if(r.url)h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:'+ti.color+'22;color:'+ti.color+';text-decoration:none;flex-shrink:0">Open</a>');
             h.push('</div>');
           });
           h.push('</div>');
@@ -1073,11 +1116,20 @@ function renderTeacherTab(teacher){
         const lesson=dayMap[label]||null;
         const dayTime=getDayPeriodTime(d,label);
         const isNow=d===realToday&&dayTime.start!=='—'&&timeToMins(dayTime.start)<=nowMins&&nowMins<timeToMins(dayTime.end);
+        const wgDateStr=(()=>{
+          const sw5=getSchoolWeekForOffset(S.tmWeekOffset||0);
+          if(!sw5)return null;
+          const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+          const dd=new Date(sw5.start); dd.setDate(dd.getDate()+days.indexOf(d));
+          return dd.toISOString().slice(0,10);
+        })();
+        const wgCellObs=wgDateStr&&lesson?getObsForDateTeacher(wgDateStr,teacher.id).filter(o=>o.cls===lesson.cls&&(o.periods.includes(pi+1)||o.periods.length===0)):[];
+        const isWgObs=wgCellObs.length>0;
         if(lesson){
           const col=subColor(lesson.sub);
           const showTime=dayTime.start!==headerTime.start&&dayTime.start!=='—';
-          h.push('<td style="padding:5px 8px;vertical-align:top;border-radius:5px;background:'+(isNow?col+'12':'transparent')+';border:1px solid '+(isNow?col+'44':'transparent')+';min-width:90px">');
-          h.push('<div style="font-weight:800;font-size:0.88rem;color:'+col+'">'+lesson.sub+'</div>');
+          h.push('<td style="padding:5px 8px;vertical-align:top;border-radius:5px;background:'+(isNow?col+'12':isWgObs?'#FFFBEB':'transparent')+';border:'+(isNow?'1px solid '+col+'44':isWgObs?'2px solid #F59E0B':'1px solid transparent')+';min-width:90px">');
+          h.push('<div style="font-weight:800;font-size:0.88rem;color:'+col+'">'+lesson.sub+(isWgObs?' <span style="font-size:0.55rem;background:#F59E0B;color:#fff;border-radius:3px;padding:0 4px;vertical-align:middle">👁</span>':'')+'</div>');
           h.push('<div style="font-size:0.75rem;font-weight:700;color:'+(lesson.help?'#6B7280':teacher.color)+';margin-top:1px">'+lesson.cls+(lesson.help?' <span style="font-size:0.62rem;background:#f1f5f9;color:#6B7280;border-radius:3px;padding:0 3px">help</span>':'')+'</div>');
           if(showTime)h.push('<div style="font-size:0.58rem;color:#94a3b8;margin-top:1px">'+dayTime.start+'</div>');
           const wgTopicLabel=getTopicLabel(lesson.topic,lesson.sub==='Integration');
@@ -1257,14 +1309,14 @@ function renderResources(){
   const filtered=subj==="All"?byLevel:byLevel.filter(r=>r.subject===subj);
   const subjsForLevel=["All",...new Set(byLevel.map(r=>r.subject).filter(Boolean))].sort((a,b)=>a==="All"?-1:b==="All"?1:a.localeCompare(b));
   const h=[];
-  h.push('<div style="padding:1rem;display:flex;flex-direction:column;gap:0.65rem">');
+  h.push('<div style="padding:1rem;width:100%;box-sizing:border-box;display:block">');
   // Header
-  h.push('<div style="display:flex;align-items:center;gap:0.5rem">');
+  h.push('<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.65rem">');
   h.push('<div style="font-weight:800;font-size:1rem;color:#111827">&#128218; Resources</div>');
   h.push('<button class="btn btn-primary" style="margin-left:auto;font-size:0.72rem" onclick="openAddResourceModal()">+ Add</button>');
   h.push('</div>');
   // Programme pills
-  h.push('<div class="scrl" style="display:flex;align-items:center;gap:0.3rem;overflow-x:auto;-webkit-overflow-scrolling:touch">');
+  h.push('<div class="scrl" style="display:flex;align-items:center;gap:0.3rem;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:0.65rem">');
   ["MLP","IEP"].forEach(p=>{
     const act=prog===p;
     h.push('<button onclick="S.resProg=\''+p+'\';S.resLevel=\'K1\';S.resSub=\'All\';render()" style="padding:0.3rem 0.75rem;border-radius:20px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#6B7280')+';font-family:\'Nunito\',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+p+'</button>');
@@ -1291,46 +1343,398 @@ function renderResources(){
     h.push('<div style="font-size:0.75rem;color:#9CA3AF;margin-top:0.3rem">Click <strong>+ Add</strong> to add the first one</div>');
     h.push('</div>');
   } else {
-    h.push('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.6rem">');
+    h.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;box-sizing:border-box">');
     filtered.forEach(r=>{
       const ti=typeInfo(r.type);
       const globalIdx=resources.indexOf(r);
-      h.push('<div style="background:#fff;border-radius:14px;box-shadow:0 1px 6px rgba(0,0,0,0.07);overflow:hidden;border-top:3px solid '+ti.color+'">');
-      h.push('<div style="padding:0.7rem 0.8rem">');
-      h.push('<div style="display:flex;align-items:flex-start;gap:0.4rem">');
-      h.push('<span style="font-size:1rem">'+ti.icon+'</span>');
+      const rUrl=r.url||'';
+      const embedSrc=r.embedSrc||'';
+
+      // ── Determine preview strategy ──
+      const isCldImage=rUrl.includes('cloudinary.com')&&(r.type==='Image'||/\.(png|jpg|jpeg|gif|webp)/i.test(rUrl));
+      const isCldPdf=rUrl.includes('cloudinary.com')&&r.type==='PDF';
+      const isCldVideo=rUrl.includes('cloudinary.com')&&r.type==='Video';
+      const isFlipbook=rUrl.includes('flipbuilder.com')||rUrl.includes('fliphtml5.com');
+      const isGDriveFile=embedSrc.includes('drive.google.com/file');
+      const hasEmbed=!!(embedSrc);
+
+      // ── Cloudinary thumbnail URL ──
+      const cldThumb=isCldImage?rUrl.replace('/upload/','/upload/w_200,h_120,c_fill,f_auto,q_auto:low/')
+        :isCldPdf?rUrl.replace('/upload/','/upload/pg_1,w_200,h_120,c_fill,f_jpg,q_auto:low/')
+        :isCldVideo?rUrl.replace('/upload/','/upload/so_0,w_200,h_120,c_fill,f_jpg,q_auto:low/')
+        :null;
+
+      h.push('<div style="background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow 0.15s;min-width:0;max-width:100%" onmouseover="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,0.14)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.08)\'">');
+
+      // ── Thumbnail area (clickable — opens preview modal) ──
+      const canPreview=!!(cldThumb||hasEmbed);
+      const previewClick=canPreview?'onclick="openResourcePreviewModal(\''+rUrl.replace(/'/g,"\\'")+"','"+embedSrc.replace(/'/g,"\\'")+"','"+r.name.replace(/'/g,"\\'")+"')\"":'';
+      h.push('<div style="position:relative;width:100%;padding-top:45%;background:'+ti.color+'18;overflow:hidden;'+(canPreview?'cursor:pointer;':'')+'" '+previewClick+'>');
+
+      if(cldThumb){
+        // Cloudinary image/PDF/video thumbnail
+        h.push('<img src="'+cldThumb+'" alt="'+r.name+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentElement.innerHTML=\'<div style=\\\"position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem\\\">'+ti.icon+'</div>\'">');
+      } else if(isFlipbook&&embedSrc){
+        // Flipbook iframe — absolutely positioned to avoid affecting card/grid width
+        h.push('<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">');
+        h.push('<div style="position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(0.5);transform-origin:top left">');
+        h.push('<iframe src="'+embedSrc+'" style="width:100%;height:100%;border:none;pointer-events:none" loading="lazy" title="'+r.name+'"></iframe>');
+        h.push('</div></div>');
+        h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.03)">');
+        h.push('<div style="background:rgba(0,0,0,0.45);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem">&#128065;</div>');
+        h.push('</div>');
+      } else if(isGDriveFile&&embedSrc){
+        // Google Drive embed — absolutely positioned
+        h.push('<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">');
+        h.push('<div style="position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(0.5);transform-origin:top left">');
+        h.push('<iframe src="'+embedSrc+'" style="width:100%;height:100%;border:none;pointer-events:none" loading="lazy" title="'+r.name+'"></iframe>');
+        h.push('</div></div>');
+        h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.03)">');
+        h.push('<div style="background:rgba(0,0,0,0.45);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem">&#128065;</div>');
+        h.push('</div>');
+      } else {
+        // Placeholder — type icon centred
+        h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.3rem">');
+        h.push('<span style="font-size:2.8rem;line-height:1">'+ti.icon+'</span>');
+        h.push('<span style="font-size:0.65rem;font-weight:700;color:'+ti.color+';text-transform:uppercase;letter-spacing:0.5px">'+r.type+'</span>');
+        h.push('</div>');
+      }
+
+      // Type badge top-right
+      h.push('<div style="position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.92);border-radius:5px;padding:2px 6px;font-size:0.6rem;font-weight:700;color:'+ti.color+'">'+ti.icon+' '+r.type+'</div>');
+      h.push('</div>'); // end thumbnail
+
+      // ── Card body ──
+      h.push('<div style="padding:0.6rem 0.7rem;flex:1;display:flex;flex-direction:column;gap:0.35rem">');
+      h.push('<div style="display:flex;align-items:flex-start;gap:0.3rem">');
       h.push('<div style="flex:1;min-width:0">');
       h.push('<div style="font-weight:800;color:#111827;font-size:0.82rem;line-height:1.3">'+r.name+'</div>');
-      h.push('<div style="font-size:0.67rem;color:#94a3b8;margin-top:1px">');
+      h.push('<div style="font-size:0.65rem;color:#94a3b8;margin-top:2px">');
       h.push('<span style="background:#f1f5f9;border-radius:3px;padding:1px 5px;font-weight:700;color:#64748b;margin-right:3px">'+(r.prog||"MLP")+' '+(r.level||"K1")+'</span>');
-      if(r.subject)h.push('<span>'+r.subject+'</span>');
-      if(r.note)h.push(' &middot; <span style="font-style:italic">'+r.note+'</span>');
-      h.push('</div></div>');
-      h.push('<button onclick="DB.resources.splice('+globalIdx+',1);pushDB();render()" style="background:none;border:none;cursor:pointer;color:#cbd5e1;font-size:0.8rem;padding:0;flex-shrink:0" title="Remove">&#10005;</button>');
+      if(r.subject)h.push('<span style="color:#374151">'+r.subject+'</span>');
       h.push('</div>');
-      h.push('<div style="margin-top:0.5rem;display:flex;gap:0.3rem;flex-wrap:wrap">');
-      if(r.url.startsWith("http")||r.url.startsWith("/"))
-        h.push('<a href="'+r.url+'" target="_blank" class="btn-sm" style="background:#FEF2F2;color:#B91C1C;text-decoration:none">&#128279; Open</a>');
-      else
-        h.push('<span class="btn-sm" style="background:#fef9c3;color:#92400e;cursor:default">&#128206; '+r.url+'</span>');
-      h.push('</div></div></div>');
+      if(r.note)h.push('<div style="font-size:0.65rem;color:#9CA3AF;margin-top:2px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.note+'</div>');
+      h.push('</div>');
+      h.push('<button onclick="confirmDeleteResource('+globalIdx+')" style="background:none;border:none;cursor:pointer;color:#e2e8f0;font-size:0.78rem;padding:0;flex-shrink:0;line-height:1" title="Remove" onmouseover="this.style.color=\'#ef4444\'" onmouseout="this.style.color=\'#e2e8f0\'">&#10005;</button>');
+      h.push('</div>'); // end flex row
+      h.push('</div>'); // end card body
+
+      // ── Open button ──
+      h.push('<div style="margin-top:auto">');
+      if(rUrl.startsWith("http")||rUrl.startsWith("/")){
+        h.push('<a href="'+rUrl+'" target="_blank" style="display:block;padding:0.4rem;text-align:center;background:#FEF2F2;color:#B91C1C;text-decoration:none;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;border-top:1px solid #FECACA">&#128279; Open</a>');
+      } else {
+        h.push('<div style="padding:0.4rem;text-align:center;background:#F9FAFB;color:#9CA3AF;font-size:0.75rem;border-top:1px solid #F3F4F6">No URL</div>');
+      }
+      h.push('</div>');
+      h.push('</div>'); // end card
     });
     h.push('</div>');
   }
   h.push('</div>');
   return h.join('');
 }
+const DELETE_PIN="acs2026";
+
+function openResourcePreviewModal(url,embedSrc,name){
+  const src=embedSrc||url;
+  if(!src)return;
+  const el=document.createElement("div");
+  el.id="res-preview-modal";
+  el.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem";
+  el.innerHTML=`
+    <div style="width:100%;max-width:900px;height:90dvh;background:#fff;border-radius:12px;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.65rem 1rem;background:#F9FAFB;border-bottom:1px solid #E5E7EB;flex-shrink:0">
+        <div style="font-weight:800;font-size:0.9rem;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</div>
+        <div style="display:flex;gap:0.5rem;flex-shrink:0">
+          <a href="${url}" target="_blank" style="padding:0.3rem 0.65rem;border-radius:7px;border:1px solid #E5E7EB;background:#FEF2F2;color:#B91C1C;text-decoration:none;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.78rem">&#128279; Open</a>
+          <button onclick="document.getElementById('res-preview-modal').remove()" style="padding:0.3rem 0.65rem;border-radius:7px;border:1px solid #E5E7EB;background:#F9FAFB;cursor:pointer;font-size:0.85rem;font-weight:700;color:#6b7280">&#10005;</button>
+        </div>
+      </div>
+      <iframe src="${src}" style="flex:1;width:100%;border:none;display:block" title="${name}" allowfullscreen></iframe>
+    </div>
+  `;
+  document.body.appendChild(el);
+  el.addEventListener("click",e=>{if(e.target===el)el.remove();});
+}
+
+function confirmDeleteResource(idx){
+  const r=DB.resources[idx];
+  if(!r){return;}
+  const el=document.createElement("div");
+  el.id="delete-res-modal";
+  el.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem";
+  el.innerHTML=`
+    <div style="background:#fff;border-radius:16px;padding:1.4rem;max-width:380px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,0.2);border-top:3px solid #ef4444">
+      <div style="font-weight:900;font-size:1rem;color:#111827;margin-bottom:0.5rem">&#128465; Delete Resource</div>
+      <div style="font-size:0.82rem;color:#6B7280;margin-bottom:1rem">
+        <strong style="color:#111827">${r.name}</strong><br>
+        Enter the password to confirm deletion. This cannot be undone.
+      </div>
+      <input id="delete-pin-input" type="password" placeholder="Enter password" autocomplete="off"
+        style="width:100%;padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.88rem;margin-bottom:0.75rem;outline:none"
+        onkeydown="if(event.key==='Enter')deleteResourceConfirmed(${idx})">
+      <div id="delete-pin-error" style="display:none;color:#ef4444;font-size:0.75rem;margin-bottom:0.5rem">&#10007; Incorrect password</div>
+      <div style="display:flex;gap:0.5rem">
+        <button onclick="document.getElementById('delete-res-modal').remove()"
+          style="flex:1;padding:0.5rem;border-radius:8px;border:1.5px solid #E5E7EB;background:#F9FAFB;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.85rem;color:#6B7280">
+          Cancel
+        </button>
+        <button onclick="deleteResourceConfirmed(${idx})"
+          style="flex:1;padding:0.5rem;border-radius:8px;border:none;background:#ef4444;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;color:#fff">
+          Delete
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(el);
+  el.addEventListener("click",e=>{if(e.target===el)el.remove();});
+  setTimeout(()=>{const i=document.getElementById("delete-pin-input");if(i)i.focus();},50);
+}
+
+function deleteResourceConfirmed(idx){
+  const input=document.getElementById("delete-pin-input");
+  const errEl=document.getElementById("delete-pin-error");
+  if(!input)return;
+  if(input.value!==DELETE_PIN){
+    if(errEl)errEl.style.display="block";
+    input.value="";
+    input.focus();
+    return;
+  }
+  DB.resources.splice(idx,1);
+  pushDB();
+  document.getElementById("delete-res-modal").remove();
+  render();
+}
+
+// ── CLOUDINARY CONFIG ─────────────────────────────────────────────────────────
+const CLOUDINARY_CLOUD = "dymyyfuyn";
+const CLOUDINARY_PRESET = "kg_teacher_hub";
+
 function openAddResourceModal(){
-  const name=prompt("Resource name:");if(!name)return;
-  const url=prompt("URL:");if(!url)return;
-  const prog=prompt("Programme (MLP / IEP):",S.resProg||"MLP")||"MLP";
-  const level=prompt("Level (K1 / K2 / K3):",S.resLevel||"K1")||"K1";
-  const subject=prompt("Subject (e.g. English, Math, Phonics):",S.resSub!=="All"?S.resSub:"")||"";
-  const type=prompt("Type (Slides/Video/Doc/Sheet/Audio/PDF/Link):")||"Link";
-  const note=prompt("Note (optional):")||"";
+  // Build modal HTML and inject into DOM (doesn't use render() so doesn't wipe state)
+  const prog=S.resProg||"MLP";
+  const level=S.resLevel||"K1";
+  const subj=S.resSub!=="All"?S.resSub:"";
+  const types=["Slides","Video","PDF","Doc","Sheet","Audio","Link","Flipbook"];
+
+  const el=document.createElement("div");
+  el.id="add-res-modal";
+  el.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem";
+  el.innerHTML=`
+    <div style="background:#fff;border-radius:16px;padding:1.4rem;max-width:480px;width:100%;max-height:90dvh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.2);border-top:3px solid #B91C1C">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
+        <div style="font-weight:900;font-size:1.05rem;color:#111827">&#10133; Add Resource</div>
+        <button onclick="document.getElementById('add-res-modal').remove()" style="padding:0.3rem 0.65rem;border-radius:8px;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer;font-size:0.85rem;font-weight:700;color:#6b7280">&#10005;</button>
+      </div>
+
+      <!-- Upload zone -->
+      <div id="cld-upload-zone" style="border:2px dashed #E5E7EB;border-radius:12px;padding:1.2rem;text-align:center;margin-bottom:1rem;cursor:pointer;transition:all 0.15s;background:#FAFAFA"
+        onclick="document.getElementById('cld-file-input').click()"
+        ondragover="event.preventDefault();this.style.borderColor='#B91C1C';this.style.background='#FEF2F2'"
+        ondragleave="this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA'"
+        ondrop="event.preventDefault();this.style.borderColor='#E5E7EB';this.style.background='#FAFAFA';handleCldDrop(event)">
+        <div id="cld-upload-label">
+          <div style="font-size:1.8rem;margin-bottom:0.3rem">&#128194;</div>
+          <div style="font-weight:700;font-size:0.88rem;color:#374151">Click or drag &amp; drop to upload</div>
+          <div style="font-size:0.72rem;color:#9CA3AF;margin-top:0.2rem">PDF, image, or any file · max 100MB</div>
+        </div>
+        <input id="cld-file-input" type="file" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.gif,.mp4,.pptx,.docx,.xlsx" onchange="handleCldFile(this.files[0])">
+      </div>
+
+      <!-- Progress bar (hidden until upload) -->
+      <div id="cld-progress-wrap" style="display:none;margin-bottom:1rem">
+        <div style="font-size:0.75rem;font-weight:700;color:#374151;margin-bottom:0.3rem" id="cld-progress-label">Uploading…</div>
+        <div style="background:#F3F4F6;border-radius:6px;height:8px;overflow:hidden">
+          <div id="cld-progress-bar" style="height:100%;background:#B91C1C;width:0%;transition:width 0.2s;border-radius:6px"></div>
+        </div>
+      </div>
+
+      <!-- Form fields -->
+      <div style="display:flex;flex-direction:column;gap:0.65rem">
+        <div>
+          <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">NAME *</label>
+          <input id="res-name" value="" placeholder="e.g. Phonics Flashcards Set A" style="width:100%;padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.85rem;outline:none">
+        </div>
+        <div>
+          <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">URL *</label>
+          <input id="res-url" value="" placeholder="Paste a URL or upload a file above" style="width:100%;padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.82rem;outline:none;color:#374151">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem">
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">PROGRAMME</label>
+            <select id="res-prog" style="width:100%;padding:0.45rem 0.5rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.82rem;outline:none">
+              <option value="MLP" ${prog==="MLP"?"selected":""}>MLP</option>
+              <option value="IEP" ${prog==="IEP"?"selected":""}>IEP</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">LEVEL</label>
+            <select id="res-level" style="width:100%;padding:0.45rem 0.5rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.82rem;outline:none">
+              <option value="K1" ${level==="K1"?"selected":""}>K1</option>
+              <option value="K2" ${level==="K2"?"selected":""}>K2</option>
+              <option value="K3" ${level==="K3"?"selected":""}>K3</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">TYPE</label>
+            <select id="res-type" style="width:100%;padding:0.45rem 0.5rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.82rem;outline:none">
+              ${types.map(t=>`<option value="${t}">${t}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">SUBJECT</label>
+          <select id="res-subject" style="width:100%;padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.85rem;outline:none">
+            <option value="">— Select subject —</option>
+            ${["Chinese","English","Integration","Love Reading","Math","Movement","Music","Outdoor","Phonics","Play & Learn","Science","Skill Building","STREAMSS","Swimming"].map(s=>`<option value="${s}" ${subj===s?"selected":""}>${s}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">NOTE <span style="font-weight:500;opacity:0.6">(optional)</span></label>
+          <input id="res-note" placeholder="Brief description" style="width:100%;padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.85rem;outline:none">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0.5rem;margin-top:1.1rem">
+        <button onclick="document.getElementById('add-res-modal').remove()" style="flex:1;padding:0.55rem;border-radius:10px;border:1.5px solid #E5E7EB;background:#F9FAFB;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.85rem;color:#6B7280">Cancel</button>
+        <button id="res-save-btn" onclick="saveNewResource()" style="flex:2;padding:0.55rem;border-radius:10px;border:none;background:#B91C1C;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;color:#fff">Save Resource</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(el);
+  // Close on backdrop click
+  el.addEventListener("click",e=>{if(e.target===el)el.remove();});
+}
+
+function handleCldFile(file){
+  if(!file)return;
+  const nameEl=document.getElementById("res-name");
+  const cleanName=file.name.replace(/\.[^.]+$/,"").replace(/[-_]/g," ");
+  if(nameEl&&!nameEl.value)nameEl.value=cleanName;
+
+  // Auto-detect type from extension
+  const typeEl=document.getElementById("res-type");
+  if(typeEl){
+    if(/\.pdf$/i.test(file.name))typeEl.value="PDF";
+    else if(/\.(pptx?|key)$/i.test(file.name))typeEl.value="Slides";
+    else if(/\.(docx?|odt)$/i.test(file.name))typeEl.value="Doc";
+    else if(/\.(xlsx?|csv)$/i.test(file.name))typeEl.value="Sheet";
+    else if(/\.(mp4|mov|avi)$/i.test(file.name))typeEl.value="Video";
+    else if(/\.(mp3|wav|m4a)$/i.test(file.name))typeEl.value="Audio";
+    else if(/\.(png|jpg|jpeg|gif|webp)$/i.test(file.name))typeEl.value="Slides";
+  }
+
+  // Auto-detect subject from filename keywords
+  const subjectEl=document.getElementById("res-subject");
+  if(subjectEl&&!subjectEl.value){
+    const lower=file.name.toLowerCase();
+    if(/phonic/i.test(lower))subjectEl.value="Phonics";
+    else if(/math/i.test(lower))subjectEl.value="Math";
+    else if(/english|reading|literacy/i.test(lower))subjectEl.value="English";
+    else if(/science/i.test(lower))subjectEl.value="Science";
+    else if(/music/i.test(lower))subjectEl.value="Music";
+    else if(/chinese|mandarin/i.test(lower))subjectEl.value="Chinese";
+    else if(/movement|pe|sport/i.test(lower))subjectEl.value="Movement";
+    else if(/outdoor/i.test(lower))subjectEl.value="Outdoor";
+    else if(/swimming/i.test(lower))subjectEl.value="Swimming";
+    else if(/stream/i.test(lower))subjectEl.value="STREAMSS";
+    else if(/play|learn/i.test(lower))subjectEl.value="Play & Learn";
+    else if(/skill/i.test(lower))subjectEl.value="Skill Building";
+    else if(/integrat/i.test(lower))subjectEl.value="Integration";
+    else if(/love.read/i.test(lower))subjectEl.value="Love Reading";
+  }
+
+  uploadToCloudinary(file);
+}
+
+function handleCldDrop(event){
+  const file=event.dataTransfer.files[0];
+  if(file)handleCldFile(file);
+}
+
+function uploadToCloudinary(file){
+  const zone=document.getElementById("cld-upload-zone");
+  const progressWrap=document.getElementById("cld-progress-wrap");
+  const progressBar=document.getElementById("cld-progress-bar");
+  const progressLabel=document.getElementById("cld-progress-label");
+  const urlEl=document.getElementById("res-url");
+  const saveBtn=document.getElementById("res-save-btn");
+
+  if(progressWrap)progressWrap.style.display="block";
+  if(zone)zone.style.display="none";
+  if(saveBtn)saveBtn.disabled=true;
+
+  const formData=new FormData();
+  formData.append("file",file);
+  formData.append("upload_preset",CLOUDINARY_PRESET);
+  formData.append("folder","kg-teacher-hub");
+
+  // Use 'auto' for images/video, 'raw' for PDFs and documents that Cloudinary can't process
+  const isPdfOrDoc=/\.(pdf|pptx?|docx?|xlsx?)$/i.test(file.name);
+  const resourceType=isPdfOrDoc?'raw':'auto';
+  const xhr=new XMLHttpRequest();
+  xhr.open("POST",`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`);
+
+  xhr.upload.onprogress=e=>{
+    if(e.lengthComputable){
+      const pct=Math.round((e.loaded/e.total)*100);
+      if(progressBar)progressBar.style.width=pct+"%";
+      if(progressLabel)progressLabel.textContent="Uploading… "+pct+"%";
+    }
+  };
+
+  xhr.onload=()=>{
+    if(xhr.status===200){
+      const res=JSON.parse(xhr.responseText);
+      if(urlEl)urlEl.value=res.secure_url;
+      if(progressLabel){progressLabel.textContent="✓ Uploaded successfully";progressLabel.style.color="#16a34a";}
+      if(progressBar){progressBar.style.background="#16a34a";progressBar.style.width="100%";}
+      if(saveBtn)saveBtn.disabled=false;
+      // Show filename in upload zone
+      if(zone){
+        zone.style.display="block";
+        zone.style.borderColor="#16a34a";
+        zone.style.background="#F0FDF4";
+        zone.innerHTML=`<div style="font-size:1.4rem">&#10003;</div><div style="font-weight:700;font-size:0.85rem;color:#16a34a">${file.name}</div><div style="font-size:0.7rem;color:#6B7280;margin-top:0.15rem">Uploaded to Cloudinary</div>`;
+      }
+    } else {
+      let errMsg="Upload failed";
+      try{const e=JSON.parse(xhr.responseText);if(e.error&&e.error.message)errMsg="Upload failed: "+e.error.message;}catch(ex){}
+      if(progressLabel){progressLabel.textContent=errMsg;progressLabel.style.color="#dc2626";}
+      if(zone)zone.style.display="block";
+      if(saveBtn)saveBtn.disabled=false;
+      console.error("[cloudinary] upload failed:",xhr.status,xhr.responseText);
+    }
+  };
+
+  xhr.onerror=()=>{
+    if(progressLabel){progressLabel.textContent="Upload failed — check connection";progressLabel.style.color="#dc2626";}
+    if(zone)zone.style.display="block";
+    if(saveBtn)saveBtn.disabled=false;
+  };
+
+  xhr.send(formData);
+}
+
+function saveNewResource(){
+  const name=(document.getElementById("res-name")||{}).value||"";
+  const url=(document.getElementById("res-url")||{}).value||"";
+  const prog=(document.getElementById("res-prog")||{}).value||"MLP";
+  const level=(document.getElementById("res-level")||{}).value||"K1";
+  const type=(document.getElementById("res-type")||{}).value||"Link";
+  const subject=(document.getElementById("res-subject")||{}).value||"";
+  const note=(document.getElementById("res-note")||{}).value||"";
+
+  if(!name.trim()){alert("Please enter a resource name.");return;}
+  if(!url.trim()){alert("Please enter a URL or upload a file.");return;}
+
   const id=Date.now();
-  DB.resources=[...(DB.resources||[]),{id,prog,level,name,url,subject,type,note}];
-  pushDB();render();
+  DB.resources=[...(DB.resources||[]),{id,prog,level,name:name.trim(),url:url.trim(),subject,type,note}];
+  pushDB();
+  document.getElementById("add-res-modal").remove();
+  render();
 }
 
 function openResourcePreview(idx){

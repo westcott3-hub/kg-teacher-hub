@@ -1934,19 +1934,20 @@ function typeInfo(t){return TYPE_OPTS.find(x=>x.label===t)||TYPE_OPTS[7];}
 const SUBJECTS_ALL=["All","English","Math","Science","STREAMSS","Phonics","Chinese","Music","Movement","Outdoor","Play & Learn","Skill Building","Love Reading","Swimming","Integration"];
 
 const ONEDRIVE_SRC="https://1drv.ms/p/c/c7815a9a8eb70b9d/IQRoHp8pKDGNTJBsh_VMCzw5AfB_ROWKAhyt5jjQNtmvjb0?wdAr=1.3580786026200873";
-const DEFAULT_RESOURCES=[
+
+// Seed resources — loaded into Firestore once at boot if Firestore has no resources yet.
+// After that Firestore is the single source of truth. Add/remove via the dashboard UI.
+// IDs 1, 2, 10 removed (incomplete URLs / lesson plans folder).
+const SEED_RESOURCES=[
   // ── MLP · K1 ──────────────────────────────────────────────────────────────
   {id:4,  prog:"MLP",level:"K1",name:"K1 English Lesson Slides",           url:ONEDRIVE_SRC,embedSrc:ONEDRIVE_SRC,                                                                                                                  subject:"English", type:"Slides", note:"K1 English - OneDrive PowerPoint"},
-  {id:10, prog:"MLP",level:"K1",name:"K1 English Lesson Plans",             url:"https://drive.google.com/drive/folders/1fCgym7iO_VX3Zk4aCIor0Iir-_KkS9f5?usp=sharing&view=grid",                                                   subject:"English", type:"Doc",    note:"K1 English lesson plans folder — Google Drive"},
   {id:6,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Activity Book",      url:"https://drive.google.com/file/d/1eodJgCS5sLCWS5M4HCSz4FkgCLrOWhU-/view",embedSrc:"https://drive.google.com/file/d/1eodJgCS5sLCWS5M4HCSz4FkgCLrOWhU-/preview",         subject:"English", type:"PDF",    note:"Cambridge Pippa and Pop Level 1 – full activity book (Units 1–9)"},
   {id:7,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Colouring Worksheet",url:"https://drive.google.com/file/d/1MnqTlPuEncYcH8RB-8MWzK1qgyHKfBqh/view",embedSrc:"https://drive.google.com/file/d/1MnqTlPuEncYcH8RB-8MWzK1qgyHKfBqh/preview",         subject:"English", type:"PDF",    note:"Character colouring sheets: Pippa, Pop, Kim, Dan, Tinks"},
   {id:8,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Mini Flashcards",    url:"https://drive.google.com/file/d/1gOeMbMqg7RbblOD6BeVz_b8D4x7euUOu/view",embedSrc:"https://drive.google.com/file/d/1gOeMbMqg7RbblOD6BeVz_b8D4x7euUOu/preview",         subject:"English", type:"PDF",    note:"Cut-out flashcards for Units 1–9 vocabulary"},
   {id:9,  prog:"MLP",level:"K1",name:"Pippa & Pop L1 – Word Cards",         url:"https://drive.google.com/file/d/1TLI2mmd9GuoU3QTLUqWqg3L1bPLMIsBS/view",embedSrc:"https://drive.google.com/file/d/1TLI2mmd9GuoU3QTLUqWqg3L1bPLMIsBS/preview",         subject:"English", type:"PDF",    note:"Cut-out word cards for Units 1–9"},
   {id:5,  prog:"MLP",level:"K1",name:"Phonics World 1 – Flipbook",          url:"https://online.flipbuilder.com/xtrvf/dsfl/",embedSrc:"https://online.flipbuilder.com/xtrvf/dsfl/",                                                subject:"Phonics",  type:"Slides", note:"Phonics World 1 interactive flipbook"},
   {id:11, prog:"MLP",level:"K1",name:"Oxford Phonics World 1 – Flashcards", url:"https://drive.google.com/file/d/1S__dFtPYzvgXsrVCsMmpSAYSB__Qg4hM/view",embedSrc:"https://drive.google.com/file/d/1S__dFtPYzvgXsrVCsMmpSAYSB__Qg4hM/preview",          subject:"Phonics",  type:"PDF",    note:"A–Z flashcards: 4 picture cards per letter"},
-  {id:1,  prog:"MLP",level:"K1",name:"KG1 Math Songs Playlist",             url:"https://drive.google.com/drive/folders/",                                                                                                         subject:"Math",    type:"Video",  note:"Counting & number songs"},
   {id:12, prog:"MLP",level:"K1",name:"Doodle Town 1 – Student Book",        url:"https://drive.google.com/file/d/1CsF3wTZvBjBfMdrTqrudn8S5f7_eGv6T/view",embedSrc:"https://drive.google.com/file/d/1CsF3wTZvBjBfMdrTqrudn8S5f7_eGv6T/preview",         subject:"Math",    type:"PDF",    note:"Doodle Town 1 student book — Math"},
-  {id:2,  prog:"MLP",level:"K1",name:"Phonics Flashcards Set A",            url:"https://docs.google.com/presentation/",                                                                                                           subject:"Phonics",  type:"Slides", note:"Letters A-M"},
   {id:3,  prog:"MLP",level:"K1",name:"Science Activity Book 2",             url:"https://drive.google.com/file/d/1ppEOE04Yf_vul-79NbetE5Ru-u79y8D5/view",embedSrc:"https://drive.google.com/file/d/1ppEOE04Yf_vul-79NbetE5Ru-u79y8D5/preview",          subject:"Science", type:"PDF",    note:"Science House K1 activity book"},
   {id:13, prog:"MLP",level:"K1",name:"Science Pupils Book 2",               url:"https://drive.google.com/file/d/1KINDBTTnfLcwxUWET-A05HcN7-Rrxcgh/view",embedSrc:"https://drive.google.com/file/d/1KINDBTTnfLcwxUWET-A05HcN7-Rrxcgh/preview",          subject:"Science", type:"PDF",    note:"Science House K1 pupils book"},
   // ── MLP · K2 ──────────────────────────────────────────────────────────────
@@ -1958,8 +1959,8 @@ const DEFAULT_RESOURCES=[
   {id:34, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Activity Book",       url:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/view",embedSrc:"https://drive.google.com/file/d/1DVineIgqipXexEBq8ZECKrVPzDKnMr75/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 activity book"},
   {id:35, prog:"MLP",level:"K3",name:"Pippa and Pop 3 – Teacher's Book",      url:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/view",embedSrc:"https://drive.google.com/file/d/1d2KMIUSV-zKfbbicIBNSAEE567u1pMpg/preview", subject:"English", type:"PDF",    note:"Pippa and Pop Level 3 teacher's book"},
   // ── IEP · K1 ──────────────────────────────────────────────────────────────
-  {id:36,prog:"IEP",level:"K1",name:"Super Safari Pupils Book 1 – Flipbook",url:"https://online.flipbuilder.com/sdtta/slkt/",embedSrc:"https://online.flipbuilder.com/sdtta/slkt/",subject:"English",type:"Slides",note:"Super Safari Student Book Level 1 – interactive flipbook"},
-  {id:37,prog:"IEP",level:"K1",name:"Super Safari Workbook 1 – Flipbook",url:"https://online.flipbuilder.com/sdtta/lpsw/",embedSrc:"https://online.flipbuilder.com/sdtta/lpsw/",subject:"English",type:"Slides",note:"Super Safari Workbook Level 1 – interactive flipbook"},
+  {id:36, prog:"IEP",level:"K1",name:"Super Safari Pupils Book 1 – Flipbook",url:"https://online.flipbuilder.com/sdtta/slkt/",embedSrc:"https://online.flipbuilder.com/sdtta/slkt/",subject:"English",type:"Slides",note:"Super Safari Student Book Level 1 – interactive flipbook"},
+  {id:37, prog:"IEP",level:"K1",name:"Super Safari Workbook 1 – Flipbook",   url:"https://online.flipbuilder.com/sdtta/lpsw/",embedSrc:"https://online.flipbuilder.com/sdtta/lpsw/",subject:"English",type:"Slides",note:"Super Safari Workbook Level 1 – interactive flipbook"},
   // ── IEP · K2 ──────────────────────────────────────────────────────────────
   {id:20, prog:"IEP",level:"K2",name:"Super Safari SB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/nyep/",embedSrc:"https://online.flipbuilder.com/sdtta/nyep/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 2 – interactive flipbook"},
   {id:21, prog:"IEP",level:"K2",name:"Super Safari WB Level 2 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/ciat/",embedSrc:"https://online.flipbuilder.com/sdtta/ciat/", subject:"English", type:"Slides", note:"Super Safari Workbook Level 2 – interactive flipbook"},
@@ -1968,7 +1969,44 @@ const DEFAULT_RESOURCES=[
   {id:23, prog:"IEP",level:"K3",name:"Super Safari SB Level 3 – Flipbook",  url:"https://online.flipbuilder.com/sdtta/ijpc/",embedSrc:"https://online.flipbuilder.com/sdtta/ijpc/", subject:"English", type:"Slides", note:"Super Safari Student Book Level 3 – interactive flipbook"},
 ];
 
-// Foreign teachers — each gets their own tab
+// DEFAULT_RESOURCES is now empty — Firestore is the single source of truth.
+// SEED_RESOURCES is used only to seed Firestore on first load if it is empty.
+const DEFAULT_RESOURCES=[];
+
+// ── LESSON OBSERVATIONS ───────────────────────────────────────────────────────
+// date: ISO date | teacherId: TEACHERS id or null (class-only) | cls: class
+// periods: 1-based period numbers observed (empty = whole day / no specific period)
+const OBSERVATIONS=[
+  {date:"2026-06-15",teacherId:"daisy",    cls:"K1/2", periods:[1]},
+  {date:"2026-06-15",teacherId:"shirley",  cls:"K2/2", periods:[2]},
+  {date:"2026-06-16",teacherId:null,       cls:"K1/3", periods:[1],  note:"Ms. Li (Chinese)"},
+  {date:"2026-06-16",teacherId:"jussill",  cls:"K2/1", periods:[2]},
+  {date:"2026-06-22",teacherId:"gary",     cls:"K1A",  periods:[2,3]},
+  {date:"2026-06-23",teacherId:"inessa",   cls:"K2A",  periods:[2]},
+  {date:"2026-06-24",teacherId:"svitlana", cls:"K2A",  periods:[2]},
+  {date:"2026-06-25",teacherId:"jayne",    cls:"K3/4", periods:[1]},
+  {date:"2026-06-29",teacherId:"yulia",    cls:"K1B",  periods:[2]},
+  {date:"2026-06-29",teacherId:"iana",     cls:"K3B",  periods:[3]},
+  {date:"2026-09-04",teacherId:"janet",    cls:"N1",   periods:[]},
+  {date:"2026-09-14",teacherId:"newteacher",cls:"K2B", periods:[2],  note:"Date adjusted — original 13 Sep was a Sunday"},
+];
+
+// Helper: get observations for a specific date + class
+function getObsForDateCls(dateStr,cls){
+  return OBSERVATIONS.filter(o=>o.date===dateStr&&o.cls===cls);
+}
+// Helper: get observations for a specific date + teacher
+function getObsForDateTeacher(dateStr,teacherId){
+  return OBSERVATIONS.filter(o=>o.date===dateStr&&o.teacherId===teacherId);
+}
+// Helper: get all obs for a class (any date) — for week grid
+function getObsForCls(cls){
+  return OBSERVATIONS.filter(o=>o.cls===cls);
+}
+// Helper: get all obs for a teacher (any date)
+function getObsForTeacher(teacherId){
+  return OBSERVATIONS.filter(o=>o.teacherId===teacherId);
+}
 const TEACHERS=[
   // MLP teachers
   {id:"gary",        name:"T. Gary",        full:"T. Gary",         classes:["K1A"],                                                                          color:"#2563eb", prog:"MLP"},
