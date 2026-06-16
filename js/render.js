@@ -1359,13 +1359,15 @@ function renderResources(){
       const isCldVideo=rUrl.includes('cloudinary.com')&&r.type==='Video';
       const isFlipbook=rUrl.includes('flipbuilder.com')||rUrl.includes('fliphtml5.com');
       const isGDriveFile=embedSrc.includes('drive.google.com/file');
-      const hasEmbed=!!(embedSrc);
+      const hasEmbed=!!(r.embedSrc||isGDriveFile||isFlipbook||ytMatch);
+      const ytMatch=rUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      const ytThumb=ytMatch?'https://img.youtube.com/vi/'+ytMatch[1]+'/mqdefault.jpg':null;
 
       // ── Cloudinary thumbnail URL ──
       const cldThumb=isCldImage?rUrl.replace('/upload/','/upload/w_200,h_120,c_fill,f_auto,q_auto:low/')
         :isCldPdf?pdfThumbBase.replace('/upload/','/upload/pg_1,w_200,h_120,c_fill,f_jpg,q_auto:low/').replace(/\.[^.]+$/,'.jpg')
         :isCldVideo?rUrl.replace('/upload/','/upload/so_0,w_200,h_120,c_fill,f_jpg,q_auto:low/')
-        :null;
+        :ytThumb||null;
 
       // ── Card outer wrapper with relative positioning for delete button ──
       h.push('<div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:visible;display:flex;flex-direction:column;min-width:0;max-width:100%;position:relative">');
@@ -1565,7 +1567,7 @@ function openAddResourceModal(){
         </div>
         <div>
           <label style="font-size:0.72rem;font-weight:700;color:#6B7280;display:block;margin-bottom:0.25rem">URL *</label>
-          <input id="res-url" value="" placeholder="Paste a URL or upload a file above" style="width:100%;padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.82rem;outline:none;color:#374151">
+          <input id="res-url" value="" placeholder="Paste a URL or upload a file above" style="width:100%;padding:0.5rem 0.7rem;border-radius:8px;border:1.5px solid #E5E7EB;font-family:'Nunito',sans-serif;font-size:0.82rem;outline:none;color:#374151" oninput="handleResUrlInput(this.value)">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem">
           <div>
@@ -1652,7 +1654,108 @@ function handleCldFile(file){
     else if(/love.read/i.test(lower))subjectEl.value="Love Reading";
   }
 
+  const MAX_SIZE=10*1024*1024; // 10MB
+
+  // Handle oversized files
+  if(file.size>MAX_SIZE){
+    const isPdf=/\.pdf$/i.test(file.name);
+    const isImage=/\.(png|jpg|jpeg|gif|webp)$/i.test(file.name);
+
+    if(isImage){
+      // Auto-compress image via Canvas
+      showUploadZoneMessage('Compressing image…','#f59e0b');
+      compressImage(file,MAX_SIZE*0.85).then(compressed=>{
+        handleCldFile(compressed);
+      }).catch(()=>{
+        uploadToCloudinary(file); // fallback to original
+      });
+      return;
+    }
+
+    if(isPdf){
+      // Show PDF-specific options
+      const zone=document.getElementById("cld-upload-zone");
+      if(zone){
+        const mb=(file.size/1024/1024).toFixed(1);
+        zone.innerHTML=`
+          <div style="font-size:0.85rem;font-weight:700;color:#dc2626;margin-bottom:0.5rem">&#9888; PDF is ${mb}MB — too large (10MB limit)</div>
+          <div style="font-size:0.75rem;color:#6B7280;margin-bottom:0.75rem">Compress it first, then drag it back in</div>
+          <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">
+            <a href="https://www.adobe.com/acrobat/online/compress-pdf.html" target="_blank"
+              style="padding:0.4rem 0.75rem;border-radius:8px;background:#dc2626;color:#fff;text-decoration:none;font-size:0.78rem;font-weight:700;font-family:'Nunito',sans-serif">
+              &#128196; Compress with Adobe
+            </a>
+            <a href="https://drive.google.com/drive/folders/11i6WT6dglfXrd4RDN8paxe1q88kEkRqC" target="_blank"
+              style="padding:0.4rem 0.75rem;border-radius:8px;background:#1a73e8;color:#fff;text-decoration:none;font-size:0.78rem;font-weight:700;font-family:'Nunito',sans-serif">
+              &#128194; Upload to Google Drive
+            </a>
+          </div>
+          <div style="font-size:0.7rem;color:#9CA3AF;margin-top:0.5rem;cursor:pointer" onclick="document.getElementById('cld-file-input').click()">
+            or drag compressed file here
+          </div>`;
+      }
+      return;
+    }
+
+    // Other large file types
+    const zone=document.getElementById("cld-upload-zone");
+    if(zone){
+      const mb=(file.size/1024/1024).toFixed(1);
+      zone.innerHTML=`
+        <div style="font-size:0.85rem;font-weight:700;color:#dc2626;margin-bottom:0.5rem">&#9888; File is ${mb}MB — too large (10MB limit)</div>
+        <div style="font-size:0.75rem;color:#6B7280;margin-bottom:0.75rem">Upload to Google Drive and paste the share link instead</div>
+        <a href="https://drive.google.com/drive/folders/11i6WT6dglfXrd4RDN8paxe1q88kEkRqC" target="_blank"
+          style="padding:0.4rem 0.75rem;border-radius:8px;background:#1a73e8;color:#fff;text-decoration:none;font-size:0.78rem;font-weight:700;font-family:'Nunito',sans-serif">
+          &#128194; Open Google Drive
+        </a>`;
+    }
+    return;
+  }
+
   uploadToCloudinary(file);
+}
+
+function showUploadZoneMessage(msg,color){
+  const zone=document.getElementById("cld-upload-zone");
+  if(zone)zone.innerHTML=`<div style="font-size:0.85rem;font-weight:700;color:${color}">${msg}</div>`;
+}
+
+async function compressImage(file,maxBytes){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=()=>{
+      URL.revokeObjectURL(url);
+      const canvas=document.createElement("canvas");
+      let w=img.width,h=img.height;
+      // Scale down if very large
+      const MAX_DIM=1920;
+      if(w>MAX_DIM||h>MAX_DIM){
+        if(w>h){h=Math.round(h*MAX_DIM/w);w=MAX_DIM;}
+        else{w=Math.round(w*MAX_DIM/h);h=MAX_DIM;}
+      }
+      canvas.width=w;canvas.height=h;
+      const ctx=canvas.getContext("2d");
+      ctx.drawImage(img,0,0,w,h);
+      // Try quality levels until under maxBytes
+      let quality=0.85;
+      const tryCompress=()=>{
+        canvas.toBlob(blob=>{
+          if(!blob){reject(new Error("Canvas failed"));return;}
+          if(blob.size<=maxBytes||quality<=0.3){
+            const compressed=new File([blob],file.name.replace(/\.[^.]+$/,".jpg"),{type:"image/jpeg"});
+            resolve(compressed);
+          } else {
+            quality-=0.1;
+            tryCompress();
+          }
+        },"image/jpeg",quality);
+      };
+      tryCompress();
+    };
+    img.onerror=reject;
+    img.src=url;
+  });
 }
 
 function handleCldDrop(event){
@@ -1727,6 +1830,24 @@ function uploadToCloudinary(file){
   xhr.send(formData);
 }
 
+function handleResUrlInput(url){
+  // Auto-detect YouTube and set type + show embed preview
+  const ytMatch=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  if(ytMatch){
+    const videoId=ytMatch[1];
+    const typeEl=document.getElementById("res-type");
+    if(typeEl)typeEl.value="Video";
+    // Show YouTube thumbnail preview in upload zone
+    const zone=document.getElementById("cld-upload-zone");
+    if(zone){
+      zone.style.display="block";
+      zone.style.borderColor="#FF0000";
+      zone.style.background="#fff5f5";
+      zone.innerHTML=`<img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:6px" onerror="this.parentElement.innerHTML='&#127910; YouTube Video'"><div style="font-size:0.7rem;color:#dc2626;font-weight:700;margin-top:4px">YouTube video detected</div>`;
+    }
+  }
+}
+
 function saveNewResource(){
   const name=(document.getElementById("res-name")||{}).value||"";
   const url=(document.getElementById("res-url")||{}).value||"";
@@ -1739,8 +1860,13 @@ function saveNewResource(){
   if(!name.trim()){alert("Please enter a resource name.");return;}
   if(!url.trim()){alert("Please enter a URL or upload a file.");return;}
 
+  // Auto-generate YouTube embed URL
+  let embedSrc='';
+  const ytMatch=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  if(ytMatch){embedSrc='https://www.youtube.com/embed/'+ytMatch[1];}
+
   const id=Date.now();
-  DB.resources=[...(DB.resources||[]),{id,prog,level,name:name.trim(),url:url.trim(),subject,type,note}];
+  DB.resources=[...(DB.resources||[]),{id,prog,level,name:name.trim(),url:url.trim(),embedSrc,subject,type,note}];
   pushDB();
   document.getElementById("add-res-modal").remove();
   render();
