@@ -1347,13 +1347,21 @@ function renderResources(){
     filtered.forEach(r=>{
       const ti=typeInfo(r.type);
       const globalIdx=resources.indexOf(r);
-      // Fix any raw Cloudinary URLs — raw delivers as download, image delivers in browser
-      const rUrl=(r.url||'').replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
-      const embedSrc=(r.embedSrc||rUrl).replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
+      // Fix raw Cloudinary URLs for viewing — use Google Docs viewer for PDFs
+      const rawUrl=r.url||'';
+      const isRawCld=rawUrl.includes('res.cloudinary.com/dymyyfuyn/raw/upload/');
+      const rUrl=rawUrl; // keep original URL for Open link (downloads correctly)
+      // For embed/preview: raw PDFs need Google Docs viewer wrapper
+      const baseEmbed=rawUrl.replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
+      const embedSrc=isRawCld&&r.type==='PDF'
+        ?'https://docs.google.com/viewer?url='+encodeURIComponent(rawUrl)+'&embedded=true'
+        :(r.embedSrc||rawUrl).replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
 
       // ── Determine preview strategy ──
       const isCldImage=rUrl.includes('cloudinary.com')&&(r.type==='Image'||/\.(png|jpg|jpeg|gif|webp)/i.test(rUrl));
       const isCldPdf=rUrl.includes('cloudinary.com')&&r.type==='PDF';
+      // For raw PDF thumbnail, switch to image endpoint
+      const pdfThumbBase=isRawCld?rawUrl.replace('/raw/upload/','/image/upload/'):rUrl;
       const isCldVideo=rUrl.includes('cloudinary.com')&&r.type==='Video';
       const isFlipbook=rUrl.includes('flipbuilder.com')||rUrl.includes('fliphtml5.com');
       const isGDriveFile=embedSrc.includes('drive.google.com/file');
@@ -1361,7 +1369,7 @@ function renderResources(){
 
       // ── Cloudinary thumbnail URL ──
       const cldThumb=isCldImage?rUrl.replace('/upload/','/upload/w_200,h_120,c_fill,f_auto,q_auto:low/')
-        :isCldPdf?rUrl.replace('/upload/','/upload/pg_1,w_200,h_120,c_fill,f_jpg,q_auto:low/')
+        :isCldPdf?pdfThumbBase.replace('/upload/','/upload/pg_1,w_200,h_120,c_fill,f_jpg,q_auto:low/').replace(/\.[^.]+$/,'.jpg')
         :isCldVideo?rUrl.replace('/upload/','/upload/so_0,w_200,h_120,c_fill,f_jpg,q_auto:low/')
         :null;
 
@@ -1369,8 +1377,7 @@ function renderResources(){
 
       // ── Thumbnail area (clickable — opens preview modal) ──
       const canPreview=!!(cldThumb||hasEmbed);
-      const previewClick=canPreview?'onclick="openResourcePreviewModal(\''+rUrl.replace(/'/g,"\\'")+"','"+embedSrc.replace(/'/g,"\\'")+"','"+r.name.replace(/'/g,"\\'")+"')\"":'';
-      h.push('<div style="position:relative;width:100%;padding-top:45%;background:'+ti.color+'18;overflow:hidden;'+(canPreview?'cursor:pointer;':'')+'" '+previewClick+'>');
+      const previewClick=canPreview?'onclick="openResourcePreview('+globalIdx+')"':'';      h.push('<div style="position:relative;width:100%;padding-top:45%;background:'+ti.color+'18;overflow:hidden;'+(canPreview?'cursor:pointer;':'')+'" '+previewClick+'>');
 
       if(cldThumb){
         // Cloudinary image/PDF/video thumbnail
@@ -1739,18 +1746,19 @@ function saveNewResource(){
 
 function openResourcePreview(idx){
   const r=DB.resources[idx];
-  if(!r||!r.embedSrc)return;
-  S.popup={type:"resourcePreview",resource:r};
-  render();
-  setTimeout(()=>{
-    const container=document.getElementById("res-preview-container");
-    if(!container)return;
-    const iframe=document.createElement("iframe");
-    iframe.src=r.embedSrc;
-    iframe.style.cssText="width:100%;height:100%;border:none;display:block";
-    iframe.title=r.name;
-    container.appendChild(iframe);
-  },50);
+  if(!r)return;
+  const rawUrl=r.url||'';
+  const isRawCld=rawUrl.includes('res.cloudinary.com/dymyyfuyn/raw/upload/');
+  let src;
+  if(isRawCld&&r.type==='PDF'){
+    // Use Google Docs viewer for raw Cloudinary PDFs
+    src='https://docs.google.com/viewer?url='+encodeURIComponent(rawUrl)+'&embedded=true';
+  } else if(r.embedSrc){
+    src=r.embedSrc;
+  } else {
+    src=rawUrl;
+  }
+  openResourcePreviewModal(rawUrl,src,r.name);
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
