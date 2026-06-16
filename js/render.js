@@ -1359,9 +1359,9 @@ function renderResources(){
       const isCldVideo=rUrl.includes('cloudinary.com')&&r.type==='Video';
       const isFlipbook=rUrl.includes('flipbuilder.com')||rUrl.includes('fliphtml5.com');
       const isGDriveFile=embedSrc.includes('drive.google.com/file');
-      const hasEmbed=!!(r.embedSrc||isGDriveFile||isFlipbook||ytMatch);
       const ytMatch=rUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
       const ytThumb=ytMatch?'https://img.youtube.com/vi/'+ytMatch[1]+'/mqdefault.jpg':null;
+      const hasEmbed=!!(r.embedSrc||isGDriveFile||isFlipbook||ytMatch);
 
       // ── Cloudinary thumbnail URL ──
       const cldThumb=isCldImage?rUrl.replace('/upload/','/upload/w_200,h_120,c_fill,f_auto,q_auto:low/')
@@ -1681,9 +1681,9 @@ function handleCldFile(file){
           <div style="font-size:0.85rem;font-weight:700;color:#dc2626;margin-bottom:0.5rem">&#9888; PDF is ${mb}MB — too large (10MB limit)</div>
           <div style="font-size:0.75rem;color:#6B7280;margin-bottom:0.75rem">Compress it first, then drag it back in</div>
           <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">
-            <a href="https://www.adobe.com/acrobat/online/compress-pdf.html" target="_blank"
+            <a href="https://www.ilovepdf.com/compress_pdf" target="_blank"
               style="padding:0.4rem 0.75rem;border-radius:8px;background:#dc2626;color:#fff;text-decoration:none;font-size:0.78rem;font-weight:700;font-family:'Nunito',sans-serif">
-              &#128196; Compress with Adobe
+              &#128196; Compress with iLovePDF
             </a>
             <a href="https://drive.google.com/drive/folders/11i6WT6dglfXrd4RDN8paxe1q88kEkRqC" target="_blank"
               style="padding:0.4rem 0.75rem;border-radius:8px;background:#1a73e8;color:#fff;text-decoration:none;font-size:0.78rem;font-weight:700;font-family:'Nunito',sans-serif">
