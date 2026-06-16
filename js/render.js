@@ -1347,8 +1347,9 @@ function renderResources(){
     filtered.forEach(r=>{
       const ti=typeInfo(r.type);
       const globalIdx=resources.indexOf(r);
-      const rUrl=r.url||'';
-      const embedSrc=r.embedSrc||'';
+      // Fix any raw Cloudinary URLs — raw delivers as download, image delivers in browser
+      const rUrl=(r.url||'').replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
+      const embedSrc=(r.embedSrc||rUrl).replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
 
       // ── Determine preview strategy ──
       const isCldImage=rUrl.includes('cloudinary.com')&&(r.type==='Image'||/\.(png|jpg|jpeg|gif|webp)/i.test(rUrl));
@@ -1400,6 +1401,9 @@ function renderResources(){
         h.push('</div>');
       }
 
+      // ── Delete button — top-left of thumbnail, always visible ──
+      h.push('<button onclick="event.stopPropagation();confirmDeleteResource('+globalIdx+')" style="position:absolute;top:5px;left:5px;z-index:10;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,0.45);cursor:pointer;color:#fff;font-size:0.7rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:700" title="Delete">&#10005;</button>');
+
       // Type badge top-right
       h.push('<div style="position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.92);border-radius:5px;padding:2px 6px;font-size:0.6rem;font-weight:700;color:'+ti.color+'">'+ti.icon+' '+r.type+'</div>');
       h.push('</div>'); // end thumbnail
@@ -1414,8 +1418,6 @@ function renderResources(){
       if(r.subject)h.push('<span style="color:#374151">'+r.subject+'</span>');
       h.push('</div>');
       if(r.note)h.push('<div style="font-size:0.65rem;color:#9CA3AF;margin-top:2px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.note+'</div>');
-      h.push('</div>');
-      h.push('<button onclick="confirmDeleteResource('+globalIdx+')" style="background:none;border:none;cursor:pointer;color:#e2e8f0;font-size:0.78rem;padding:0;flex-shrink:0;line-height:1" title="Remove" onmouseover="this.style.color=\'#ef4444\'" onmouseout="this.style.color=\'#e2e8f0\'">&#10005;</button>');
       h.push('</div>'); // end flex row
       h.push('</div>'); // end card body
 
@@ -1434,7 +1436,7 @@ function renderResources(){
   h.push('</div>');
   return h.join('');
 }
-const DELETE_PIN="acs2026";
+const DELETE_PIN="2026";
 
 function openResourcePreviewModal(url,embedSrc,name){
   const src=embedSrc||url;
@@ -1671,11 +1673,9 @@ function uploadToCloudinary(file){
   formData.append("upload_preset",CLOUDINARY_PRESET);
   formData.append("folder","kg-teacher-hub");
 
-  // Use 'auto' for images/video, 'raw' for PDFs and documents that Cloudinary can't process
-  const isPdfOrDoc=/\.(pdf|pptx?|docx?|xlsx?)$/i.test(file.name);
-  const resourceType=isPdfOrDoc?'raw':'auto';
+  // Use auto for all types — Cloudinary serves PDFs as viewable documents via auto
   const xhr=new XMLHttpRequest();
-  xhr.open("POST",`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/${resourceType}/upload`);
+  xhr.open("POST",`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/auto/upload`);
 
   xhr.upload.onprogress=e=>{
     if(e.lengthComputable){
