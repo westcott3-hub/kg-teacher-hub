@@ -1375,11 +1375,11 @@ function renderResources(){
 
       // ── Thumbnail area ──
       const canPreview=!!(cldThumb||hasEmbed);
-      h.push('<div style="position:relative;width:100%;padding-top:60%;background:'+ti.color+'18;overflow:hidden;border-radius:12px 12px 0 0;'+(canPreview?'cursor:pointer;':'')+'" '+(canPreview?'onclick="openResourcePreview('+globalIdx+')"':'')+'>');
+      h.push('<div style="position:relative;width:100%;height:130px;background:'+ti.color+'18;overflow:hidden;border-radius:12px 12px 0 0;flex-shrink:0;'+(canPreview?'cursor:pointer;':'')+'" '+(canPreview?'onclick="openResourcePreview('+globalIdx+')"':'')+'>');
 
       if(cldThumb){
         // Cloudinary image/PDF/video thumbnail
-        h.push('<img src="'+cldThumb+'" alt="'+r.name+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block" onerror="this.parentElement.innerHTML=\'<div style=\\\"position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem\\\">'+ti.icon+'</div>\'">');
+        h.push('<img src="'+cldThumb+'" alt="'+r.name+'" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy" onerror="this.style.display=\'none\'">');
       } else if(isFlipbook&&embedSrc){
         // Flipbook iframe — absolutely positioned to avoid affecting card/grid width
         h.push('<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">');
@@ -1400,7 +1400,7 @@ function renderResources(){
         h.push('</div>');
       } else {
         // Placeholder — type icon centred
-        h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.3rem">');
+        h.push('<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;flex-direction:column;gap:0.3rem">');
         h.push('<span style="font-size:2.8rem;line-height:1">'+ti.icon+'</span>');
         h.push('<span style="font-size:0.65rem;font-weight:700;color:'+ti.color+';text-transform:uppercase;letter-spacing:0.5px">'+r.type+'</span>');
         h.push('</div>');
