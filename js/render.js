@@ -1347,21 +1347,15 @@ function renderResources(){
     filtered.forEach(r=>{
       const ti=typeInfo(r.type);
       const globalIdx=resources.indexOf(r);
-      // Fix raw Cloudinary URLs for viewing — use Google Docs viewer for PDFs
       const rawUrl=r.url||'';
-      const isRawCld=rawUrl.includes('res.cloudinary.com/dymyyfuyn/raw/upload/');
-      const rUrl=rawUrl; // keep original URL for Open link (downloads correctly)
-      // For embed/preview: raw PDFs need Google Docs viewer wrapper
-      const baseEmbed=rawUrl.replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
-      const embedSrc=isRawCld&&r.type==='PDF'
-        ?'https://docs.google.com/viewer?url='+encodeURIComponent(rawUrl)+'&embedded=true'
-        :(r.embedSrc||rawUrl).replace('res.cloudinary.com/dymyyfuyn/raw/upload/','res.cloudinary.com/dymyyfuyn/image/upload/');
+      const rUrl=rawUrl;
+      const embedSrc=r.embedSrc||rawUrl;
+      const isRawCld=false; // no longer upload as raw
 
       // ── Determine preview strategy ──
       const isCldImage=rUrl.includes('cloudinary.com')&&(r.type==='Image'||/\.(png|jpg|jpeg|gif|webp)/i.test(rUrl));
       const isCldPdf=rUrl.includes('cloudinary.com')&&r.type==='PDF';
-      // For raw PDF thumbnail, switch to image endpoint
-      const pdfThumbBase=isRawCld?rawUrl.replace('/raw/upload/','/image/upload/'):rUrl;
+      const pdfThumbBase=rUrl;
       const isCldVideo=rUrl.includes('cloudinary.com')&&r.type==='Video';
       const isFlipbook=rUrl.includes('flipbuilder.com')||rUrl.includes('fliphtml5.com');
       const isGDriveFile=embedSrc.includes('drive.google.com/file');
@@ -1431,7 +1425,7 @@ function renderResources(){
       h.push('</div>'); // end card body
 
       // ── Open button ──
-      const openUrl=isRawCld?rawUrl.replace('/raw/upload/','/image/upload/'):rUrl;
+      const openUrl=rUrl;
       h.push('<div style="margin-top:auto">');
       if(openUrl.startsWith("http")||openUrl.startsWith("/")){
         h.push('<a href="'+openUrl+'" target="_blank" style="display:block;padding:0.4rem;text-align:center;background:#FEF2F2;color:#B91C1C;text-decoration:none;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;border-top:1px solid #FECACA;border-radius:0 0 12px 12px">&#128279; Open</a>');
@@ -1698,7 +1692,12 @@ function uploadToCloudinary(file){
   xhr.onload=()=>{
     if(xhr.status===200){
       const res=JSON.parse(xhr.responseText);
-      if(urlEl)urlEl.value=res.secure_url;
+      console.log('[cloudinary upload] resource_type:',res.resource_type,'url:',res.secure_url,'format:',res.format);
+      // Use the exact URL Cloudinary returned — don't rewrite it
+      const finalUrl=res.secure_url;
+      if(urlEl)urlEl.value=finalUrl;
+      // Store resource_type as data attribute for later use
+      if(urlEl)urlEl.dataset.resourceType=res.resource_type||'image';
       if(progressLabel){progressLabel.textContent="✓ Uploaded successfully";progressLabel.style.color="#16a34a";}
       if(progressBar){progressBar.style.background="#16a34a";progressBar.style.width="100%";}
       if(saveBtn)saveBtn.disabled=false;
@@ -1750,12 +1749,8 @@ function saveNewResource(){
 function openResourcePreview(idx){
   const r=DB.resources[idx];
   if(!r)return;
-  const rawUrl=r.url||'';
-  const isRawCld=rawUrl.includes('res.cloudinary.com/dymyyfuyn/raw/upload/');
-  // For raw Cloudinary PDFs, switch to image endpoint which serves as viewable PDF
-  const viewUrl=isRawCld?rawUrl.replace('/raw/upload/','/image/upload/'):rawUrl;
-  const src=r.embedSrc||viewUrl;
-  openResourcePreviewModal(viewUrl,src,r.name);
+  const src=r.embedSrc||r.url||'';
+  openResourcePreviewModal(r.url||'',src,r.name);
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
