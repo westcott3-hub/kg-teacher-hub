@@ -1803,11 +1803,24 @@ const WEEK_TOPICS={
 
 // Get all calendar entries for a date
 
-// Pippa and Pop unit number by school week (2 weeks per unit, weeks 19-20 = exam/review)
+// Pippa and Pop unit number by school week (40 week year, Option A)
+// Sem 1 weeks 1-20: Units 1-4 (weeks 1-16 = 4 weeks each), review weeks 17-18, exams weeks 19-20
+// Sem 2 weeks 21-40: Units 5-8 (weeks 21-36 = 4 weeks each), Unit 9 (weeks 37-38 = 2 weeks), exams weeks 39-40
 const PP_UNIT_FOR_WEEK={
-  1:1,2:1,3:2,4:2,5:3,6:3,7:4,8:4,9:5,10:5,
-  11:6,12:6,13:7,14:7,15:8,16:8,17:9,18:9,19:null,20:null
+   1:1, 2:1, 3:1, 4:1,
+   5:2, 6:2, 7:2, 8:2,
+   9:3,10:3,11:3,12:3,
+  13:4,14:4,15:4,16:4,
+  17:null,18:null,          // Sem 1 review
+  19:null,20:null,          // Sem 1 exams
+  21:5,22:5,23:5,24:5,
+  25:6,26:6,27:6,28:6,
+  29:7,30:7,31:7,32:7,
+  33:8,34:8,35:8,36:8,
+  37:9,38:9,                // Unit 9 — 2 weeks only before exams
+  39:null,40:null           // Sem 2 exams
 };
+function getPPUnitForWeek(weekNum){return PP_UNIT_FOR_WEEK[weekNum]||null;}
 function getPPUnitForWeek(weekNum){return PP_UNIT_FOR_WEEK[weekNum]||null;}
 
 function getWeekTopic(subject,weekNum,cls){
