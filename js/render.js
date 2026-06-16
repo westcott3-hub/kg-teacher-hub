@@ -1373,11 +1373,15 @@ function renderResources(){
         :isCldVideo?rUrl.replace('/upload/','/upload/so_0,w_200,h_120,c_fill,f_jpg,q_auto:low/')
         :null;
 
-      h.push('<div style="background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow 0.15s;min-width:0;max-width:100%" onmouseover="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,0.14)\'" onmouseout="this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.08)\'">');
+      // ── Card outer wrapper with relative positioning for delete button ──
+      h.push('<div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:visible;display:flex;flex-direction:column;min-width:0;max-width:100%;position:relative">');
 
-      // ── Thumbnail area (clickable — opens preview modal) ──
+      // ── Delete button — outside overflow:hidden, top-left corner ──
+      h.push('<button onclick="confirmDeleteResource('+globalIdx+')" style="position:absolute;top:-6px;left:-6px;z-index:20;width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#ef4444;cursor:pointer;color:#fff;font-size:0.6rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:0 1px 4px rgba(0,0,0,0.3)" title="Delete">&#10005;</button>');
+
+      // ── Thumbnail area ──
       const canPreview=!!(cldThumb||hasEmbed);
-      const previewClick=canPreview?'onclick="openResourcePreview('+globalIdx+')"':'';      h.push('<div style="position:relative;width:100%;padding-top:45%;background:'+ti.color+'18;overflow:hidden;'+(canPreview?'cursor:pointer;':'')+'" '+previewClick+'>');
+      h.push('<div style="position:relative;width:100%;padding-top:60%;background:'+ti.color+'18;overflow:hidden;border-radius:12px 12px 0 0;'+(canPreview?'cursor:pointer;':'')+'" '+(canPreview?'onclick="openResourcePreview('+globalIdx+')"':'')+'>');
 
       if(cldThumb){
         // Cloudinary image/PDF/video thumbnail
@@ -1408,9 +1412,6 @@ function renderResources(){
         h.push('</div>');
       }
 
-      // ── Delete button — top-left of thumbnail, always visible ──
-      h.push('<button onclick="event.stopPropagation();confirmDeleteResource('+globalIdx+')" style="position:absolute;top:5px;left:5px;z-index:10;width:22px;height:22px;border-radius:50%;border:none;background:rgba(0,0,0,0.45);cursor:pointer;color:#fff;font-size:0.7rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:700" title="Delete">&#10005;</button>');
-
       // Type badge top-right
       h.push('<div style="position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.92);border-radius:5px;padding:2px 6px;font-size:0.6rem;font-weight:700;color:'+ti.color+'">'+ti.icon+' '+r.type+'</div>');
       h.push('</div>'); // end thumbnail
@@ -1423,19 +1424,21 @@ function renderResources(){
       h.push('<div style="font-size:0.65rem;color:#94a3b8;margin-top:2px">');
       h.push('<span style="background:#f1f5f9;border-radius:3px;padding:1px 5px;font-weight:700;color:#64748b;margin-right:3px">'+(r.prog||"MLP")+' '+(r.level||"K1")+'</span>');
       if(r.subject)h.push('<span style="color:#374151">'+r.subject+'</span>');
-      h.push('</div>');
+      h.push('</div>'); // end metadata
       if(r.note)h.push('<div style="font-size:0.65rem;color:#9CA3AF;margin-top:2px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.note+'</div>');
+      h.push('</div>'); // end name col
       h.push('</div>'); // end flex row
       h.push('</div>'); // end card body
 
       // ── Open button ──
+      const openUrl=isRawCld?rawUrl.replace('/raw/upload/','/image/upload/'):rUrl;
       h.push('<div style="margin-top:auto">');
-      if(rUrl.startsWith("http")||rUrl.startsWith("/")){
-        h.push('<a href="'+rUrl+'" target="_blank" style="display:block;padding:0.4rem;text-align:center;background:#FEF2F2;color:#B91C1C;text-decoration:none;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;border-top:1px solid #FECACA">&#128279; Open</a>');
+      if(openUrl.startsWith("http")||openUrl.startsWith("/")){
+        h.push('<a href="'+openUrl+'" target="_blank" style="display:block;padding:0.4rem;text-align:center;background:#FEF2F2;color:#B91C1C;text-decoration:none;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;border-top:1px solid #FECACA;border-radius:0 0 12px 12px">&#128279; Open</a>');
       } else {
         h.push('<div style="padding:0.4rem;text-align:center;background:#F9FAFB;color:#9CA3AF;font-size:0.75rem;border-top:1px solid #F3F4F6">No URL</div>');
       }
-      h.push('</div>');
+      h.push('</div>'); // end open button wrapper
       h.push('</div>'); // end card
     });
     h.push('</div>');
@@ -1749,16 +1752,10 @@ function openResourcePreview(idx){
   if(!r)return;
   const rawUrl=r.url||'';
   const isRawCld=rawUrl.includes('res.cloudinary.com/dymyyfuyn/raw/upload/');
-  let src;
-  if(isRawCld&&r.type==='PDF'){
-    // Use Google Docs viewer for raw Cloudinary PDFs
-    src='https://docs.google.com/viewer?url='+encodeURIComponent(rawUrl)+'&embedded=true';
-  } else if(r.embedSrc){
-    src=r.embedSrc;
-  } else {
-    src=rawUrl;
-  }
-  openResourcePreviewModal(rawUrl,src,r.name);
+  // For raw Cloudinary PDFs, switch to image endpoint which serves as viewable PDF
+  const viewUrl=isRawCld?rawUrl.replace('/raw/upload/','/image/upload/'):rawUrl;
+  const src=r.embedSrc||viewUrl;
+  openResourcePreviewModal(viewUrl,src,r.name);
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
