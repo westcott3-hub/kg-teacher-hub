@@ -1346,7 +1346,7 @@ function renderResources(){
     h.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;box-sizing:border-box">');
     filtered.forEach(r=>{
       const ti=typeInfo(r.type);
-      const globalIdx=resources.indexOf(r);
+      const globalIdx=resources.findIndex(x=>x.id===r.id);
       const rawUrl=r.url||'';
       const rUrl=rawUrl;
       const embedSrc=r.embedSrc||rawUrl;
@@ -1873,6 +1873,7 @@ function saveNewResource(){
 }
 
 function openResourcePreview(idx){
+  if(idx<0||idx>=DB.resources.length)return;
   const r=DB.resources[idx];
   if(!r)return;
   const src=r.embedSrc||r.url||'';
