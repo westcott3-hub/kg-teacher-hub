@@ -98,6 +98,17 @@ function startSync(){
       if(d.resources&&d.resources.length>0){
         // Firestore has resources — use as-is, full source of truth
         DB.resources=d.resources;
+        // Append any SEED_RESOURCES entries missing from Firestore (new additions)
+        const existingIds=new Set(DB.resources.map(r=>r.id));
+        const missing=SEED_RESOURCES.filter(r=>!existingIds.has(r.id));
+        if(missing.length>0){
+          console.log("[sync] adding "+missing.length+" new seed resources");
+          DB.resources=[...DB.resources,...missing];
+          db.collection("hubData").doc("shared").set(
+            {resources:DB.resources,resourcesVersion:RESOURCES_VERSION},
+            {merge:true}
+          );
+        }
         console.log("[sync] loaded "+DB.resources.length+" resources from Firestore");
       } else {
         // Firestore empty — seed with SEED_RESOURCES

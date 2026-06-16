@@ -351,15 +351,22 @@ function renderTimetable(){
   // Resources matching a subject
   function getResources(subj){
     if(!subj)return[];
-    // Derive prog and level from current class context
     const isMLP=cls==='K1A'||cls==='K1B'||cls==='K2A'||cls==='K2B'||cls==='K3A'||cls==='K3B'||cls==='N1'||cls==='N2';
     const resProg=isMLP?'MLP':'IEP';
     const resLevel=cls.startsWith('K3')?'K3':cls.startsWith('K2')?'K2':'K1';
-    return(DB.resources||[]).filter(r=>
-      r.subject&&subj.includes(r.subject)&&
-      (r.prog||'MLP')===resProg&&
-      (r.level||'K1')===resLevel
-    );
+    // Get current PP unit for week-based filtering
+    const ppUnit=weekNum?getPPUnitForWeek(weekNum):null;
+    return(DB.resources||[]).filter(r=>{
+      if(!r.subject||!subj.includes(r.subject))return false;
+      if((r.prog||'MLP')!==resProg)return false;
+      if((r.level||'K1')!==resLevel)return false;
+      // Unit-specific filtering: if resource has a unit note (U1·, U2· etc), only show for matching unit
+      if(ppUnit&&r.note){
+        const unitMatch=r.note.match(/^U(\d+)\s*·/);
+        if(unitMatch)return parseInt(unitMatch[1])===ppUnit;
+      }
+      return true;
+    });
   }
 
   const h=[];
@@ -1014,11 +1021,17 @@ function renderTeacherTab(teacher){
     const isMLP=lessonCls==='K1A'||lessonCls==='K1B'||lessonCls==='K2A'||lessonCls==='K2B'||lessonCls==='K3A'||lessonCls==='K3B'||lessonCls==='N1'||lessonCls==='N2';
     const resProg=isMLP?'MLP':'IEP';
     const resLevel=lessonCls.startsWith('K3')?'K3':lessonCls.startsWith('K2')?'K2':'K1';
-    return(DB.resources||[]).filter(r=>
-      r.subject&&lessonSub.includes(r.subject)&&
-      (r.prog||'MLP')===resProg&&
-      (r.level||'K1')===resLevel
-    );
+    const ppUnit=weekNum?getPPUnitForWeek(weekNum):null;
+    return(DB.resources||[]).filter(r=>{
+      if(!r.subject||!lessonSub.includes(r.subject))return false;
+      if((r.prog||'MLP')!==resProg)return false;
+      if((r.level||'K1')!==resLevel)return false;
+      if(ppUnit&&r.note){
+        const unitMatch=r.note.match(/^U(\d+)\s*·/);
+        if(unitMatch)return parseInt(unitMatch[1])===ppUnit;
+      }
+      return true;
+    });
   }
   const todayLessonMap=getDayLessonMap(today);
   // Observation data for this teacher + day
@@ -1335,114 +1348,157 @@ function renderResources(){
     h.push('<button onclick="S.resSub=\''+s+'\';render()" style="padding:0.3rem 0.65rem;border-radius:8px;border:2px solid '+(act?'var(--red)':'#E5E7EB')+';background:'+(act?'var(--red)':'#F9FAFB')+';color:'+(act?'#fff':'#374151')+';font-family:\'Nunito\',sans-serif;font-size:0.85rem;font-weight:'+(act?800:700)+';cursor:pointer;white-space:nowrap;flex-shrink:0;min-height:32px;transition:all 0.15s">'+s+'</button>');
   });
   h.push('</div>');
-  // Resource grid
+  // Resource grid — grouped by unit for video content, flat grid otherwise
+  const VIDEO_TYPES=['Student Book','Workbook','Story','Story (Role Play)','Chant','Phonics','Video'];
+  const hasUnitVideos=filtered.some(r=>VIDEO_TYPES.includes(r.type)&&r.note&&/^U\d+\s*·/.test(r.note));
+
   if(filtered.length===0){
     h.push('<div style="text-align:center;color:#94a3b8;padding:2.5rem 1rem;background:#fff;border-radius:12px;border:1px dashed #E5E7EB">');
     h.push('<div style="font-size:1.5rem;margin-bottom:0.5rem">&#128194;</div>');
     h.push('<div style="font-weight:700;color:#6B7280">No '+prog+' '+level+' '+(subj==="All"?"resources":subj+" resources")+' yet</div>');
     h.push('<div style="font-size:0.75rem;color:#9CA3AF;margin-top:0.3rem">Click <strong>+ Add</strong> to add the first one</div>');
     h.push('</div>');
-  } else {
-    h.push('<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;box-sizing:border-box">');
-    filtered.forEach(r=>{
-      const ti=typeInfo(r.type);
-      const globalIdx=resources.findIndex(x=>x.id===r.id);
-      const rawUrl=r.url||'';
-      const rUrl=rawUrl;
-      const embedSrc=r.embedSrc||rawUrl;
-      const isRawCld=false; // no longer upload as raw
 
-      // ── Determine preview strategy ──
-      const isCldImage=rUrl.includes('cloudinary.com')&&(r.type==='Image'||/\.(png|jpg|jpeg|gif|webp)/i.test(rUrl));
-      const isCldPdf=rUrl.includes('cloudinary.com')&&r.type==='PDF';
-      const pdfThumbBase=rUrl;
-      const isCldVideo=rUrl.includes('cloudinary.com')&&r.type==='Video';
-      const isFlipbook=rUrl.includes('flipbuilder.com')||rUrl.includes('fliphtml5.com');
-      const isGDriveFile=embedSrc.includes('drive.google.com/file');
-      const ytMatch=rUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-      const ytThumb=ytMatch?'https://img.youtube.com/vi/'+ytMatch[1]+'/mqdefault.jpg':null;
-      const hasEmbed=!!(r.embedSrc||isGDriveFile||isFlipbook||ytMatch);
-
-      // ── Cloudinary thumbnail URL ──
-      const cldThumb=isCldImage?rUrl.replace('/upload/','/upload/w_200,h_120,c_fill,f_auto,q_auto:low/')
-        :isCldPdf?pdfThumbBase.replace('/upload/','/upload/pg_1,w_200,h_120,c_fill,f_jpg,q_auto:low/').replace(/\.[^.]+$/,'.jpg')
-        :isCldVideo?rUrl.replace('/upload/','/upload/so_0,w_200,h_120,c_fill,f_jpg,q_auto:low/')
-        :ytThumb||null;
-
-      // ── Card outer wrapper with relative positioning for delete button ──
-      h.push('<div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:visible;display:flex;flex-direction:column;min-width:0;max-width:100%;position:relative">');
-
-      // ── Delete button — outside overflow:hidden, top-left corner ──
-      h.push('<button onclick="confirmDeleteResource('+globalIdx+')" style="position:absolute;top:-6px;left:-6px;z-index:20;width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#ef4444;cursor:pointer;color:#fff;font-size:0.6rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:0 1px 4px rgba(0,0,0,0.3)" title="Delete">&#10005;</button>');
-
-      // ── Thumbnail area ──
-      const canPreview=!!(cldThumb||hasEmbed);
-      h.push('<div style="position:relative;width:100%;height:130px;background:'+ti.color+'18;overflow:hidden;border-radius:12px 12px 0 0;flex-shrink:0;'+(canPreview?'cursor:pointer;':'')+'" '+(canPreview?'onclick="openResourcePreview('+globalIdx+')"':'')+'>');
-
-      if(cldThumb){
-        // Cloudinary image/PDF/video thumbnail
-        h.push('<img src="'+cldThumb+'" alt="'+r.name+'" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy" onerror="this.style.display=\'none\'">');
-      } else if(isFlipbook&&embedSrc){
-        // Flipbook iframe — absolutely positioned to avoid affecting card/grid width
-        h.push('<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">');
-        h.push('<div style="position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(0.5);transform-origin:top left">');
-        h.push('<iframe src="'+embedSrc+'" style="width:100%;height:100%;border:none;pointer-events:none" loading="lazy" title="'+r.name+'"></iframe>');
-        h.push('</div></div>');
-        h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.03)">');
-        h.push('<div style="background:rgba(0,0,0,0.45);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem">&#128065;</div>');
-        h.push('</div>');
-      } else if(isGDriveFile&&embedSrc){
-        // Google Drive embed — absolutely positioned
-        h.push('<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">');
-        h.push('<div style="position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(0.5);transform-origin:top left">');
-        h.push('<iframe src="'+embedSrc+'" style="width:100%;height:100%;border:none;pointer-events:none" loading="lazy" title="'+r.name+'"></iframe>');
-        h.push('</div></div>');
-        h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.03)">');
-        h.push('<div style="background:rgba(0,0,0,0.45);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem">&#128065;</div>');
-        h.push('</div>');
-      } else {
-        // Placeholder — type icon centred
-        h.push('<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;flex-direction:column;gap:0.3rem">');
-        h.push('<span style="font-size:2.8rem;line-height:1">'+ti.icon+'</span>');
-        h.push('<span style="font-size:0.65rem;font-weight:700;color:'+ti.color+';text-transform:uppercase;letter-spacing:0.5px">'+r.type+'</span>');
-        h.push('</div>');
-      }
-
-      // Type badge top-right
-      h.push('<div style="position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.92);border-radius:5px;padding:2px 6px;font-size:0.6rem;font-weight:700;color:'+ti.color+'">'+ti.icon+' '+r.type+'</div>');
-      h.push('</div>'); // end thumbnail
-
-      // ── Card body ──
-      h.push('<div style="padding:0.6rem 0.7rem;flex:1;display:flex;flex-direction:column;gap:0.35rem">');
-      h.push('<div style="display:flex;align-items:flex-start;gap:0.3rem">');
-      h.push('<div style="flex:1;min-width:0">');
-      h.push('<div style="font-weight:800;color:#111827;font-size:0.82rem;line-height:1.3">'+r.name+'</div>');
-      h.push('<div style="font-size:0.65rem;color:#94a3b8;margin-top:2px">');
-      h.push('<span style="background:#f1f5f9;border-radius:3px;padding:1px 5px;font-weight:700;color:#64748b;margin-right:3px">'+(r.prog||"MLP")+' '+(r.level||"K1")+'</span>');
-      if(r.subject)h.push('<span style="color:#374151">'+r.subject+'</span>');
-      h.push('</div>'); // end metadata
-      if(r.note)h.push('<div style="font-size:0.65rem;color:#9CA3AF;margin-top:2px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.note+'</div>');
-      h.push('</div>'); // end name col
-      h.push('</div>'); // end flex row
-      h.push('</div>'); // end card body
-
-      // ── Open button ──
-      const openUrl=rUrl;
-      h.push('<div style="margin-top:auto">');
-      if(openUrl.startsWith("http")||openUrl.startsWith("/")){
-        h.push('<a href="'+openUrl+'" target="_blank" style="display:block;padding:0.4rem;text-align:center;background:#FEF2F2;color:#B91C1C;text-decoration:none;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;border-top:1px solid #FECACA;border-radius:0 0 12px 12px">&#128279; Open</a>');
-      } else {
-        h.push('<div style="padding:0.4rem;text-align:center;background:#F9FAFB;color:#9CA3AF;font-size:0.75rem;border-top:1px solid #F3F4F6">No URL</div>');
-      }
-      h.push('</div>'); // end open button wrapper
-      h.push('</div>'); // end card
+  } else if(hasUnitVideos){
+    // ── GROUPED BY UNIT ────────────────────────────────────────────────────
+    const nonUnit=filtered.filter(r=>!r.note||!/^U\d+\s*·/.test(r.note));
+    const unitRes=filtered.filter(r=>r.note&&/^U\d+\s*·/.test(r.note));
+    const sw=getSchoolWeekForOffset(S.tmWeekOffset||0);
+    const currentPPUnit=sw?getPPUnitForWeek(sw.week):null;
+    // Group by unit number
+    const unitMap={};
+    unitRes.forEach(r=>{
+      const m=r.note.match(/^U(\d+)\s*·/);
+      if(m){const u=parseInt(m[1]);if(!unitMap[u])unitMap[u]=[];unitMap[u].push(r);}
     });
+    const unitNums=Object.keys(unitMap).map(Number).sort((a,b)=>a-b);
+    // Non-unit resources (PDFs, playlists, flipbooks) shown first
+    if(nonUnit.length>0){
+      h.push('<div style="margin-bottom:1.25rem">');
+      h.push('<div style="font-weight:800;font-size:0.78rem;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem">&#128218; Course Resources</div>');
+      h.push('<div class="res-grid">');
+      nonUnit.forEach(r=>renderResourceCard(h,r,resources));
+      h.push('</div></div>');
+    }
+    // Unit groups
+    const typeOrder=['Student Book','Workbook','Story','Story (Role Play)','Chant','Phonics','Video'];
+    unitNums.forEach(unitNum=>{
+      const isCurrentUnit=currentPPUnit===unitNum;
+      const unitResources=unitMap[unitNum];
+      const sbRes=unitResources.find(r=>r.type==='Student Book');
+      const topicMatch=sbRes&&sbRes.note&&sbRes.note.match(/^U\d+\s*·\s*(.+)/);
+      const topicName=topicMatch?topicMatch[1]:'';
+      h.push('<div style="margin-bottom:1.25rem">');
+      h.push('<div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.75rem;border-radius:10px;background:'+(isCurrentUnit?'#FEF2F2':'#F9FAFB')+';border:1px solid '+(isCurrentUnit?'#FECACA':'#E5E7EB')+';margin-bottom:0.5rem">');
+      h.push('<div style="font-weight:900;font-size:0.88rem;color:'+(isCurrentUnit?'var(--red)':'#374151')+'">Unit '+unitNum+'</div>');
+      if(topicName)h.push('<div style="font-size:0.78rem;color:'+(isCurrentUnit?'#B91C1C':'#6B7280')+';font-weight:600">'+topicName+'</div>');
+      if(isCurrentUnit)h.push('<div style="margin-left:auto;font-size:0.7rem;font-weight:800;color:var(--red);background:#fff;border-radius:6px;padding:0.15rem 0.5rem;border:1px solid #FECACA">&#128197; This Week</div>');
+      h.push('</div>');
+      const sorted=[...unitResources].sort((a,b)=>typeOrder.indexOf(a.type)-typeOrder.indexOf(b.type));
+      h.push('<div class="res-grid">');
+      sorted.forEach(r=>renderResourceCard(h,r,resources));
+      h.push('</div></div>');
+    });
+
+  } else {
+    // ── FLAT GRID ──────────────────────────────────────────────────────────
+    h.push('<div class="res-grid">');
+    filtered.forEach(r=>renderResourceCard(h,r,resources));
     h.push('</div>');
   }
   h.push('</div>');
   return h.join('');
 }
-const DELETE_PIN="2026";
+
+function renderResourceCard(h,r,resources){
+  const ti=typeInfo(r.type);
+  const globalIdx=resources.findIndex(x=>x.id===r.id);
+  const rawUrl=r.url||'';
+  const rUrl=rawUrl;
+  const embedSrc=r.embedSrc||rawUrl;
+  const isRawCld=false;
+
+  // Determine preview strategy
+  const isCldImage=rUrl.includes('cloudinary.com')&&(r.type==='Image'||/\.(png|jpg|jpeg|gif|webp)/i.test(rUrl));
+  const isCldPdf=rUrl.includes('cloudinary.com')&&r.type==='PDF';
+  const pdfThumbBase=rUrl;
+  const isCldVideo=rUrl.includes('cloudinary.com')&&r.type==='Video';
+  const isFlipbook=rUrl.includes('flipbuilder.com')||rUrl.includes('fliphtml5.com');
+  const isGDriveFile=embedSrc.includes('drive.google.com/file');
+  const ytMatch=rUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  const ytIsPlaylist=rUrl.includes('youtube.com/playlist')||rUrl.includes('list=');
+  const ytThumb=ytMatch?'https://img.youtube.com/vi/'+ytMatch[1]+'/mqdefault.jpg':null;
+  const hasEmbed=!!(r.embedSrc||isGDriveFile||isFlipbook||ytMatch||ytIsPlaylist);
+
+  // Cloudinary thumbnail URL
+  const cldThumb=isCldImage?rUrl.replace('/upload/','/upload/w_200,h_120,c_fill,f_auto,q_auto:low/')
+    :isCldPdf?pdfThumbBase.replace('/upload/','/upload/pg_1,w_200,h_120,c_fill,f_jpg,q_auto:low/').replace(/\.[^.]+$/,'.jpg')
+    :isCldVideo?rUrl.replace('/upload/','/upload/so_0,w_200,h_120,c_fill,f_jpg,q_auto:low/')
+    :ytThumb||null;
+
+  const canPreview=!!(cldThumb||hasEmbed);
+
+  // Card outer wrapper
+  h.push('<div style="background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08);overflow:visible;display:flex;flex-direction:column;min-width:0;max-width:100%;position:relative">');
+
+  // Delete button
+  h.push('<button onclick="confirmDeleteResource('+globalIdx+')" style="position:absolute;top:-6px;left:-6px;z-index:20;width:20px;height:20px;border-radius:50%;border:2px solid #fff;background:#ef4444;cursor:pointer;color:#fff;font-size:0.6rem;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:0 1px 4px rgba(0,0,0,0.3)" title="Delete">&#10005;</button>');
+
+  // Thumbnail
+  h.push('<div style="position:relative;width:100%;height:130px;background:'+ti.color+'18;overflow:hidden;border-radius:12px 12px 0 0;flex-shrink:0;'+(canPreview?'cursor:pointer;':'')+'" '+(canPreview?'onclick="openResourcePreview('+globalIdx+')"':'')+'>');
+  if(cldThumb){
+    h.push('<img src="'+cldThumb+'" alt="'+r.name+'" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy" onerror="this.style.display=\'none\'">');
+  } else if(isFlipbook&&embedSrc){
+    h.push('<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">');
+    h.push('<div style="position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(0.5);transform-origin:top left">');
+    h.push('<iframe src="'+embedSrc+'" style="width:100%;height:100%;border:none;pointer-events:none" loading="lazy" title="'+r.name+'"></iframe>');
+    h.push('</div></div>');
+    h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.03)">');
+    h.push('<div style="background:rgba(0,0,0,0.45);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem">&#128065;</div>');
+    h.push('</div>');
+  } else if(isGDriveFile&&embedSrc){
+    h.push('<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">');
+    h.push('<div style="position:absolute;top:0;left:0;width:200%;height:200%;transform:scale(0.5);transform-origin:top left">');
+    h.push('<iframe src="'+embedSrc+'" style="width:100%;height:100%;border:none;pointer-events:none" loading="lazy" title="'+r.name+'"></iframe>');
+    h.push('</div></div>');
+    h.push('<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.03)">');
+    h.push('<div style="background:rgba(0,0,0,0.45);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem">&#128065;</div>');
+    h.push('</div>');
+  } else {
+    h.push('<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;flex-direction:column;gap:0.3rem">');
+    h.push('<span style="font-size:2.8rem;line-height:1">'+ti.icon+'</span>');
+    h.push('<span style="font-size:0.65rem;font-weight:700;color:'+ti.color+';text-transform:uppercase;letter-spacing:0.5px">'+r.type+'</span>');
+    h.push('</div>');
+  }
+  // Type badge top-right
+  h.push('<div style="position:absolute;top:6px;right:6px;background:rgba(255,255,255,0.92);border-radius:5px;padding:2px 6px;font-size:0.6rem;font-weight:700;color:'+ti.color+'">'+ti.icon+' '+r.type+'</div>');
+  h.push('</div>'); // end thumbnail
+
+  // Card body
+  h.push('<div style="padding:0.6rem 0.7rem;flex:1;display:flex;flex-direction:column;gap:0.35rem">');
+  h.push('<div style="display:flex;align-items:flex-start;gap:0.3rem">');
+  h.push('<div style="flex:1;min-width:0">');
+  h.push('<div style="font-weight:800;color:#111827;font-size:0.82rem;line-height:1.3">'+r.name+'</div>');
+  h.push('<div style="font-size:0.65rem;color:#94a3b8;margin-top:2px">');
+  h.push('<span style="background:#f1f5f9;border-radius:3px;padding:1px 5px;font-weight:700;color:#64748b;margin-right:3px">'+(r.prog||"MLP")+' '+(r.level||"K1")+'</span>');
+  if(r.subject)h.push('<span style="color:#374151">'+r.subject+'</span>');
+  h.push('</div>');
+  if(r.note)h.push('<div style="font-size:0.65rem;color:#9CA3AF;margin-top:2px;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.note+'</div>');
+  h.push('</div>'); // end name col
+  h.push('</div>'); // end flex row
+  h.push('</div>'); // end card body
+
+  // Open button
+  const openUrl=rUrl;
+  h.push('<div style="margin-top:auto">');
+  if(openUrl.startsWith("http")||openUrl.startsWith("/")){
+    h.push('<a href="'+openUrl+'" target="_blank" style="display:block;padding:0.4rem;text-align:center;background:#FEF2F2;color:#B91C1C;text-decoration:none;font-family:\'Nunito\',sans-serif;font-weight:700;font-size:0.78rem;border-top:1px solid #FECACA;border-radius:0 0 12px 12px">&#128279; Open</a>');
+  } else {
+    h.push('<div style="padding:0.4rem;text-align:center;background:#F9FAFB;color:#9CA3AF;font-size:0.75rem;border-top:1px solid #F3F4F6;border-radius:0 0 12px 12px">No URL</div>');
+  }
+  h.push('</div>');
+  h.push('</div>'); // end card
+}
 
 function openResourcePreviewModal(url,embedSrc,name){
   const src=embedSrc||url;
@@ -1525,7 +1581,7 @@ function openAddResourceModal(){
   const prog=S.resProg||"MLP";
   const level=S.resLevel||"K1";
   const subj=S.resSub!=="All"?S.resSub:"";
-  const types=["Slides","Video","PDF","Doc","Sheet","Audio","Link","Flipbook"];
+  const types=["Slides","Video","Student Book","Workbook","Story","Story (Role Play)","Chant","Phonics","PDF","Doc","Sheet","Audio","Link"];
 
   const el=document.createElement("div");
   el.id="add-res-modal";
@@ -1876,6 +1932,10 @@ function openResourcePreview(idx){
   if(idx<0||idx>=DB.resources.length)return;
   const r=DB.resources[idx];
   if(!r)return;
+  // YouTube playlists open in new tab — can't embed playlist pages
+  if((r.url||'').includes('youtube.com/playlist')){
+    window.open(r.url,'_blank');return;
+  }
   const src=r.embedSrc||r.url||'';
   openResourcePreviewModal(r.url||'',src,r.name);
 }
