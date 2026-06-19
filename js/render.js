@@ -1556,6 +1556,8 @@ function confirmDeleteResource(idx){
   setTimeout(()=>{const i=document.getElementById("delete-pin-input");if(i)i.focus();},50);
 }
 
+const DELETE_PIN="2026";
+
 function deleteResourceConfirmed(idx){
   const input=document.getElementById("delete-pin-input");
   const errEl=document.getElementById("delete-pin-error");
