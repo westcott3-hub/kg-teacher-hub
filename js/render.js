@@ -1569,6 +1569,7 @@ function deleteResourceConfirmed(idx){
     return;
   }
   DB.resources.splice(idx,1);
+  _pushing=true; // block onSnapshot from overwriting DB.resources until this push completes
   pushDB();
   document.getElementById("delete-res-modal").remove();
   render();
