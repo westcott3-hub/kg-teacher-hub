@@ -97,35 +97,48 @@ function startSync(){
 
       if(d.resources&&d.resources.length>0){
         // Firestore has resources — use as-is, full source of truth
+        const prevCount=DB.resources.length;
         DB.resources=d.resources;
-        // Append any SEED_RESOURCES entries missing from Firestore (new additions)
+        console.log("[sync] Firestore→DB: "+d.resources.length+" resources (was "+prevCount+") ts="+new Date().toISOString());
+        // Append any SEED_RESOURCES entries missing from Firestore (new additions to defaults)
         const existingIds=new Set(DB.resources.map(r=>r.id));
         const missing=SEED_RESOURCES.filter(r=>!existingIds.has(r.id));
         if(missing.length>0){
-          console.log("[sync] adding "+missing.length+" new seed resources");
+          console.log("[sync] WRITING BACK "+missing.length+" missing seed IDs: "+missing.map(r=>r.id).join(","));
           DB.resources=[...DB.resources,...missing];
+          _pushing=true;
+          db.collection("hubData").doc("shared").set(
+            {resources:DB.resources,resourcesVersion:RESOURCES_VERSION},
+            {merge:true}
+          ).then(()=>{_pushing=false;console.log("[sync] write-back complete: "+DB.resources.length+" resources");})
+           .catch((e)=>{_pushing=false;console.error("[sync] write-back failed:",e);});
+        }
+        console.log("[sync] loaded "+DB.resources.length+" resources from Firestore");
+      } else {
+        // Firestore shows empty resources — could be transient. Only seed if memory is also empty.
+        if(DB.resources.length<=SEED_RESOURCES.length){
+          console.log("[sync] Firestore empty — seeding "+SEED_RESOURCES.length+" resources");
+          DB.resources=JSON.parse(JSON.stringify(SEED_RESOURCES));
           db.collection("hubData").doc("shared").set(
             {resources:DB.resources,resourcesVersion:RESOURCES_VERSION},
             {merge:true}
           );
+        } else {
+          console.warn("[sync] Firestore shows empty but DB has "+DB.resources.length+" resources — skipping seed");
         }
-        console.log("[sync] loaded "+DB.resources.length+" resources from Firestore");
-      } else {
-        // Firestore empty — seed with SEED_RESOURCES
-        console.log("[sync] Firestore empty — seeding "+SEED_RESOURCES.length+" resources");
-        DB.resources=JSON.parse(JSON.stringify(SEED_RESOURCES));
-        db.collection("hubData").doc("shared").set(
-          {resources:DB.resources,resourcesVersion:RESOURCES_VERSION},
-          {merge:true}
-        );
       }
     } else {
-      // No Firestore document yet — create and seed
-      console.log("[sync] no doc — creating and seeding");
-      DB.resources=JSON.parse(JSON.stringify(SEED_RESOURCES));
-      db.collection("hubData").doc("shared").set(
-        {resources:DB.resources,resourcesVersion:RESOURCES_VERSION,snapshots:{},assessments:{},dailyLogs:{}}
-      );
+      // Document appears not to exist — but this can happen transiently during
+      // auth token refresh or network blips. Only seed if we have no resources at all.
+      if(DB.resources.length<=SEED_RESOURCES.length){
+        console.log("[sync] no doc or empty — seeding with SEED_RESOURCES");
+        DB.resources=JSON.parse(JSON.stringify(SEED_RESOURCES));
+        db.collection("hubData").doc("shared").set(
+          {resources:DB.resources,resourcesVersion:RESOURCES_VERSION,snapshots:{},assessments:{},dailyLogs:{}}
+        );
+      } else {
+        console.warn("[sync] snap.exists=false but DB has "+DB.resources.length+" resources — skipping seed to protect user data");
+      }
     }
     S.syncStatus="ok";
     render();
