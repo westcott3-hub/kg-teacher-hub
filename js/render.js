@@ -21,6 +21,7 @@ function render(){
     S.clockStr=nowTimeStr();
     root.innerHTML=`
       ${renderHeader()}
+      ${renderTicker()}
       ${renderTabs()}
       ${S.tab==="timetable"?renderTimetableNav():""}
       <div id="tab-body" style="flex:1;overflow:visible;position:relative;width:100%">
@@ -141,6 +142,7 @@ function renderHeader(){
       <!-- Clock + actions -->
       <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
         <div id="period-progress"></div>
+        <button onclick="S.popup={type:'assembly'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Assembly — Morning Talk, Story &amp; Announcements">&#127908; <span>Assembly</span></button>
         <button onclick="S.popup={type:'dutyRota'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Morning Duty Rota">&#128205; <span>Duty</span></button>
         <div style="text-align:right">
           <div id="header-clock" style="font-size:1.6rem;font-weight:900;color:#111827;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1">${nowTimeStr()}</div>
@@ -1176,7 +1178,127 @@ function renderPopup(){
   if(S.popup.type==="period")return renderPeriodPopup();
   if(S.popup.type==="resourcePreview")return renderResourcePreviewPopup();
   if(S.popup.type==="dutyRota")return renderDutyRotaModal();
+  if(S.popup.type==="assembly")return renderAssemblyModal();
   return"";
+}
+
+// ── NOTIFICATION TICKER ───────────────────────────────────────────────────────
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderTicker(){
+  const items=[];
+  const now=new Date();
+  const nextWkDate=new Date(now);nextWkDate.setDate(nextWkDate.getDate()+7);
+  // Morning Talk — next week's line-up
+  const mt=getMorningTalkWeek(nextWkDate);
+  items.push('&#127908; Morning Talk next week ('+mt.label+'): Mon '+mt.Monday+' &middot; Tue '+mt.Tuesday+' &middot; Wed '+mt.Wednesday+' &middot; Thu '+mt.Thursday+' &middot; Fri '+mt.Friday);
+  // Wednesday assembly story — next upcoming
+  const st=getNextStory();
+  items.push('&#128214; Assembly Story &middot; Wed '+st.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+': <b>'+st.teacher+'</b>');
+  // Morning duty — next school week
+  const sw=getCurrentSchoolWeek();
+  if(sw){
+    const nw=SCHOOL_WEEKS.find(w=>w.week===sw.week+1);
+    const rota=nw?getDutyRota(nw.week):null;
+    if(rota)items.push('&#128205; Morning duty Wk '+nw.week+': Rota '+rota.rota+(GARY_DUTY_WEEKS.has(nw.week)?' &mdash; T. Gary on duty &#128308;':''));
+  }
+  // Teacher announcements (editable in Assembly popup)
+  (DB.announcements||[]).forEach(a=>items.push('&#128226; '+escHtml(a.text)));
+  const track=items.join('<span class="ticker-sep">&#9679;</span>');
+  const dur=Math.max(30,Math.round(track.replace(/<[^>]*>/g,'').length*0.28));
+  return '<div class="ticker" onclick="S.popup={type:\'assembly\'};render()" title="Open assembly schedule &amp; announcements">'
+    +'<div class="ticker-label">&#128226; NEWS</div>'
+    +'<div class="ticker-view"><div class="ticker-track" style="animation-duration:'+dur+'s">'+track+'</div></div>'
+    +'</div>';
+}
+
+// ── ASSEMBLY MODAL — Morning Talk, Wednesday Story, Announcements ─────────────
+function renderAssemblyModal(){
+  const now=new Date();
+  const today=todayDayName();
+  const curIdx=getMorningTalkWeekIdx(now);
+  const cur=MORNING_TALK_ROTA[curIdx];
+  const nxt=MORNING_TALK_ROTA[1-curIdx];
+  const h=[];
+  h.push('<div class="modal-bg" onclick="if(event.target===this){S.popup=null;render()}">');
+  h.push('<div class="modal-box" style="max-width:580px">');
+  h.push('<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">');
+  h.push('<div style="font-weight:900;font-size:1.05rem;color:#111827">&#127908; Assembly Schedule</div>');
+  h.push('<button onclick="S.popup=null;render()" style="padding:0.3rem 0.65rem;border-radius:8px;border:1px solid #e5e7eb;background:#f9fafb;cursor:pointer;font-size:0.85rem;font-weight:700;color:#6b7280">&#10005;</button>');
+  h.push('</div>');
+
+  // ── Morning Talk — this week / next week side by side
+  h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">&#127908; Morning Talk</div>');
+  h.push('<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1rem">');
+  [[cur,'This week',true],[nxt,'Next week',false]].forEach(([rota,title,isCur])=>{
+    h.push('<div style="border:1px solid '+(isCur?'#FECACA':'#E5E7EB')+';border-radius:10px;overflow:hidden">');
+    h.push('<div style="padding:0.35rem 0.6rem;background:'+(isCur?'#FEF2F2':'#F9FAFB')+';font-size:0.72rem;font-weight:800;color:'+(isCur?'var(--red)':'#6B7280')+'">'+title+' &middot; '+rota.label+'</div>');
+    ["Monday","Tuesday","Wednesday","Thursday","Friday"].forEach(d=>{
+      const hl=isCur&&d===today;
+      h.push('<div style="display:flex;justify-content:space-between;gap:0.5rem;padding:0.28rem 0.6rem;'+(hl?'background:#FEF2F2;':'')+'border-top:1px solid #F3F4F6">');
+      h.push('<span style="font-size:0.72rem;font-weight:700;color:'+(hl?'var(--red)':'#9CA3AF')+'">'+d.slice(0,3)+'</span>');
+      h.push('<span style="font-size:0.76rem;font-weight:'+(hl?800:600)+';color:'+(hl?'var(--red)':'#374151')+';text-align:right">'+rota[d]+'</span>');
+      h.push('</div>');
+    });
+    h.push('</div>');
+  });
+  h.push('</div>');
+
+  // ── Wednesday Story — next 6 Wednesdays (full cycle)
+  h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">&#128214; Wednesday Story (Assembly)</div>');
+  h.push('<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem">');
+  const first=getNextStory();
+  for(let i=0;i<6;i++){
+    const d=new Date(first.date);d.setDate(d.getDate()+i*7);
+    const s=getStoryTellerFor(d);
+    const isNext=i===0;
+    h.push('<div style="padding:0.3rem 0.6rem;border-radius:8px;background:'+(isNext?'#FEF2F2':'#F9FAFB')+';border:1px solid '+(isNext?'#FECACA':'#E5E7EB')+'">');
+    h.push('<div style="font-size:0.75rem;font-weight:'+(isNext?800:600)+';color:'+(isNext?'var(--red)':'#374151')+'">'+s.teacher+(isNext?' &#11088;':'')+'</div>');
+    h.push('<div style="font-size:0.65rem;color:#9CA3AF">'+s.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</div>');
+    h.push('</div>');
+  }
+  h.push('</div>');
+
+  // ── Announcements — shared, editable by all teachers
+  h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">&#128226; Announcements <span style="font-weight:600;text-transform:none;letter-spacing:0">(shown on the scrolling news bar)</span></div>');
+  const anns=DB.announcements||[];
+  if(anns.length===0){
+    h.push('<div style="color:#9CA3AF;font-style:italic;font-size:0.8rem;margin-bottom:0.5rem">No announcements yet &mdash; add one below.</div>');
+  } else {
+    h.push('<div style="display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.5rem">');
+    anns.forEach(a=>{
+      h.push('<div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0.6rem;border-radius:8px;background:#F9FAFB;border:1px solid #E5E7EB">');
+      h.push('<div style="flex:1;font-size:0.8rem;font-weight:600;color:#374151">'+escHtml(a.text)+'</div>');
+      if(a.added)h.push('<div style="font-size:0.62rem;color:#D1D5DB;white-space:nowrap">'+a.added+'</div>');
+      h.push('<button onclick="deleteAnnouncement('+a.id+')" title="Remove" style="border:none;background:none;cursor:pointer;color:#9CA3AF;font-size:0.8rem;font-weight:700;padding:0.1rem 0.3rem">&#10005;</button>');
+      h.push('</div>');
+    });
+    h.push('</div>');
+  }
+  h.push('<div style="display:flex;gap:0.4rem">');
+  h.push('<input id="ann-input" type="text" maxlength="160" placeholder="e.g. Sports Day rehearsal Friday 09:00" onkeydown="if(event.key===\'Enter\')addAnnouncement()" style="flex:1;padding:0.45rem 0.6rem;border-radius:8px;border:1.5px solid #E5E7EB;font-size:0.8rem;font-weight:600;outline-color:var(--red)">');
+  h.push('<button class="btn btn-primary" onclick="addAnnouncement()" style="font-size:0.78rem">+ Add</button>');
+  h.push('</div>');
+
+  h.push('</div></div>');
+  return h.join('');
+}
+
+function addAnnouncement(){
+  const el=document.getElementById('ann-input');
+  if(!el)return;
+  const txt=el.value.trim();
+  if(!txt)return;
+  DB.announcements=DB.announcements||[];
+  DB.announcements.push({id:Date.now(),text:txt,added:todayKey()});
+  pushDB();
+  render();
+}
+
+function deleteAnnouncement(id){
+  DB.announcements=(DB.announcements||[]).filter(a=>a.id!==id);
+  pushDB();
+  render();
 }
 
 function renderDutyRotaModal(){
@@ -1965,4 +2087,10 @@ startSync();
 S.clockStr=nowTimeStr();
 render();
 // Update clock every minute
-setInterval(()=>{ S.clockStr=nowTimeStr(); render(); }, 60000);
+setInterval(()=>{
+  S.clockStr=nowTimeStr();
+  // Don't wipe user typing (e.g. announcement input) with the minute refresh
+  const ae=document.activeElement;
+  if(ae&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'))return;
+  render();
+}, 60000);

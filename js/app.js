@@ -76,7 +76,8 @@ let DB={
   snapshots:{},
   resources:JSON.parse(JSON.stringify(SEED_RESOURCES)),
   assessments:{},
-  dailyLogs:{}
+  dailyLogs:{},
+  announcements:[]
 };
 
 let _pushing=false;
@@ -94,6 +95,7 @@ function startSync(){
       if(d.snapshots)DB.snapshots={...DB.snapshots,...d.snapshots};
       if(d.assessments)DB.assessments=d.assessments;
       if(d.dailyLogs)DB.dailyLogs={...DB.dailyLogs,...d.dailyLogs};
+      if(d.announcements)DB.announcements=d.announcements;
 
       if(d.resources&&d.resources.length>0){
         // Firestore has resources — use as-is, full source of truth
@@ -154,7 +156,8 @@ function pushDB(){
     resources:DB.resources,
     resourcesVersion:RESOURCES_VERSION,
     assessments:DB.assessments,
-    dailyLogs:DB.dailyLogs
+    dailyLogs:DB.dailyLogs,
+    announcements:DB.announcements||[]
   },{merge:true})
   .then(()=>{
     _pushing=false;
