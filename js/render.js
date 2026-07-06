@@ -904,6 +904,29 @@ function renderTeacherTab(teacher){
     h.push('</div>');
   })();
 
+  // Helper: get resources for a lesson based on its class and subject
+  // NOTE: must be declared here (top level of renderTeacherTab), NOT inside a
+  // conditional block — it is called from the active-lesson card below, which
+  // runs before the grid section. Block-scoped declaration caused a live-hours
+  // crash: "getTeacherResources is not a function".
+  function getTeacherResources(lessonCls,lessonSub){
+    if(!lessonSub)return[];
+    const isMLP=lessonCls==='K1A'||lessonCls==='K1B'||lessonCls==='K2A'||lessonCls==='K2B'||lessonCls==='K3A'||lessonCls==='K3B'||lessonCls==='N1'||lessonCls==='N2';
+    const resProg=isMLP?'MLP':'IEP';
+    const resLevel=lessonCls.startsWith('K3')?'K3':lessonCls.startsWith('K2')?'K2':'K1';
+    const ppUnit=weekNum?getPPUnitForWeek(weekNum):null;
+    return(DB.resources||[]).filter(r=>{
+      if(!r.subject||!lessonSub.includes(r.subject))return false;
+      if((r.prog||'MLP')!==resProg)return false;
+      if((r.level||'K1')!==resLevel)return false;
+      if(ppUnit&&r.note){
+        const unitMatch=r.note.match(/^U(\d+)\s*·/);
+        if(unitMatch)return parseInt(unitMatch[1])===ppUnit;
+      }
+      return true;
+    });
+  }
+
   // ── ACTIVE LESSON FOCUS ───────────────────────────────────────────────────
   if(activeLesson&&today===realToday){
     const col=subColor(activeLesson.sub);
@@ -1017,24 +1040,6 @@ function renderTeacherTab(teacher){
     return slot?{start:slot.start,end:slot.end}:{start:'—',end:'—'};
   }
   // Render P1..MAX_PERIODS — lesson rows filled, free slots shown faintly
-  // Helper: get resources for a lesson based on its class and subject
-  function getTeacherResources(lessonCls,lessonSub){
-    if(!lessonSub)return[];
-    const isMLP=lessonCls==='K1A'||lessonCls==='K1B'||lessonCls==='K2A'||lessonCls==='K2B'||lessonCls==='K3A'||lessonCls==='K3B'||lessonCls==='N1'||lessonCls==='N2';
-    const resProg=isMLP?'MLP':'IEP';
-    const resLevel=lessonCls.startsWith('K3')?'K3':lessonCls.startsWith('K2')?'K2':'K1';
-    const ppUnit=weekNum?getPPUnitForWeek(weekNum):null;
-    return(DB.resources||[]).filter(r=>{
-      if(!r.subject||!lessonSub.includes(r.subject))return false;
-      if((r.prog||'MLP')!==resProg)return false;
-      if((r.level||'K1')!==resLevel)return false;
-      if(ppUnit&&r.note){
-        const unitMatch=r.note.match(/^U(\d+)\s*·/);
-        if(unitMatch)return parseInt(unitMatch[1])===ppUnit;
-      }
-      return true;
-    });
-  }
   const todayLessonMap=getDayLessonMap(today);
   // Observation data for this teacher + day
   const teacherDateStr=(()=>{
