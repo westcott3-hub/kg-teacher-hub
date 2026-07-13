@@ -1135,18 +1135,27 @@ const SCHOOL_CALENDAR={
   "2026-07":{
     name:"July 2026",
     holidays:[
+      {date:"2026-07-25",label:"Holiday",type:"holiday"},
+      {date:"2026-07-26",label:"Holiday",type:"holiday"},
+      {date:"2026-07-27",label:"Additional Holiday",type:"holiday"},
       {date:"2026-07-28",label:"Holiday – His Majesty King Rama X's Birthday",type:"holiday"},
       {date:"2026-07-29",label:"Substitution Holiday – Asalha Bucha Day",type:"holiday"},
-      {date:"2026-07-30",label:"Buddhist Lent Day Holiday",type:"holiday"}
+      {date:"2026-07-30",label:"Buddhist Lent Day Holiday",type:"holiday"},
+      {date:"2026-07-31",label:"Additional Holiday",type:"holiday"}
     ],
-    events:[]
+    events:[
+      {date:"2026-07-18",label:"Working Day – Make-up Class",type:"event"}
+    ]
   },
   "2026-08":{
     name:"August 2026",
     holidays:[
+      {date:"2026-08-01",label:"Holiday",type:"holiday"},
+      {date:"2026-08-02",label:"Holiday",type:"holiday"},
       {date:"2026-08-12",label:"Mother's Day Holiday",type:"holiday"}
     ],
     events:[
+      {date:"2026-08-03",label:"Classes Resume",type:"event"},
       {date:"2026-08-07",label:"ACS Open House 2026 – Kindergarten",type:"event"},
       {date:"2026-08-22",label:"KG Rally Family Tour 2026",type:"event"},
       {date:"2026-08-23",label:"KG Rally Family Tour 2026",type:"event"}
