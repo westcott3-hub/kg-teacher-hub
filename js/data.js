@@ -979,14 +979,14 @@ const SCHOOL_WEEKS=[
 // ตารางเวรประจำวัน 07:00–07:55 (4 rotating teams of 6 positions)
 // ตารางเวรสาย 07:55–08:25 (at ประตูหน้าตึกยอห์น)
 
-// Gary's duty weeks — Screening position, Rota 3 (weeks 3,7,11,15,19)
-const GARY_DUTY_WEEKS=new Set([3,7,11,15,19]);
+// Gary's duty weeks — Screening position, Rota 3 (weeks 4,8,12,16,20 — shifted +1 wk after Aug 2026 holiday)
+const GARY_DUTY_WEEKS=new Set([4,8,12,16,20]);
 
 // Full duty rota — all positions for all 4 teams
 const MORNING_DUTY_ROTA=[
   {
     rota:1,
-    weeks:[1,5,9,13,17],
+    weeks:[2,6,10,14,18],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Arparat**","Miss Niraporn","Miss Siriporn","T. Lana","T. Taylinn"]},
       {pos:"บันได",staff:["Miss Soonan"]},
@@ -999,7 +999,7 @@ const MORNING_DUTY_ROTA=[
   },
   {
     rota:2,
-    weeks:[2,6,10,14,18],
+    weeks:[3,7,11,15,19],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Wiphawadee**","Miss Sirikarn**","Miss Thipsudar","Miss Thanjira"]},
       {pos:"บันได",staff:["Miss Yuphin"]},
@@ -1012,7 +1012,7 @@ const MORNING_DUTY_ROTA=[
   },
   {
     rota:3,
-    weeks:[3,7,11,15,19],
+    weeks:[4,8,12,16,20],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Saipratoom","Miss Thitichaya","Miss Sirinan","Mr. Chalermphon"]},
       {pos:"บันได",staff:["Ms. Li Yan"]},
@@ -1025,7 +1025,7 @@ const MORNING_DUTY_ROTA=[
   },
   {
     rota:4,
-    weeks:[4,8,12,16,20],
+    weeks:[5,9,13,17,21],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Anchapha","Miss Sunisa**","Miss Phannasorn","T. Jayne"]},
       {pos:"บันได",staff:["Miss Kanthira"]},
@@ -1077,15 +1077,15 @@ function getForeignDutyTeachers(rota){
 
 // ── ASSEMBLY ROTAS ────────────────────────────────────────────────────────────
 // Morning Talk — two alternating weekly line-ups (Mon–Fri).
-// Anchor: week of Mon 2026-07-06 = "2nd week" line-up (T. JC on Monday).
-const MORNING_TALK_ANCHOR="2026-07-06";
+// Anchor: shifted +1 week after Aug 2026 holiday (was 2026-07-06).
+const MORNING_TALK_ANCHOR="2026-07-13";
 const MORNING_TALK_ROTA=[
   {label:"1st week",Monday:"T. Gary",Tuesday:"T. Sevara + New Teacher",Wednesday:"T. Tata",Thursday:"T. Taylinn",Friday:"Li Yan"},
   {label:"2nd week",Monday:"T. JC",Tuesday:"T. Daisy",Wednesday:"T. Jayne",Thursday:"T. Lhen",Friday:"T. Yana"}
 ];
 // Wednesday Story at assembly — foreign-teacher rotation.
-// Anchor: Wed 2026-07-08 = T. Jayne, then cycles in order.
-const STORY_ANCHOR="2026-07-08";
+// Anchor: shifted +1 week after Aug 2026 holiday (was 2026-07-08).
+const STORY_ANCHOR="2026-07-15";
 const STORY_ROTA=["T. Jayne","T. Yana","T. Gary","T. Sevara","T. Taylinn","T. JC"];
 
 // Monday 00:00 of the week containing date d
