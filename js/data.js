@@ -1080,7 +1080,7 @@ function getForeignDutyTeachers(rota){
 // Anchor: shifted +1 week after Aug 2026 holiday (was 2026-07-06).
 const MORNING_TALK_ANCHOR="2026-07-13";
 const MORNING_TALK_ROTA=[
-  {label:"1st week",Monday:"T. Gary",Tuesday:"T. Sevara + New Teacher",Wednesday:"T. Tata",Thursday:"T. Taylinn",Friday:"Li Yan"},
+  {label:"1st week",Monday:"T. Gary",Tuesday:"T. Sevara",Wednesday:"T. Tata",Thursday:"T. Taylinn",Friday:"Li Yan"},
   {label:"2nd week",Monday:"T. JC",Tuesday:"T. Daisy",Wednesday:"T. Jayne",Thursday:"T. Lhen",Friday:"T. Yana"}
 ];
 // Wednesday Story at assembly — foreign-teacher rotation.
