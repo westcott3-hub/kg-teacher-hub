@@ -107,18 +107,18 @@ function renderHeader(){
   const syncCls=S.syncStatus==='ok'?'sync-ok':S.syncStatus==='ing'?'sync-ing':'sync-err';
   return`<div style="flex-shrink:0;background:#fff;border-bottom:3px solid ${dc.border}">
     <div style="height:4px;background:linear-gradient(90deg,#B91C1C 0%,${dc.border} 100%)"></div>
-    <div style="padding:0.5rem 0.85rem;display:flex;align-items:center;gap:0.75rem">
+    <div class="hdr-main" style="padding:0.5rem 0.85rem;display:flex;align-items:center;gap:0.75rem">
 
       <!-- Logo + School identity -->
       <img src="${SCHOOL_LOGO}" style="height:42px;width:auto;border-radius:5px;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,0.12)" alt="ACS">
-      <div style="flex-shrink:0;border-right:1px solid #E5E7EB;padding-right:0.75rem;min-width:0">
-        <div style="font-weight:900;font-size:0.88rem;color:#111827;letter-spacing:-0.2px;line-height:1.2;white-space:nowrap">Assumption College Sriracha</div>
+      <div class="hdr-id" style="flex-shrink:0;border-right:1px solid #E5E7EB;padding-right:0.75rem;min-width:0">
+        <div class="hdr-school" style="font-weight:900;font-size:0.88rem;color:#111827;letter-spacing:-0.2px;line-height:1.2;white-space:nowrap">Assumption College Sriracha</div>
         <div style="font-size:0.8rem;font-weight:700;color:#B91C1C;line-height:1.2;white-space:nowrap">KG Teacher Hub</div>
-        <div style="font-size:0.58rem;color:#9CA3AF;font-style:italic;line-height:1.2;white-space:nowrap">Labor Omnia Vincit</div>
+        <div class="hdr-tag" style="font-size:0.58rem;color:#9CA3AF;font-style:italic;line-height:1.2;white-space:nowrap">Labor Omnia Vincit</div>
       </div>
 
       <!-- Day + Date + Week context -->
-      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:0.25rem">
+      <div class="hdr-ctx" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:0.25rem">
         <!-- Day pill — bold, day's own colour -->
         <div style="display:flex;align-items:center;gap:0.5rem">
           <div style="display:inline-flex;align-items:center;padding:0.22rem 0.75rem;border-radius:20px;background:${dc.bg};border:1.5px solid ${dc.border}">
@@ -140,12 +140,12 @@ function renderHeader(){
       </div>
 
       <!-- Clock + actions -->
-      <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
+      <div class="hdr-act" style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
         <div id="period-progress"></div>
         <button onclick="S.popup={type:'assembly'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Assembly — Morning Talk, Story &amp; Announcements">&#127908; <span>Assembly</span></button>
         <button onclick="S.popup={type:'dutyRota'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Morning Duty Rota">&#128205; <span>Duty</span></button>
         <div style="text-align:right">
-          <div id="header-clock" style="font-size:1.6rem;font-weight:900;color:#111827;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1">${nowTimeStr()}</div>
+          <div id="header-clock" class="hdr-clock" style="font-size:1.6rem;font-weight:900;color:#111827;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1">${nowTimeStr()}</div>
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:0.3rem;margin-top:1px">
             <div class="sync-dot ${syncCls}" title="Sync: ${S.syncStatus}"></div>
             <span style="font-size:0.55rem;color:#D1D5DB;font-weight:600">${S.syncStatus==='ok'?'LIVE':S.syncStatus==='ing'?'SYNC':'ERR'}</span>
@@ -1110,7 +1110,7 @@ function renderTeacherTab(teacher){
   }
   h.push('</div></div>');
   // RIGHT: Week grid (uses MAX_PERIODS, getDayLessonMap, getDayPeriodTime defined above)
-  h.push('<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
+  h.push('<div class="week-grid-collapse" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
   h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.45rem 0.85rem;display:flex;align-items:center;justify-content:space-between">');
   h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">&#128197; Week Grid'+(weekNum?' &middot; Wk '+weekNum:'')+'</div>');
   h.push('</div>');

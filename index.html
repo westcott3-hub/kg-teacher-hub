@@ -157,12 +157,32 @@ select,input,textarea{font-family:'Nunito',sans-serif}
 
 /* two-column timetable layout — day grid left, week grid right */
 .two-col{display:grid;grid-template-columns:1fr 1.6fr;gap:0.75rem}
-@media(max-width:768px){.two-col{grid-template-columns:1fr !important}}
+@media(max-width:768px){
+  .two-col{grid-template-columns:1fr !important}
+  /* On phones/tablets the day period-list already shows the full day —
+     hide the wide week grid so the page never scrolls sideways. */
+  .week-grid-collapse{display:none !important}
+}
 
 /* resource grid — always at least 2 columns */
 .res-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;box-sizing:border-box}
+@media(max-width:520px){.res-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:768px){.res-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(min-width:1100px){.res-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+/* ── MOBILE HEADER ─────────────────────────────────────────────
+   The header is a single no-wrap flex row on desktop. On phones it
+   overflows, so let it wrap onto stacked lines and shrink the clock. */
+@media(max-width:640px){
+  .hdr-main{flex-wrap:wrap !important;gap:0.35rem 0.6rem !important}
+  .hdr-id{border-right:none !important;padding-right:0 !important;flex-shrink:1 !important}
+  .hdr-school{white-space:normal !important;font-size:0.82rem !important;line-height:1.15 !important}
+  .hdr-tag{display:none !important}
+  /* date/week context drops to its own full-width line so the date never spills */
+  .hdr-ctx{flex-basis:100% !important}
+  .hdr-act{margin-left:auto !important;gap:0.4rem !important}
+  .hdr-clock{font-size:1.3rem !important}
+}
 </style>
 </head>
 <body>
