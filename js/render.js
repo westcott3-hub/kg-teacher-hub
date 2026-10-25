@@ -130,7 +130,7 @@ function renderHeader(){
         ${sw?`<div style="display:flex;align-items:center;gap:0.35rem;flex-wrap:wrap">
           <div style="display:inline-flex;align-items:center;gap:0.25rem;padding:0.12rem 0.55rem;border-radius:6px;background:#FEF2F2;border:1px solid #FECACA">
             <span style="font-size:0.62rem;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.4px">WEEK</span>
-            <span style="font-size:0.85rem;font-weight:900;color:#B91C1C;line-height:1">${sw.week}</span>
+            <span style="font-size:0.85rem;font-weight:900;color:#B91C1C;line-height:1">${dispWk(sw.week)}</span>
           </div>
           <div style="display:inline-flex;align-items:center;padding:0.12rem 0.55rem;border-radius:6px;background:#F9FAFB;border:1px solid #E5E7EB">
             <span style="font-size:0.75rem;font-weight:700;color:#6B7280">${sw.sem}</span>
@@ -607,7 +607,7 @@ function renderTimetable(){
     h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.2rem;flex-shrink:0">');
     h.push('<button onclick="S.tmWeekOffset='+(_wo-1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&lsaquo;</button>');
     if(_sw){
-      h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+_sw.week+'</div></div>');
+      h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+dispWk(_sw.week)+'</div></div>');
     } else {
       h.push('<div style="min-width:44px;text-align:center;font-size:0.72rem;color:#9CA3AF">&mdash;</div>');
     }
@@ -633,7 +633,7 @@ function renderTimetable(){
     // Card header
     h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.55rem 0.85rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5">');
     h.push('<div style="font-weight:800;font-size:0.88rem;color:#B91C1C">'+viewDay+' &nbsp;·&nbsp; '+cls+'</div>');
-    if(weekNum)h.push('<div style="font-size:0.68rem;color:#9CA3AF;font-weight:700">Wk '+weekNum+'</div>');
+    if(weekNum)h.push('<div style="font-size:0.68rem;color:#9CA3AF;font-weight:700">Wk '+dispWk(weekNum)+'</div>');
     h.push('</div>');
     // Period rows
     h.push('<div style="padding:0.5rem">');
@@ -996,7 +996,7 @@ function renderTeacherTab(teacher){
   h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.2rem;flex-shrink:0">');
   h.push('<button onclick="S.tmWeekOffset='+(_tchrWo-1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&lsaquo;</button>');
   if(_tchrSw){
-    h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+_tchrSw.week+'</div></div>');
+    h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+dispWk(_tchrSw.week)+'</div></div>');
   } else {
     h.push('<div style="min-width:44px;text-align:center;font-size:0.72rem;color:#9CA3AF">&mdash;</div>');
   }
@@ -1012,7 +1012,7 @@ function renderTeacherTab(teacher){
   h.push('<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
   h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.55rem 0.85rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5">');
   h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">'+today+' &nbsp;·&nbsp; '+teacher.full+'</div>');
-  if(weekNum)h.push('<div style="font-size:0.68rem;color:#9CA3AF;font-weight:700">Wk '+weekNum+'</div>');
+  if(weekNum)h.push('<div style="font-size:0.68rem;color:#9CA3AF;font-weight:700">Wk '+dispWk(weekNum)+'</div>');
   h.push('</div>');
   h.push('<div style="padding:0.5rem">');
   // Fixed P1..MAX_PERIODS rows — always show all periods, free slots for gaps
@@ -1112,7 +1112,7 @@ function renderTeacherTab(teacher){
   // RIGHT: Week grid (uses MAX_PERIODS, getDayLessonMap, getDayPeriodTime defined above)
   h.push('<div class="week-grid-collapse" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
   h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.45rem 0.85rem;display:flex;align-items:center;justify-content:space-between">');
-  h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">&#128197; Week Grid'+(weekNum?' &middot; Wk '+weekNum:'')+'</div>');
+  h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">&#128197; Week Grid'+(weekNum?' &middot; Wk '+dispWk(weekNum):'')+'</div>');
   h.push('</div>');
   if(teacherGridsOpen){
     h.push('<div style="overflow-x:auto;padding:0.5rem 0.65rem">');
@@ -1205,7 +1205,7 @@ function renderTicker(){
   if(sw){
     const nw=SCHOOL_WEEKS.find(w=>w.week===sw.week+1);
     const rota=nw?getDutyRota(nw.week):null;
-    if(rota)items.push('&#128205; Morning duty Wk '+nw.week+': Rota '+rota.rota+(GARY_DUTY_WEEKS.has(nw.week)?' &mdash; T. Gary on duty &#128308;':''));
+    if(rota)items.push('&#128205; Morning duty Wk '+dispWk(nw.week)+': Rota '+rota.rota+(GARY_DUTY_WEEKS.has(nw.week)?' &mdash; T. Gary on duty &#128308;':''));
   }
   // Teacher announcements (editable in Assembly popup)
   (DB.announcements||[]).forEach(a=>items.push('&#128226; '+escHtml(a.text)));
@@ -1322,7 +1322,7 @@ function renderDutyRotaModal(){
   h.push('</div>');
   if(weekNum&&rota){
     h.push('<div style="background:'+(isGaryOnDuty?'#FEF2F2':'#F9FAFB')+';border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:0.75rem;border:1px solid '+(isGaryOnDuty?'#FECACA':'#E5E7EB')+'">');
-    h.push('<div style="font-weight:800;font-size:0.88rem;color:'+(isGaryOnDuty?'var(--red)':'#374151')+'">Wk '+weekNum+' &nbsp;&middot;&nbsp; Rota '+rota.rota+(isGaryOnDuty?' &nbsp;&#128308; Gary on duty':'')+'</div>');
+    h.push('<div style="font-weight:800;font-size:0.88rem;color:'+(isGaryOnDuty?'var(--red)':'#374151')+'">Wk '+dispWk(weekNum)+' &nbsp;&middot;&nbsp; Rota '+rota.rota+(isGaryOnDuty?' &nbsp;&#128308; Gary on duty':'')+'</div>');
     h.push('</div>');
   }
   if(rota){
@@ -1356,7 +1356,7 @@ function renderDutyRotaModal(){
     const isCurrent=weekNum&&r.weeks.includes(weekNum);
     h.push('<div style="padding:0.3rem 0.6rem;border-radius:8px;background:'+(isCurrent?'#FEF2F2':'#F9FAFB')+';border:1px solid '+(isCurrent?'#FECACA':'#E5E7EB')+'">');
     h.push('<div style="font-size:0.75rem;font-weight:'+(isCurrent?800:600)+';color:'+(isCurrent?'var(--red)':'#6B7280')+'">Rota '+r.rota+(r.rota===3?' &#128308;':'')+'</div>');
-    h.push('<div style="font-size:0.65rem;color:#9CA3AF">Wks '+r.weeks.join(', ')+'</div>');
+    h.push('<div style="font-size:0.65rem;color:#9CA3AF">Wks '+r.weeks.map(dispWk).join(', ')+'</div>');
     h.push('</div>');
   });
   h.push('</div>');
@@ -1413,7 +1413,7 @@ function renderPeriodPopup(){
       </div>
 
       ${sw?`<div style="background:#f0f9ff;border-radius:8px;padding:0.5rem 0.7rem;margin-bottom:0.75rem;font-size:0.72rem;color:#0369a1">
-        📚 ${sw.sem} · Week ${sw.week} · <strong>${sw.unit}</strong>
+        📚 ${sw.sem} · Week ${dispWk(sw.week)} · <strong>${sw.unit}</strong>
       </div>`:""}
 
       ${matchedRes.length>0

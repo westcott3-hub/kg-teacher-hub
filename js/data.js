@@ -951,7 +951,7 @@ function getTimetableForCls(cls){
 const PERIODS=PERIODS_K1;
 const BREAKS=BREAKS_K1;
 
-// Semester 1 / 2026 school weeks
+// Semester 1 & 2 / 2026 school weeks
 const SCHOOL_WEEKS=[
   {sem:"S1/2026",week:1, start:"2026-05-18",end:"2026-05-22",unit:"Myself"},
   {sem:"S1/2026",week:2, start:"2026-05-25",end:"2026-05-29",unit:"My Body"},
@@ -972,21 +972,45 @@ const SCHOOL_WEEKS=[
   {sem:"S1/2026",week:17,start:"2026-09-07",end:"2026-09-11",unit:"STREAMSS"},
   {sem:"S1/2026",week:18,start:"2026-09-14",end:"2026-09-18",unit:"STREAMSS"},
   {sem:"S1/2026",week:19,start:"2026-09-21",end:"2026-09-25",unit:"Test"},
-  {sem:"S1/2026",week:20,start:"2026-09-28",end:"2026-10-02",unit:"Test"}
+  {sem:"S1/2026",week:20,start:"2026-09-28",end:"2026-10-02",unit:"Test"},
+  // Semester 2 / 2026 — internal weeks 21-39 (shown as S2 Wk 1-19). Units copied from S2/2025 Integration Course Outline.
+  // Christmas break 19 Dec 2026 – 3 Jan 2027 (no school weeks).
+  {sem:"S2/2026",week:21,dw:1,start:"2026-10-19",end:"2026-10-23",unit:"Animals"},
+  {sem:"S2/2026",week:22,dw:2,start:"2026-10-26",end:"2026-10-30",unit:"Colorful Plants"},
+  {sem:"S2/2026",week:23,dw:3,start:"2026-11-02",end:"2026-11-06",unit:"Environmental Conservation"},
+  {sem:"S2/2026",week:24,dw:4,start:"2026-11-09",end:"2026-11-13",unit:"Natural Resources"},
+  {sem:"S2/2026",week:25,dw:5,start:"2026-11-16",end:"2026-11-20",unit:"Things Around Us"},
+  {sem:"S2/2026",week:26,dw:6,start:"2026-11-23",end:"2026-11-27",unit:"Shapes and Forms"},
+  {sem:"S2/2026",week:27,dw:7,start:"2026-11-30",end:"2026-12-04",unit:"Five Senses"},
+  {sem:"S2/2026",week:28,dw:8,start:"2026-12-07",end:"2026-12-11",unit:"Number and Money"},
+  {sem:"S2/2026",week:29,dw:9,start:"2026-12-14",end:"2026-12-18",unit:"Seasons and Natural Disasters"},
+  {sem:"S2/2026",week:30,dw:10,start:"2027-01-04",end:"2027-01-08",unit:"Christmas Day and New Year"},
+  {sem:"S2/2026",week:31,dw:11,start:"2027-01-11",end:"2027-01-15",unit:"Appliances + Tools"},
+  {sem:"S2/2026",week:32,dw:12,start:"2027-01-18",end:"2027-01-22",unit:"Soil and Water"},
+  {sem:"S2/2026",week:33,dw:13,start:"2027-01-25",end:"2027-01-29",unit:"Transportation"},
+  {sem:"S2/2026",week:34,dw:14,start:"2027-02-01",end:"2027-02-05",unit:"Communication and Technology"},
+  {sem:"S2/2026",week:35,dw:15,start:"2027-02-08",end:"2027-02-12",unit:"Project Approach"},
+  {sem:"S2/2026",week:36,dw:16,start:"2027-02-15",end:"2027-02-19",unit:"Project Approach"},
+  {sem:"S2/2026",week:37,dw:17,start:"2027-02-22",end:"2027-02-26",unit:"Project Approach / Evaluation"},
+  {sem:"S2/2026",week:38,dw:18,start:"2027-03-01",end:"2027-03-05",unit:"Show Project Approach / Evaluation"},
+  {sem:"S2/2026",week:39,dw:19,start:"2027-03-08",end:"2027-03-12",unit:"Show Project Approach / Evaluation"}
 ];
+// Display week number within semester (S2 internal 21+ → 1+)
+function dispWk(n){return n>20?n-20:n;}
 
 // Morning Duty Rota — sourced from ตารางสอน.xlsx (Sheet: เวร)
 // ตารางเวรประจำวัน 07:00–07:55 (4 rotating teams of 6 positions)
 // ตารางเวรสาย 07:55–08:25 (at ประตูหน้าตึกยอห์น)
 
 // Gary's duty weeks — Screening position, Rota 3 (weeks 4,8,12,16,20 — shifted +1 wk after Aug 2026 holiday)
-const GARY_DUTY_WEEKS=new Set([4,8,12,16,20]);
+// S2/2026: Wk1 (internal 21) = Rota 3 → Gary on duty S2 Wks 1,5,9,13,17
+const GARY_DUTY_WEEKS=new Set([21,25,29,33,37]);
 
 // Full duty rota — all positions for all 4 teams
 const MORNING_DUTY_ROTA=[
   {
     rota:1,
-    weeks:[2,6,10,14,18],
+    weeks:[23,27,31,35,39],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Arparat**","Miss Niraporn","Miss Siriporn","T. Lana","T. Taylinn"]},
       {pos:"บันได",staff:["Miss Soonan"]},
@@ -999,7 +1023,7 @@ const MORNING_DUTY_ROTA=[
   },
   {
     rota:2,
-    weeks:[3,7,11,15,19],
+    weeks:[24,28,32,36],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Wiphawadee**","Miss Sirikarn**","Miss Thipsudar","Miss Thanjira"]},
       {pos:"บันได",staff:["Miss Yuphin"]},
@@ -1012,7 +1036,7 @@ const MORNING_DUTY_ROTA=[
   },
   {
     rota:3,
-    weeks:[4,8,12,16,20],
+    weeks:[21,25,29,33,37],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Saipratoom","Miss Thitichaya","Miss Sirinan","Mr. Chalermphon"]},
       {pos:"บันได",staff:["Ms. Li Yan"]},
@@ -1025,7 +1049,7 @@ const MORNING_DUTY_ROTA=[
   },
   {
     rota:4,
-    weeks:[5,9,13,17,21],
+    weeks:[22,26,30,34,38],
     positions:[
       {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Anchapha","Miss Sunisa**","Miss Phannasorn","T. Jayne"]},
       {pos:"บันได",staff:["Miss Kanthira"]},
@@ -1078,7 +1102,8 @@ function getForeignDutyTeachers(rota){
 // ── ASSEMBLY ROTAS ────────────────────────────────────────────────────────────
 // Morning Talk — two alternating weekly line-ups (Mon–Fri).
 // Anchor: shifted +1 week after Aug 2026 holiday (was 2026-07-06).
-const MORNING_TALK_ANCHOR="2026-07-13";
+// S2/2026: week of 19 Oct 2026 = "2nd week" line-up (T. JC Monday)
+const MORNING_TALK_ANCHOR="2026-10-19";
 const MORNING_TALK_ROTA=[
   {label:"1st week",Monday:"T. Gary",Tuesday:"T. Sevara",Wednesday:"T. Tata",Thursday:"T. Taylinn",Friday:"Li Yan"},
   {label:"2nd week",Monday:"T. JC",Tuesday:"T. Daisy",Wednesday:"T. Jayne",Thursday:"T. Lhen",Friday:"T. Yana"}
@@ -1098,7 +1123,7 @@ function mondayOf(d){
 function getMorningTalkWeekIdx(d){
   const anchor=mondayOf(new Date(MORNING_TALK_ANCHOR+"T00:00:00"));
   const wk=Math.round((mondayOf(d||new Date())-anchor)/604800000);
-  return ((1+wk)%2+2)%2;
+  return ((1+wk)%2+2)%2; // anchor week → idx 1 ("2nd week")
 }
 // Morning Talk line-up object for the week containing d
 function getMorningTalkWeek(d){return MORNING_TALK_ROTA[getMorningTalkWeekIdx(d)];}
@@ -1178,7 +1203,8 @@ const SCHOOL_CALENDAR={
       {date:"2026-10-13",label:"Semester Break",type:"break"},
       {date:"2026-10-14",label:"Semester Break",type:"break"},
       {date:"2026-10-15",label:"Semester Break",type:"break"},
-      {date:"2026-10-16",label:"Semester Break",type:"break"}
+      {date:"2026-10-16",label:"Semester Break",type:"break"},
+      {date:"2026-10-23",label:"Chulalongkorn Day – No Class",type:"holiday"}
     ],
     events:[
       {date:"2026-10-01",label:"Final Examination",type:"exam"},
@@ -1189,6 +1215,131 @@ const SCHOOL_CALENDAR={
       {date:"2026-10-08",label:"Grading Period – working day",type:"event"},
       {date:"2026-10-18",label:"Grade Release – working day",type:"event"},
       {date:"2026-10-19",label:"Academic Year 2/2026 Opens",type:"event"}
+    ]
+  },
+  "2026-11":{
+    name:"November 2026",
+    holidays:[],
+    events:[
+      {date:"2026-11-14",label:"ACS Open House on Tour 2026 @ Central Si Racha",type:"event"},
+      {date:"2026-11-18",label:"ACS Academic Days",type:"event"},
+      {date:"2026-11-19",label:"ACS Academic Days",type:"event"},
+      {date:"2026-11-20",label:"ACS Academic Days",type:"event"},
+      {date:"2026-11-21",label:"ACS Open House @ ACS",type:"event"},
+      {date:"2026-11-24",label:"Loy Krathong Day",type:"event"},
+      {date:"2026-11-28",label:"Kindergarten Sport Days",type:"event"}
+    ]
+  },
+  "2026-12":{
+    name:"December 2026",
+    holidays:[
+      {date:"2026-12-07",label:"Substitution for Father's Day – No Class",type:"holiday"},
+      {date:"2026-12-10",label:"Substitution for Constitution Day – No Class",type:"holiday"},
+      {date:"2026-12-21",label:"Christmas Break",type:"break"},
+      {date:"2026-12-22",label:"Christmas Break",type:"break"},
+      {date:"2026-12-23",label:"Christmas Break",type:"break"},
+      {date:"2026-12-24",label:"Christmas Break",type:"break"},
+      {date:"2026-12-25",label:"Christmas Break",type:"break"},
+      {date:"2026-12-28",label:"Christmas Break",type:"break"},
+      {date:"2026-12-29",label:"Christmas Break",type:"break"},
+      {date:"2026-12-30",label:"Christmas Break",type:"break"},
+      {date:"2026-12-31",label:"Christmas Break",type:"break"}
+    ],
+    events:[
+      {date:"2026-12-18",label:"ACS Teachers & Staff Christmas Celebration",type:"event"}
+    ]
+  },
+  "2027-01":{
+    name:"January 2027",
+    holidays:[
+      {date:"2027-01-01",label:"Christmas Break",type:"break"}
+    ],
+    events:[
+      {date:"2027-01-04",label:"Classes Resume",type:"event"},
+      {date:"2027-01-28",label:"ACS Family Night – Primary Section",type:"event"},
+      {date:"2027-01-29",label:"ACS Family Night – MLP & Secondary Section",type:"event"},
+      {date:"2027-01-30",label:"ACS Family Night – Kindergarten",type:"event"}
+    ]
+  },
+  "2027-02":{
+    name:"February 2027",
+    holidays:[
+      {date:"2027-02-22",label:"Substitution for Makha Bucha Day – No Class",type:"holiday"}
+    ],
+    events:[
+      {date:"2027-02-05",label:"Chinese New Year Activity",type:"event"},
+      {date:"2027-02-13",label:"ACS Home Coming Day – working day",type:"event"}
+    ]
+  },
+  "2027-03":{
+    name:"March 2027",
+    holidays:[
+      {date:"2027-03-11",label:"ACS Teachers Annual Trip – No Class",type:"break"},
+      {date:"2027-03-12",label:"ACS Teachers Annual Trip – No Class",type:"break"}
+    ],
+    events:[
+      {date:"2027-03-13",label:"ACS Teachers Annual Trip",type:"event"},
+      {date:"2027-03-14",label:"Parents & Teachers Annual Meeting / Grade Release – working day",type:"event"},
+      {date:"2027-03-15",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-16",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-17",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-18",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-19",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-22",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-23",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-24",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-25",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-26",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-29",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-30",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-03-31",label:"ACS Summer School 2027",type:"event"}
+    ]
+  },
+  "2027-04":{
+    name:"April 2027",
+    holidays:[
+      {date:"2027-04-12",label:"Semester Break",type:"break"},
+      {date:"2027-04-13",label:"Semester Break",type:"break"},
+      {date:"2027-04-14",label:"Semester Break",type:"break"},
+      {date:"2027-04-15",label:"Semester Break",type:"break"},
+      {date:"2027-04-16",label:"Semester Break",type:"break"},
+      {date:"2027-04-19",label:"Semester Break",type:"break"},
+      {date:"2027-04-20",label:"Semester Break",type:"break"},
+      {date:"2027-04-21",label:"Semester Break",type:"break"},
+      {date:"2027-04-22",label:"Semester Break",type:"break"},
+      {date:"2027-04-23",label:"Semester Break",type:"break"},
+      {date:"2027-04-26",label:"Semester Break",type:"break"},
+      {date:"2027-04-27",label:"Semester Break",type:"break"},
+      {date:"2027-04-28",label:"Semester Break",type:"break"},
+      {date:"2027-04-29",label:"Semester Break",type:"break"},
+      {date:"2027-04-30",label:"Semester Break",type:"break"}
+    ],
+    events:[
+      {date:"2027-04-01",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-04-02",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-04-05",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-04-06",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-04-07",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-04-08",label:"ACS Summer School 2027",type:"event"},
+      {date:"2027-04-09",label:"ACS Summer School 2027",type:"event"}
+    ]
+  },
+  "2027-05":{
+    name:"May 2027",
+    holidays:[
+      {date:"2027-05-03",label:"Semester Break",type:"break"},
+      {date:"2027-05-04",label:"Semester Break",type:"break"},
+      {date:"2027-05-05",label:"Semester Break",type:"break"},
+      {date:"2027-05-06",label:"Semester Break",type:"break"},
+      {date:"2027-05-07",label:"Semester Break",type:"break"}
+    ],
+    events:[
+      {date:"2027-05-10",label:"Preparation for Academic Year 2027 (TBA)",type:"event"},
+      {date:"2027-05-11",label:"Preparation for Academic Year 2027 (TBA)",type:"event"},
+      {date:"2027-05-12",label:"Preparation for Academic Year 2027 (TBA)",type:"event"},
+      {date:"2027-05-13",label:"Preparation for Academic Year 2027 (TBA)",type:"event"},
+      {date:"2027-05-14",label:"Preparation for Academic Year 2027 (TBA)",type:"event"},
+      {date:"2027-05-17",label:"Academic Year 2027 Starts (TBA)",type:"event"}
     ]
   }
 };
