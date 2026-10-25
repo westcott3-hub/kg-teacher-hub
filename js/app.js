@@ -6,7 +6,7 @@ const TABS=[
 // ── APP STATE ─────────────────────────────────────────────────────────────────
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-function todayKey(){return new Date().toISOString().slice(0,10);}
+function todayKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");} // local date (was UTC — wrong before 07:00 in Bangkok)
 function nowTimeStr(){return new Date().toTimeString().slice(0,5);}
 function timeToMins(t){const[h,m]=t.split(":").map(Number);return h*60+m;}
 function minsToTime(m){return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");}
