@@ -1,3 +1,11 @@
+// Integration topic pill — header, daily and weekly views
+function integChip(weekNum,size){
+  const th=getIntegrationTheme(weekNum);if(!th)return '';
+  const col=subColor('Integration');const big=size==='lg';
+  return '<span title="Integration topic this week" style="display:inline-flex;align-items:center;gap:0.35rem;max-width:100%;padding:'+(big?'0.18rem 0.65rem':'0.1rem 0.5rem')+';border-radius:999px;background:'+col+'14;border:1px solid '+col+'55;white-space:nowrap;overflow:hidden">'
+    +'<span style="font-size:'+(big?'0.6rem':'0.55rem')+';font-weight:800;color:'+col+';text-transform:uppercase;letter-spacing:0.5px;opacity:0.85">Integration</span>'
+    +'<span style="font-size:'+(big?'0.8rem':'0.7rem')+';font-weight:800;color:'+col+';overflow:hidden;text-overflow:ellipsis">'+th+'</span></span>';
+}
 function render(){
   // Persist nav state across refreshes
   try{localStorage.setItem("navState",JSON.stringify({
@@ -135,14 +143,14 @@ function renderHeader(){
           <div style="display:inline-flex;align-items:center;padding:0.12rem 0.55rem;border-radius:6px;background:#F9FAFB;border:1px solid #E5E7EB">
             <span style="font-size:0.75rem;font-weight:700;color:#6B7280">${sw.sem}</span>
           </div>
-          ${sw.unit?`<div style="font-size:0.7rem;color:#9CA3AF;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px" title="${sw.unit}">${sw.unit}</div>`:''}
+          ${integChip(sw.week,'lg')}
         </div>`:''}
       </div>
 
       <!-- Clock + actions -->
       <div class="hdr-act" style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
         <div id="period-progress"></div>
-        <button onclick="S.popup={type:'assembly'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Assembly — Morning Talk, Story &amp; Announcements">&#127908; <span>Assembly</span></button>
+        <button onclick="S.popup={type:'assembly'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Assembly — Morning Talk &amp; Announcements">&#127908; <span>Assembly</span></button>
         <button onclick="S.popup={type:'dutyRota'};render()" style="height:32px;padding:0 0.6rem;border-radius:8px;border:1.5px solid ${dc.border};background:${dc.bg};cursor:pointer;font-size:0.72rem;font-weight:800;color:${dc.text};white-space:nowrap;font-family:'Nunito',sans-serif;display:flex;align-items:center;gap:0.25rem" title="Morning Duty Rota">&#128205; <span>Duty</span></button>
         <div style="text-align:right">
           <div id="header-clock" class="hdr-clock" style="font-size:1.6rem;font-weight:900;color:#111827;font-variant-numeric:tabular-nums;letter-spacing:-1px;line-height:1">${nowTimeStr()}</div>
@@ -607,7 +615,7 @@ function renderTimetable(){
     h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.2rem;flex-shrink:0">');
     h.push('<button onclick="S.tmWeekOffset='+(_wo-1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&lsaquo;</button>');
     if(_sw){
-      h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+dispWk(_sw.week)+'</div></div>');
+      h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+dispWk(_sw.week)+'</div></div>'+'<span class="integ-bar" style="margin-left:0.3rem">'+integChip(_sw.week)+'</span>');
     } else {
       h.push('<div style="min-width:44px;text-align:center;font-size:0.72rem;color:#9CA3AF">&mdash;</div>');
     }
@@ -633,7 +641,7 @@ function renderTimetable(){
     // Card header
     h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.55rem 0.85rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5">');
     h.push('<div style="font-weight:800;font-size:0.88rem;color:#B91C1C">'+viewDay+' &nbsp;·&nbsp; '+cls+'</div>');
-    if(weekNum)h.push('<div style="font-size:0.68rem;color:#9CA3AF;font-weight:700">Wk '+dispWk(weekNum)+'</div>');
+    if(weekNum)h.push('<div style="display:flex;align-items:center;gap:0.4rem;min-width:0">'+integChip(weekNum)+'<span style="font-size:0.68rem;color:#9CA3AF;font-weight:700;white-space:nowrap">Wk '+dispWk(weekNum)+'</span></div>');
     h.push('</div>');
     // Period rows
     h.push('<div style="padding:0.5rem">');
@@ -650,8 +658,9 @@ function renderTimetable(){
         h.push('<div class="period-label">'+p.label+'<div class="period-time-sm">'+p.start+'</div></div>');
         h.push('<div style="width:4px;background:'+col+';flex-shrink:0;align-self:stretch"></div>');
         h.push('<div style="flex:1;min-width:0;padding:0.6rem 0.7rem">');
-        h.push('<div style="font-weight:800;font-size:1rem;color:'+col+';line-height:1.2">Integration / ประจำชั้น</div>');
+        h.push('<div style="font-weight:800;font-size:1rem;color:'+col+';line-height:1.2">Integration / Homeroom</div>');
         h.push('<div class="period-tchr">👤 Thai homeroom teacher</div>');
+        {const _th=getIntegrationTheme(weekNum);if(_th)h.push('<div style="font-size:0.78rem;font-weight:700;font-style:italic;color:'+col+';margin-top:0.15rem">'+_th+'</div>');}
         h.push('</div>');
         h.push('</div>');
         return;
@@ -727,7 +736,8 @@ function renderTimetable(){
             const clsTopicLabel=getTopicLabel(cellTopic,period.sub==='Integration');
             if(clsTopicLabel)h.push('<div class="week-cell-topic" title="'+(typeof cellTopic==='object'?(cellTopic.vocab||''):'')+'" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px">'+clsTopicLabel+'</div>');
           } else if(period===null){
-            h.push('<div class="week-cell-subj" style="color:'+subColor('Integration')+'">Integration / ประจำชั้น</div>');
+            h.push('<div class="week-cell-subj" style="color:'+subColor('Integration')+'">Integration / Homeroom</div>');
+            {const _th=getIntegrationTheme(weekNum);if(_th)h.push('<div class="week-cell-topic" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100px">'+_th+'</div>');}
           } else {
             h.push('<div style="color:#E5E7EB;font-size:0.8rem">—</div>');
           }
@@ -996,7 +1006,7 @@ function renderTeacherTab(teacher){
   h.push('<div style="margin-left:auto;display:flex;align-items:center;gap:0.2rem;flex-shrink:0">');
   h.push('<button onclick="S.tmWeekOffset='+(_tchrWo-1)+';render()" style="width:24px;height:24px;border-radius:5px;border:1px solid #E5E7EB;background:#fff;cursor:pointer;font-size:0.95rem;line-height:1;font-weight:700;color:#374151;padding:0">&lsaquo;</button>');
   if(_tchrSw){
-    h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+dispWk(_tchrSw.week)+'</div></div>');
+    h.push('<div style="min-width:44px;text-align:center;padding:0.1rem 0.35rem;background:#fff;border-radius:5px;border:1px solid #E5E7EB"><div style="font-size:0.8rem;font-weight:900;color:var(--red);line-height:1.2">Wk '+dispWk(_tchrSw.week)+'</div></div>'+'<span class="integ-bar" style="margin-left:0.3rem">'+integChip(_tchrSw.week)+'</span>');
   } else {
     h.push('<div style="min-width:44px;text-align:center;font-size:0.72rem;color:#9CA3AF">&mdash;</div>');
   }
@@ -1012,7 +1022,7 @@ function renderTeacherTab(teacher){
   h.push('<div style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
   h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.55rem 0.85rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5">');
   h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">'+today+' &nbsp;·&nbsp; '+teacher.full+'</div>');
-  if(weekNum)h.push('<div style="font-size:0.68rem;color:#9CA3AF;font-weight:700">Wk '+dispWk(weekNum)+'</div>');
+  if(weekNum)h.push('<div style="display:flex;align-items:center;gap:0.4rem;min-width:0">'+integChip(weekNum)+'<span style="font-size:0.68rem;color:#9CA3AF;font-weight:700;white-space:nowrap">Wk '+dispWk(weekNum)+'</span></div>');
   h.push('</div>');
   h.push('<div style="padding:0.5rem">');
   // Fixed P1..MAX_PERIODS rows — always show all periods, free slots for gaps
@@ -1112,7 +1122,7 @@ function renderTeacherTab(teacher){
   // RIGHT: Week grid (uses MAX_PERIODS, getDayLessonMap, getDayPeriodTime defined above)
   h.push('<div class="week-grid-collapse" style="background:#fff;border-radius:12px;border:1px solid #E5E7EB;overflow:hidden">');
   h.push('<div style="background:#FEF2F2;border-bottom:1px solid #FECACA;padding:0.45rem 0.85rem;display:flex;align-items:center;justify-content:space-between">');
-  h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">&#128197; Week Grid'+(weekNum?' &middot; Wk '+dispWk(weekNum):'')+'</div>');
+  h.push('<div style="font-weight:800;font-size:0.88rem;color:var(--red)">&#128197; Week Grid'+(weekNum?' &middot; Wk '+dispWk(weekNum):'')+'</div>'+(weekNum?integChip(weekNum):''));
   h.push('</div>');
   if(teacherGridsOpen){
     h.push('<div style="overflow-x:auto;padding:0.5rem 0.65rem">');
@@ -1198,8 +1208,6 @@ function renderTicker(){
   const mt=getMorningTalkWeek(nextWkDate);
   items.push('&#127908; Morning Talk next week ('+mt.label+'): Mon '+mt.Monday+' &middot; Tue '+mt.Tuesday+' &middot; Wed '+mt.Wednesday+' &middot; Thu '+mt.Thursday+' &middot; Fri '+mt.Friday);
   // Wednesday assembly story — next upcoming
-  const st=getNextStory();
-  items.push('&#128214; Assembly Story &middot; Wed '+st.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+': <b>'+st.teacher+'</b>');
   // Morning duty — next school week
   const sw=getCurrentSchoolWeek();
   if(sw){
@@ -1217,7 +1225,7 @@ function renderTicker(){
     +'</div>';
 }
 
-// ── ASSEMBLY MODAL — Morning Talk, Wednesday Story, Announcements ─────────────
+// ── ASSEMBLY MODAL — Morning Talk, Announcements ─────────────
 function renderAssemblyModal(){
   const now=new Date();
   const today=todayDayName();
@@ -1247,21 +1255,6 @@ function renderAssemblyModal(){
     });
     h.push('</div>');
   });
-  h.push('</div>');
-
-  // ── Wednesday Story — next 6 Wednesdays (full cycle)
-  h.push('<div style="font-size:0.72rem;font-weight:800;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.4rem">&#128214; Wednesday Story (Assembly)</div>');
-  h.push('<div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem">');
-  const first=getNextStory();
-  for(let i=0;i<6;i++){
-    const d=new Date(first.date);d.setDate(d.getDate()+i*7);
-    const s=getStoryTellerFor(d);
-    const isNext=i===0;
-    h.push('<div style="padding:0.3rem 0.6rem;border-radius:8px;background:'+(isNext?'#FEF2F2':'#F9FAFB')+';border:1px solid '+(isNext?'#FECACA':'#E5E7EB')+'">');
-    h.push('<div style="font-size:0.75rem;font-weight:'+(isNext?800:600)+';color:'+(isNext?'var(--red)':'#374151')+'">'+s.teacher+(isNext?' &#11088;':'')+'</div>');
-    h.push('<div style="font-size:0.65rem;color:#9CA3AF">'+s.date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+'</div>');
-    h.push('</div>');
-  }
   h.push('</div>');
 
   // ── Announcements — shared, editable by all teachers

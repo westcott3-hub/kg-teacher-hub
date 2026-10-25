@@ -46,8 +46,8 @@ const TIMETABLE={
       null,
       {sub:"Integration",   teacher:"T. Gary"},
       {sub:"English",       teacher:"T. Gary"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       {sub:"Math",          teacher:"T. Gary"}
     ],
     Tuesday:[
@@ -59,16 +59,16 @@ const TIMETABLE={
       {sub:"Math",          teacher:"T. Gary"}
     ],
     Wednesday:[
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       {sub:"Integration",   teacher:"T. Gary"},
       {sub:"Play & Learn",  teacher:"T. Gary"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"Phonics",       teacher:"T. Gary"}
     ],
     Thursday:[
       {sub:"Play & Learn",  teacher:"T. Gary"},
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       {sub:"STREAMSS",      teacher:"T. Gary"},
       {sub:"Science",       teacher:"T. Gary"},
@@ -77,7 +77,7 @@ const TIMETABLE={
     Friday:[
       {sub:"Integration",   teacher:"T. Gary"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Science",       teacher:"T. Gary"},
       {sub:"Phonics",       teacher:"T. Gary"},
       {sub:"STREAMSS",      teacher:"T. Gary"}
@@ -87,8 +87,8 @@ const TIMETABLE={
     Monday:[
       null,
       {sub:"Integration",   teacher:"T. Sevara"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       {sub:"English",       teacher:"T. Sevara"},
       {sub:"Math",          teacher:"T. Sevara"}
     ],
@@ -103,13 +103,13 @@ const TIMETABLE={
     Wednesday:[
       null,
       {sub:"Integration",   teacher:"T. Sevara"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       {sub:"STREAMSS",      teacher:"T. Sevara"},
       {sub:"Phonics",       teacher:"T. Sevara"},
       {sub:"Science",       teacher:"T. Sevara"}
     ],
     Thursday:[
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"Play & Learn",  teacher:"T. Sevara"},
       null,
       {sub:"Phonics",       teacher:"T. Sevara"},
@@ -118,9 +118,9 @@ const TIMETABLE={
     ],
     Friday:[
       {sub:"STREAMSS",      teacher:"T. Sevara"},
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Play & Learn",  teacher:"T. Sevara"},
       {sub:"Integration",   teacher:"T. Sevara"}
     ]
@@ -129,7 +129,7 @@ const TIMETABLE={
   "K1/1":{
     Monday:[
       {sub:"English",       teacher:"T. Taylinn"},
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       null,
       {sub:"Chinese",       teacher:"Li Yan"},
@@ -139,21 +139,21 @@ const TIMETABLE={
       {sub:"English",       teacher:"T. Taylinn"},
       {sub:"Science",       teacher:"T. Daisy"},
       null,
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
-      {sub:"Movement",      teacher:"มิสกาญธิรา"}
+      {sub:"Movement",      teacher:"Miss Kanthira"}
     ],
     Wednesday:[
       null,
       {sub:"Math",          teacher:"T. Jussill"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       null,
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null
     ],
     Thursday:[
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       {sub:"Science",       teacher:"T. Daisy"},
       null,
@@ -179,22 +179,22 @@ const TIMETABLE={
     ],
     Tuesday:[
       null,
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       null,
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       {sub:"Math",          teacher:"T. Jussill"}
     ],
     Wednesday:[
       {sub:"Math",          teacher:"T. Jussill"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"English",       teacher:"T. Taylinn"},
       null,
       null,
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"}
+      {sub:"Love Reading",  teacher:"Miss Nopwan"}
     ],
     Thursday:[
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       null,
       null,
@@ -202,7 +202,7 @@ const TIMETABLE={
       null
     ],
     Friday:[
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Science",       teacher:"T. Daisy"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null,
@@ -221,15 +221,15 @@ const TIMETABLE={
     ],
     Tuesday:[
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       null,
       {sub:"Math",          teacher:"T. Jussill"},
       null,
       {sub:"English",       teacher:"T. Taylinn"}
     ],
     Wednesday:[
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       null,
       null,
@@ -238,14 +238,14 @@ const TIMETABLE={
     Thursday:[
       {sub:"Math",          teacher:"T. Jussill"},
       null,
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       null,
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"}
+      {sub:"Love Reading",  teacher:"Miss Nopwan"}
     ],
     Friday:[
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Science",       teacher:"T. Daisy"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null,
@@ -275,22 +275,22 @@ const TIMETABLE={
       {sub:"STREAMSS",      teacher:"T. Lana"},
       null,
       {sub:"STREAMSS",      teacher:"T. Lana"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       {sub:"Integration",   teacher:"T. Taylinn"}
     ],
     Thursday:[
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       {sub:"Integration",   teacher:"T. Taylinn"},
       {sub:"Math",          teacher:"T. Yana"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null
     ],
     Friday:[
       {sub:"Integration",   teacher:"T. Taylinn"},
       {sub:"Science",       teacher:"T. Yana"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"Integration",   teacher:"T. Taylinn"}
     ]
@@ -313,34 +313,34 @@ const TIMETABLE={
       {sub:"Integration",   teacher:"T. JC"}
     ],
     Wednesday:[
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       {sub:"Math",          teacher:"T. Yana"},
       {sub:"STREAMSS",      teacher:"T. Lana"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       {sub:"Integration",   teacher:"T. JC"}
     ],
     Thursday:[
       {sub:"Math",          teacher:"T. Yana"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"STREAMSS",      teacher:"T. Lana"},
       null,
       {sub:"Integration",   teacher:"T. JC"},
       {sub:"Chinese",       teacher:"Li Yan"}
     ],
     Friday:[
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"Science",       teacher:"T. Yana"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       {sub:"Integration",   teacher:"T. JC"}
     ]
   },
     // ── KG2 IEP ───────────────────────────────────────────────────────────────
   "K2/1":{
     Monday:[
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       {sub:"Math",          teacher:"T. Jussill"},
       {sub:"Science",       teacher:"T. Daisy"},
@@ -348,7 +348,7 @@ const TIMETABLE={
       null
     ],
     Tuesday:[
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Math",          teacher:"T. Jussill"},
       {sub:"Science",       teacher:"T. Daisy"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
@@ -359,20 +359,20 @@ const TIMETABLE={
       {sub:"English",       teacher:"T. JC"},
       {sub:"Chinese",       teacher:"Li Yan"},
       null,
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null
     ],
     Thursday:[
       {sub:"English",       teacher:"T. JC"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       null,
       null,
       null,
       null
     ],
     Friday:[
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       null,
       null,
@@ -390,9 +390,9 @@ const TIMETABLE={
       {sub:"Science",       teacher:"T. Daisy"}
     ],
     Tuesday:[
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Science",       teacher:"T. Daisy"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null
@@ -403,19 +403,19 @@ const TIMETABLE={
       {sub:"Chinese",       teacher:"Li Yan"},
       null,
       {sub:"Math",          teacher:"T. Jussill"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"}
+      {sub:"Movement",      teacher:"Miss Kanthira"}
     ],
     Thursday:[
       null,
       {sub:"English",       teacher:"T. JC"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       null
     ],
     Friday:[
       null,
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       null,
       null,
@@ -436,11 +436,11 @@ const TIMETABLE={
       null,
       {sub:"Math",          teacher:"T. Jussill"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       null
     ],
     Wednesday:[
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       {sub:"English",       teacher:"T. JC"},
       {sub:"Science",       teacher:"T. Daisy"},
@@ -448,18 +448,18 @@ const TIMETABLE={
       null
     ],
     Thursday:[
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       null,
       {sub:"English",       teacher:"T. JC"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"Chinese",       teacher:"Li Yan"},
       null
     ],
     Friday:[
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null,
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       null
     ]
@@ -468,28 +468,28 @@ const TIMETABLE={
   K3A:{
     Monday:[
       {sub:"Integration",   teacher:"T. Jayne"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       {sub:"English",       teacher:"T. JC"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Science",       teacher:"T. Yana"},
       null
     ],
     Tuesday:[
       {sub:"STREAMSS",      teacher:"T. Lana"},
       null,
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"English",       teacher:"T. JC"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       {sub:"Integration",   teacher:"T. Jayne"}
     ],
     Wednesday:[
       {sub:"STREAMSS",      teacher:"T. Lana"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Math",          teacher:"T. Yana"},
       {sub:"Phonics",       teacher:"T. Taylinn"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       null
     ],
@@ -504,8 +504,8 @@ const TIMETABLE={
     ],
     Friday:[
       {sub:"Integration",   teacher:"T. Jayne"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       {sub:"Integration",   teacher:"T. Jayne"},
       {sub:"Science",       teacher:"T. Yana"},
       {sub:"Play & Learn",  teacher:"T. Jayne"},
@@ -514,35 +514,35 @@ const TIMETABLE={
   },
   K3B:{
     Monday:[
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       {sub:"Science",       teacher:"T. Yana"},
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       {sub:"Integration",   teacher:"T. Yana"},
       null,
       {sub:"English",       teacher:"T. JC"}
     ],
     Tuesday:[
       null,
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"English",       teacher:"T. JC"},
       {sub:"STREAMSS",      teacher:"T. Lana"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Integration",   teacher:"T. Yana"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"}
+      {sub:"Skill Building",teacher:"Miss Mayura"}
     ],
     Wednesday:[
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Phonics",       teacher:"T. Taylinn"},
       null,
       {sub:"Math",          teacher:"T. Yana"},
       {sub:"Play & Learn",  teacher:"T. Jayne"},
       {sub:"Integration",   teacher:"T. Yana"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"}
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"}
     ],
     Thursday:[
       {sub:"STREAMSS",      teacher:"T. Lana"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       {sub:"Play & Learn",  teacher:"T. Jayne"},
       {sub:"Math",          teacher:"T. Yana"},
@@ -553,8 +553,8 @@ const TIMETABLE={
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"STREAMSS",      teacher:"T. Lana"},
       {sub:"Science",       teacher:"T. Yana"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       {sub:"Integration",   teacher:"T. Yana"}
     ]
@@ -562,12 +562,12 @@ const TIMETABLE={
     // ── KG3 IEP ───────────────────────────────────────────────────────────────
   "K3/1":{
     Monday:[
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       null,
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       {sub:"English",       teacher:"T. Jayne"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       null
     ],
     Tuesday:[
@@ -575,25 +575,25 @@ const TIMETABLE={
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null,
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null
     ],
     Wednesday:[
       {sub:"Science",       teacher:"T. Daisy"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       {sub:"English",       teacher:"T. Jayne"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       null
     ],
     Thursday:[
       null,
       {sub:"Math",          teacher:"T. Jussill"},
       {sub:"Science",       teacher:"T. Daisy"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       null
     ],
@@ -601,7 +601,7 @@ const TIMETABLE={
       null,
       null,
       null,
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       null,
       null
@@ -610,17 +610,17 @@ const TIMETABLE={
   "K3/2":{
     Monday:[
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       null,
       {sub:"English",       teacher:"T. Jayne"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       null,
-      {sub:"Movement",      teacher:"มิสกาญธิรา"}
+      {sub:"Movement",      teacher:"Miss Kanthira"}
     ],
     Tuesday:[
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       null,
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       {sub:"Math",          teacher:"T. Jussill"},
       null,
@@ -630,7 +630,7 @@ const TIMETABLE={
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null,
       {sub:"Science",       teacher:"T. Daisy"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null,
       {sub:"English",       teacher:"T. Jayne"},
       {sub:"Math",          teacher:"T. Jussill"}
@@ -638,16 +638,16 @@ const TIMETABLE={
     Thursday:[
       null,
       {sub:"Science",       teacher:"T. Daisy"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null
     ],
     Friday:[
       {sub:"Play & Learn",  teacher:"T. Lhen"},
       null,
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       null,
       null,
@@ -656,19 +656,19 @@ const TIMETABLE={
   },
   "K3/3":{
     Monday:[
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null
     ],
     Tuesday:[
       null,
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       {sub:"English",       teacher:"T. Jayne"},
       {sub:"Chinese",       teacher:"Li Yan"},
       null
@@ -676,14 +676,14 @@ const TIMETABLE={
     Wednesday:[
       null,
       {sub:"Science",       teacher:"T. Daisy"},
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       null,
       {sub:"English",       teacher:"T. Jayne"}
     ],
     Thursday:[
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       null,
       null,
@@ -704,18 +704,18 @@ const TIMETABLE={
   "K3/4":{
     Monday:[
       null,
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
-      {sub:"Movement",      teacher:"มิสกาญธิรา"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
+      {sub:"Movement",      teacher:"Miss Kanthira"},
       {sub:"Math",          teacher:"T. Jussill"},
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
       null
     ],
     Tuesday:[
       null,
-      {sub:"Love Reading",  teacher:"มิสนพวรรณ"},
-      {sub:"Skill Building",teacher:"มิสมยุรา"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
+      {sub:"Skill Building",teacher:"Miss Mayura"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       null,
       {sub:"English",       teacher:"T. Jayne"},
       {sub:"Play & Learn",  teacher:"T. Lhen"}
@@ -723,7 +723,7 @@ const TIMETABLE={
     Wednesday:[
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"Play & Learn",  teacher:"T. Lhen"},
-      {sub:"Music",         teacher:"ม.อัครินทร์"},
+      {sub:"Music",         teacher:"Mr. Akkarin"},
       null,
       {sub:"Science",       teacher:"T. Daisy"},
       null,
@@ -732,7 +732,7 @@ const TIMETABLE={
     Thursday:[
       null,
       null,
-      {sub:"Swimming",      teacher:"นิราภร"},
+      {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       {sub:"Science",       teacher:"T. Daisy"},
       {sub:"English",       teacher:"T. Jayne"},
@@ -744,7 +744,7 @@ const TIMETABLE={
       null,
       null,
       {sub:"Math",          teacher:"T. Jussill"},
-      {sub:"Outdoor",       teacher:"ม.ณัฐพงศ์"},
+      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
       null
     ]
   }
@@ -1012,53 +1012,53 @@ const MORNING_DUTY_ROTA=[
     rota:1,
     weeks:[23,27,31,35,39],
     positions:[
-      {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Arparat**","Miss Niraporn","Miss Siriporn","T. Lana","T. Taylinn"]},
-      {pos:"บันได",staff:["Miss Soonan"]},
-      {pos:"ใต้ต้นไทร",staff:["Miss Nopwan"]},
-      {pos:"วอกเวย์",staff:["Mr. Natthapong"]},
-      {pos:"คัดกรองประตูสนาม",staff:["Miss Arpornphan**","T. Yana"]},
-      {pos:"รับส่งเด็กประตูสนาม",staff:["Miss Sasinee","Miss Srassaya","Miss Phornthip"]}
+      {pos:"Front Gate (St. John Bldg)",staff:["Miss Arparat**","Miss Niraporn","Miss Siriporn","T. Lana","T. Taylinn"]},
+      {pos:"Stairs",staff:["Miss Soonan"]},
+      {pos:"Under the Banyan Tree",staff:["Miss Nopwan"]},
+      {pos:"Walkway",staff:["Mr. Natthapong"]},
+      {pos:"Screening – Field Gate",staff:["Miss Arpornphan**","T. Yana"]},
+      {pos:"Drop-off & Pick-up – Field Gate",staff:["Miss Sasinee","Miss Srassaya","Miss Phornthip"]}
     ],
-    lateduty:{pos:"ประตูหน้าตึกยอห์น",staff:["T. Lhen","Mr. Akkarin","T. Jussill"]}
+    lateduty:{pos:"Front Gate (St. John Bldg)",staff:["T. Lhen","Mr. Akkarin","T. Jussill"]}
   },
   {
     rota:2,
     weeks:[24,28,32,36],
     positions:[
-      {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Wiphawadee**","Miss Sirikarn**","Miss Thipsudar","Miss Thanjira"]},
-      {pos:"บันได",staff:["Miss Yuphin"]},
-      {pos:"ใต้ต้นไทร",staff:["T. Lhen"]},
-      {pos:"วอกเวย์",staff:["T. Jussill"]},
-      {pos:"คัดกรองประตูสนาม",staff:["Miss Rungtiva","T. Sevara"]},
-      {pos:"รับส่งเด็กประตูสนาม",staff:["Miss Ariyaporn","Miss Srassaya (Joy)","Miss Paphawarin"]}
+      {pos:"Front Gate (St. John Bldg)",staff:["Miss Wiphawadee**","Miss Sirikarn**","Miss Thipsudar","Miss Thanjira"]},
+      {pos:"Stairs",staff:["Miss Yuphin"]},
+      {pos:"Under the Banyan Tree",staff:["T. Lhen"]},
+      {pos:"Walkway",staff:["T. Jussill"]},
+      {pos:"Screening – Field Gate",staff:["Miss Rungtiva","T. Sevara"]},
+      {pos:"Drop-off & Pick-up – Field Gate",staff:["Miss Ariyaporn","Miss Srassaya (Joy)","Miss Paphawarin"]}
     ],
-    lateduty:{pos:"ประตูหน้าตึกยอห์น",staff:["Miss Mayura","Miss Nopwan"]}
+    lateduty:{pos:"Front Gate (St. John Bldg)",staff:["Miss Mayura","Miss Nopwan"]}
   },
   {
     rota:3,
     weeks:[21,25,29,33,37],
     positions:[
-      {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Saipratoom","Miss Thitichaya","Miss Sirinan","Mr. Chalermphon"]},
-      {pos:"บันได",staff:["Ms. Li Yan"]},
-      {pos:"ใต้ต้นไทร",staff:["Miss Mayura**"]},
-      {pos:"วอกเวย์",staff:["T. Daisy"]},
-      {pos:"คัดกรองประตูสนาม",staff:["Miss Benjawan**","T. Gary"]},
-      {pos:"รับส่งเด็กประตูสนาม",staff:["Miss Somsuarn","Miss Srassaya (Benz)"]}
+      {pos:"Front Gate (St. John Bldg)",staff:["Miss Saipratoom","Miss Thitichaya","Miss Sirinan","Mr. Chalermphon"]},
+      {pos:"Stairs",staff:["Ms. Li Yan"]},
+      {pos:"Under the Banyan Tree",staff:["Miss Mayura**"]},
+      {pos:"Walkway",staff:["T. Daisy"]},
+      {pos:"Screening – Field Gate",staff:["Miss Benjawan**","T. Gary"]},
+      {pos:"Drop-off & Pick-up – Field Gate",staff:["Miss Somsuarn","Miss Srassaya (Benz)"]}
     ],
-    lateduty:{pos:"ประตูหน้าตึกยอห์น",staff:["Mr. Natthapong","Miss Niraporn"]}
+    lateduty:{pos:"Front Gate (St. John Bldg)",staff:["Mr. Natthapong","Miss Niraporn"]}
   },
   {
     rota:4,
     weeks:[22,26,30,34,38],
     positions:[
-      {pos:"ประตูหน้าตึกยอห์น",staff:["Miss Anchapha","Miss Sunisa**","Miss Phannasorn","T. Jayne"]},
-      {pos:"บันได",staff:["Miss Kanthira"]},
-      {pos:"ใต้ต้นไทร",staff:["Mr. Akkarin"]},
-      {pos:"วอกเวย์",staff:["Miss Phanumas"]},
-      {pos:"คัดกรองประตูสนาม",staff:["Miss Aemwika**","T. JC"]},
-      {pos:"รับส่งเด็กประตูสนาม",staff:["Miss Yada","Miss Ananya","Miss Thapanee"]}
+      {pos:"Front Gate (St. John Bldg)",staff:["Miss Anchapha","Miss Sunisa**","Miss Phannasorn","T. Jayne"]},
+      {pos:"Stairs",staff:["Miss Kanthira"]},
+      {pos:"Under the Banyan Tree",staff:["Mr. Akkarin"]},
+      {pos:"Walkway",staff:["Miss Phanumas"]},
+      {pos:"Screening – Field Gate",staff:["Miss Aemwika**","T. JC"]},
+      {pos:"Drop-off & Pick-up – Field Gate",staff:["Miss Yada","Miss Ananya","Miss Thapanee"]}
     ],
-    lateduty:{pos:"ประตูหน้าตึกยอห์น",staff:["Mr. Natthapong","Miss Kanthira"]}
+    lateduty:{pos:"Front Gate (St. John Bldg)",staff:["Mr. Natthapong","Miss Kanthira"]}
   }
 ];
 
@@ -1108,11 +1108,6 @@ const MORNING_TALK_ROTA=[
   {label:"1st week",Monday:"T. Gary",Tuesday:"T. Sevara",Wednesday:"T. Tata",Thursday:"T. Taylinn",Friday:"Li Yan"},
   {label:"2nd week",Monday:"T. JC",Tuesday:"T. Daisy",Wednesday:"T. Jayne",Thursday:"T. Lhen",Friday:"T. Yana"}
 ];
-// Wednesday Story at assembly — foreign-teacher rotation.
-// Anchor: shifted +1 week after Aug 2026 holiday (was 2026-07-08).
-const STORY_ANCHOR="2026-07-15";
-const STORY_ROTA=["T. Jayne","T. Yana","T. Gary","T. Sevara","T. Taylinn","T. JC"];
-
 // Monday 00:00 of the week containing date d
 function mondayOf(d){
   const dt=new Date(d.getFullYear(),d.getMonth(),d.getDate());
@@ -1127,21 +1122,6 @@ function getMorningTalkWeekIdx(d){
 }
 // Morning Talk line-up object for the week containing d
 function getMorningTalkWeek(d){return MORNING_TALK_ROTA[getMorningTalkWeekIdx(d)];}
-// Storyteller for the Wednesday of the week containing d
-function getStoryTellerFor(d){
-  const anchor=new Date(STORY_ANCHOR+"T00:00:00");
-  const wed=mondayOf(d||new Date());wed.setDate(wed.getDate()+2);
-  const wk=Math.round((wed-anchor)/604800000);
-  return {teacher:STORY_ROTA[((wk%6)+6)%6],date:wed};
-}
-// Next upcoming Wednesday storyteller (today if it's Wednesday)
-function getNextStory(){
-  const today=new Date();const t0=new Date(today.getFullYear(),today.getMonth(),today.getDate());
-  let s=getStoryTellerFor(t0);
-  if(s.date<t0){const n=new Date(t0);n.setDate(n.getDate()+7);s=getStoryTellerFor(n);}
-  return s;
-}
-
 // ── SCHOOL CALENDAR ───────────────────────────────────────────────────────────
 const SCHOOL_CALENDAR={
   "2026-06":{
@@ -1995,7 +1975,20 @@ const PP_UNIT_FOR_WEEK={
 function getPPUnitForWeek(weekNum){return PP_UNIT_FOR_WEEK[weekNum]||null;}
 function getPPUnitForWeek(weekNum){return PP_UNIT_FOR_WEEK[weekNum]||null;}
 
+// Integration theme for a school week (whole-KG course outline, from SCHOOL_WEEKS.unit)
+function getIntegrationTheme(weekNum){
+  if(!weekNum)return null;
+  const w=SCHOOL_WEEKS.find(x=>x.week===weekNum);
+  return w&&w.unit?w.unit:null;
+}
+// Wrapper: Integration falls back to the course-outline theme when no detailed entry exists (e.g. S2)
 function getWeekTopic(subject,weekNum,cls){
+  const t=_getWeekTopicRaw(subject,weekNum,cls);
+  if(t||!subject||!/Integration/.test(subject))return t;
+  const th=getIntegrationTheme(weekNum);
+  return th?{theme:th}:null;
+}
+function _getWeekTopicRaw(subject,weekNum,cls){
   if(!weekNum||!subject)return null;
   const isMLP_K3=cls==='K3A'||cls==='K3B';
   const isK2=cls==='K2A'||cls==='K2B'||cls==='K2/1'||cls==='K2/2'||cls==='K2/3';
