@@ -511,7 +511,7 @@ function renderTimetable(){
     h.push('<div style="font-size:0.68rem;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:0.5px">NOW &mdash; '+PERIODS[activePeriodIdx].label+'</div>');
     h.push('<div style="font-weight:800;font-size:1.3rem;color:#111827">'+subj+'</div>');
     if(tchr)h.push('<div style="font-size:0.75rem;color:#94a3b8">&#128100; '+tchr+'</div>');
-    if(topic){if(typeof topic==='object'){const al=getTopicLabel(topic,period&&period.sub==='Integration');if(al)h.push('<div style="font-size:0.78rem;color:#475569;margin-top:0.2rem">&#128218; '+al+'</div>');}else h.push('<div style="font-size:0.78rem;color:#475569;margin-top:0.2rem">&#128218; '+topic+'</div>');}
+    if(topic){if(typeof topic==='object'){const al=getTopicLabel(topic,subj==='Integration');if(al)h.push('<div style="font-size:0.78rem;color:#475569;margin-top:0.2rem">&#128218; '+al+'</div>');}else h.push('<div style="font-size:0.78rem;color:#475569;margin-top:0.2rem">&#128218; '+topic+'</div>');}
     h.push('</div>');
     h.push('<div style="text-align:right;flex-shrink:0">');
     h.push('<div style="font-size:1.1rem;font-weight:800;color:'+col+'">'+minsLeft+'m</div>');
