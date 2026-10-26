@@ -34,7 +34,7 @@ function todayDayColors(){
 }
 
 // Semester 1 / 2026 timetable — sourced from ตารางสอน.xlsx (Sheet: ตารางสอน)
-// K1A = อ.1A (Gary), K1B = อ.1B (Sevara)
+// K1A = อ.1A (Gary), K1B = อ.1B (Dianaimh)
 // K2A = อ.2A, K2B = อ.2B
 // K3A = อ.3A, K3B = อ.3B (อนุบาล 3 MLP — 7 periods per day)
 // Periods for อนุบาล 1: P1 08:30-09:10, P2 09:10-09:50, P3 10:10-10:50,
@@ -86,43 +86,43 @@ const TIMETABLE={
   K1B:{
     Monday:[
       null,
-      {sub:"Integration",   teacher:"T. Sevara"},
+      {sub:"Integration",   teacher:"T. Dianaimh"},
       {sub:"Love Reading",  teacher:"Miss Nopwan"},
       {sub:"Movement",      teacher:"Miss Kanthira"},
-      {sub:"English",       teacher:"T. Sevara"},
-      {sub:"Math",          teacher:"T. Sevara"}
+      {sub:"English",       teacher:"T. Dianaimh"},
+      {sub:"Math",          teacher:"T. Dianaimh"}
     ],
     Tuesday:[
       null,
-      {sub:"Integration",   teacher:"T. Sevara"},
+      {sub:"Integration",   teacher:"T. Dianaimh"},
       {sub:"Chinese",       teacher:"Li Yan"},
-      {sub:"STREAMSS",      teacher:"T. Sevara"},
-      {sub:"English",       teacher:"T. Sevara"},
-      {sub:"Math",          teacher:"T. Sevara"}
+      {sub:"STREAMSS",      teacher:"T. Dianaimh"},
+      {sub:"English",       teacher:"T. Dianaimh"},
+      {sub:"Math",          teacher:"T. Dianaimh"}
     ],
     Wednesday:[
       null,
-      {sub:"Integration",   teacher:"T. Sevara"},
+      {sub:"Integration",   teacher:"T. Dianaimh"},
       {sub:"Skill Building",teacher:"Miss Mayura"},
-      {sub:"STREAMSS",      teacher:"T. Sevara"},
-      {sub:"Phonics",       teacher:"T. Sevara"},
-      {sub:"Science",       teacher:"T. Sevara"}
+      {sub:"STREAMSS",      teacher:"T. Dianaimh"},
+      {sub:"Phonics",       teacher:"T. Dianaimh"},
+      {sub:"Science",       teacher:"T. Dianaimh"}
     ],
     Thursday:[
       {sub:"Outdoor",       teacher:"Mr. Natthapong"},
-      {sub:"Play & Learn",  teacher:"T. Sevara"},
+      {sub:"Play & Learn",  teacher:"T. Dianaimh"},
       null,
-      {sub:"Phonics",       teacher:"T. Sevara"},
-      {sub:"Science",       teacher:"T. Sevara"},
-      {sub:"Integration",   teacher:"T. Sevara"}
+      {sub:"Phonics",       teacher:"T. Dianaimh"},
+      {sub:"Science",       teacher:"T. Dianaimh"},
+      {sub:"Integration",   teacher:"T. Dianaimh"}
     ],
     Friday:[
-      {sub:"STREAMSS",      teacher:"T. Sevara"},
+      {sub:"STREAMSS",      teacher:"T. Dianaimh"},
       {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
       {sub:"Music",         teacher:"Mr. Akkarin"},
-      {sub:"Play & Learn",  teacher:"T. Sevara"},
-      {sub:"Integration",   teacher:"T. Sevara"}
+      {sub:"Play & Learn",  teacher:"T. Dianaimh"},
+      {sub:"Integration",   teacher:"T. Dianaimh"}
     ]
   },
     // ── KG1 IEP ───────────────────────────────────────────────────────────────
@@ -1029,7 +1029,7 @@ const MORNING_DUTY_ROTA=[
       {pos:"Stairs",staff:["Miss Yuphin"]},
       {pos:"Under the Banyan Tree",staff:["T. Lhen"]},
       {pos:"Walkway",staff:["T. Jussill"]},
-      {pos:"Screening – Field Gate",staff:["Miss Rungtiva","T. Sevara"]},
+      {pos:"Screening – Field Gate",staff:["Miss Rungtiva","T. Dianaimh"]},
       {pos:"Drop-off & Pick-up – Field Gate",staff:["Miss Ariyaporn","Miss Srassaya (Joy)","Miss Paphawarin"]}
     ],
     lateduty:{pos:"Front Gate (St. John Bldg)",staff:["Miss Mayura","Miss Nopwan"]}
@@ -1105,7 +1105,7 @@ function getForeignDutyTeachers(rota){
 // S2/2026: week of 19 Oct 2026 = "2nd week" line-up (T. JC Monday)
 const MORNING_TALK_ANCHOR="2026-10-19";
 const MORNING_TALK_ROTA=[
-  {label:"1st week",Monday:"T. Gary",Tuesday:"T. Sevara",Wednesday:"T. Tata",Thursday:"T. Taylinn",Friday:"Li Yan"},
+  {label:"1st week",Monday:"T. Gary",Tuesday:"T. Dianaimh",Wednesday:"T. Tata",Thursday:"T. Taylinn",Friday:"Li Yan"},
   {label:"2nd week",Monday:"T. JC",Tuesday:"T. Daisy",Wednesday:"T. Jayne",Thursday:"T. Lhen",Friday:"T. Yana"}
 ];
 // Monday 00:00 of the week containing date d
@@ -2340,7 +2340,7 @@ function getObsForTeacher(teacherId){
 const TEACHERS=[
   // MLP teachers
   {id:"gary",        name:"T. Gary",        full:"T. Gary",         classes:["K1A"],                                                                          color:"#2563eb", prog:"MLP"},
-  {id:"yulia",      name:"T. Sevara",      full:"T. Sevara",       classes:["K1B"],                                                                          color:"#7c3aed", prog:"MLP"},
+  {id:"yulia",      name:"T. Dianaimh",      full:"T. Dianaimh",       classes:["K1B"],                                                                          color:"#7c3aed", prog:"MLP"},
   {id:"inessa",      name:"T. Taylinn",      full:"T. Taylinn",       classes:["K2A","K2B","K3A","K3B","K1/1","K1/2","K1/3","N1","N2"],                        color:"#0891b2", prog:"Both"},
   {id:"iana",        name:"T. Yana",        full:"T. Yana",         classes:["K2A","K2B","K3A","K3B","N1","N2"],                                              color:"#059669", prog:"MLP"},
   {id:"jayne",       name:"T. Jayne",       full:"T. Jayne",        classes:["K2A","K2B","K3A","K3B","K2/1","K2/2","K2/3","K3/1","K3/2","K3/3","K3/4","N1","N2"], color:"#d97706", prog:"Both"},
