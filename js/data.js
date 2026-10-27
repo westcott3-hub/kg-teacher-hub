@@ -85,33 +85,33 @@ const TIMETABLE={
   },
   K1B:{
     Monday:[
+      {sub:"Math",          teacher:"T. Dianaimh"},
+      {sub:"English",       teacher:"T. Dianaimh"},
+      {sub:"Love Reading",  teacher:"Miss Nopwan"},
       null,
       {sub:"Integration",   teacher:"T. Dianaimh"},
-      {sub:"Love Reading",  teacher:"Miss Nopwan"},
-      {sub:"Movement",      teacher:"Miss Kanthira"},
-      {sub:"English",       teacher:"T. Dianaimh"},
-      {sub:"Math",          teacher:"T. Dianaimh"}
+      null
     ],
     Tuesday:[
-      null,
-      {sub:"Integration",   teacher:"T. Dianaimh"},
+      {sub:"Math",          teacher:"T. Dianaimh"},
+      {sub:"English",       teacher:"T. Dianaimh"},
       {sub:"Chinese",       teacher:"Li Yan"},
       {sub:"STREAMSS",      teacher:"T. Dianaimh"},
-      {sub:"English",       teacher:"T. Dianaimh"},
-      {sub:"Math",          teacher:"T. Dianaimh"}
+      {sub:"Integration",   teacher:"T. Dianaimh"},
+      null
     ],
     Wednesday:[
-      null,
-      {sub:"Integration",   teacher:"T. Dianaimh"},
+      {sub:"Science",       teacher:"T. Dianaimh"},
+      {sub:"Phonics",       teacher:"T. Dianaimh"},
       {sub:"Skill Building",teacher:"Miss Mayura"},
       {sub:"STREAMSS",      teacher:"T. Dianaimh"},
-      {sub:"Phonics",       teacher:"T. Dianaimh"},
-      {sub:"Science",       teacher:"T. Dianaimh"}
+      {sub:"Integration",   teacher:"T. Dianaimh"},
+      null
     ],
     Thursday:[
-      {sub:"Outdoor",       teacher:"Mr. Natthapong"},
+      {sub:"Activities"},
       {sub:"Play & Learn",  teacher:"T. Dianaimh"},
-      null,
+      {sub:"Dance"},
       {sub:"Phonics",       teacher:"T. Dianaimh"},
       {sub:"Science",       teacher:"T. Dianaimh"},
       {sub:"Integration",   teacher:"T. Dianaimh"}
@@ -120,9 +120,9 @@ const TIMETABLE={
       {sub:"STREAMSS",      teacher:"T. Dianaimh"},
       {sub:"Swimming",      teacher:"Miss Niraporn"},
       null,
+      {sub:"Integration",   teacher:"T. Dianaimh"},
       {sub:"Music",         teacher:"Mr. Akkarin"},
-      {sub:"Play & Learn",  teacher:"T. Dianaimh"},
-      {sub:"Integration",   teacher:"T. Dianaimh"}
+      {sub:"Play & Learn",  teacher:"T. Dianaimh"}
     ]
   },
     // ── KG1 IEP ───────────────────────────────────────────────────────────────
