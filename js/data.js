@@ -2307,23 +2307,30 @@ const DEFAULT_RESOURCES=[];
 // date: ISO date | teacherId: TEACHERS id or null (class-only) | cls: class
 // periods: 1-based period numbers observed (empty = whole day / no specific period)
 const OBSERVATIONS=[
-  {date:"2026-06-15",teacherId:"daisy",    cls:"K1/2", periods:[1]},
-  {date:"2026-06-15",teacherId:"shirley",  cls:"K2/2", periods:[2]},
-  {date:"2026-06-16",teacherId:null,       cls:"K1/3", periods:[1],  note:"Ms. Li (Chinese)"},
-  {date:"2026-06-16",teacherId:"jussill",  cls:"K2/1", periods:[2]},
-  {date:"2026-06-22",teacherId:"gary",     cls:"K1A",  periods:[2,3]},
-  {date:"2026-06-23",teacherId:"inessa",   cls:"K2A",  periods:[2]},
-  {date:"2026-06-24",teacherId:"svitlana", cls:"K2A",  periods:[2]},
-  {date:"2026-06-25",teacherId:"jayne",    cls:"K3/4", periods:[1]},
-  {date:"2026-06-29",teacherId:"yulia",    cls:"K1B",  periods:[2]},
-  {date:"2026-06-29",teacherId:"iana",     cls:"K3B",  periods:[3]},
-  {date:"2026-09-04",teacherId:"janet",    cls:"N1",   periods:[]},
-  {date:"2026-09-14",teacherId:"newteacher",cls:"K2B", periods:[2],  note:"Date adjusted — original 13 Sep was a Sunday"},
+  // Semester 2 / 2569 — foreign teachers only. observers: Head of Dept, Academic, Level rep, Peer
+  {date:"2026-11-09",teacherId:"daisy",    cls:"K1/3",     periods:[2], observers:["มิสวาสนา พรยิ่ง","ม.ตฤณ โกมลธนกิจ","มิสศิรินันท์ สมนาแซง","มิสอาภรพรรณ์ ไชยวารินทร์"]},
+  {date:"2026-11-11",teacherId:"jussill",  cls:"K1/2",     periods:[1], observers:["มิสวาสนา พรยิ่ง","ม.ตฤณ โกมลธนกิจ","มิสศิรินันท์ สมนาแซง","มิสอาภรพรรณ์ ไชยวารินทร์"]},
+  {date:"2026-11-13",teacherId:"gary",     cls:"K1A",      periods:[1], observers:["มิสวาสนา พรยิ่ง","ม.ตฤณ โกมลธนกิจ","มิสศิรินันท์ สมนาแซง","มิสอาภรพรรณ์ ไชยวารินทร์"]},
+  {date:"2026-11-13",teacherId:"shirley",  cls:"K2/3",     periods:[2], observers:["มิสวาสนา พรยิ่ง","ม.ตฤณ โกมลธนกิจ","มิสศิรินันท์ สมนาแซง","มิสอาภรพรรณ์ ไชยวารินทร์"]},
+  {date:"2026-11-20",teacherId:"inessa",   cls:"K2A",      periods:[2], observers:["มิสวาสนา พรยิ่ง","ม.ตฤณ โกมลธนกิจ","มิสอาภรพรรณ์ ไชยวารินทร์","มิสศิรินันท์ สมนาแซง"]},
+  {date:"2026-11-25",teacherId:"iana",     cls:"K2B",      periods:[2], observers:["มิสวาสนา พรยิ่ง","ม.ตฤณ โกมลธนกิจ","มิสอาภรพรรณ์ ไชยวารินทร์","มิสศิรินันท์ สมนาแซง"]},
+  {date:"2026-11-25",teacherId:"jayne",    cls:"K3/1",     periods:[3], observers:["มิสวาสนา พรยิ่ง","ม.ตฤณ โกมลธนกิจ","มิสอาภรพรรณ์ ไชยวารินทร์","มิสศิรินันท์ สมนาแซง"]},
+  {date:"2026-11-27",teacherId:"svitlana", cls:"K3B",      periods:[2], observers:["มิสวาสนา พรยิ่ง","มิสจุรี ทวีธนวาณิชย์","มิสอาภรพรรณ์ ไชยวารินทร์","มิสศิรินันท์ สมนาแซง"]},
+  {date:"2026-11-30",teacherId:"yulia",    cls:"K1B",      periods:[2], observers:["มิสวาสนา พรยิ่ง","มิสจุรี ทวีธนวาณิชย์","มิสอาภรพรรณ์ ไชยวารินทร์","มิสศิรินันท์ สมนาแซง"]},
+  {date:"2027-02-03",teacherId:"janet",    cls:"*",        periods:[1,2], observers:["มิสวาสนา พรยิ่ง","มิสจุรี ทวีธนวาณิชย์","มิสศิรินันท์ สมนาแซง","มิสอาภรพรรณ์ ไชยวารินทร์"], clsLabel:"ชั้นเตรียม (Prep class)"},
 ];
 
+// English names for observers (shown above the Thai name on the observation card)
+const OBS_NAMES_EN={
+  "มิสวาสนา พรยิ่ง":"Miss Wasana Pornying",
+  "ม.ตฤณ โกมลธนกิจ":"Mr. Trin Komolthanakit",
+  "มิสจุรี ทวีธนวาณิชย์":"Miss Juree Taweethanawanich",
+  "มิสศิรินันท์ สมนาแซง":"Miss Sirinan Somnasaeng",
+  "มิสอาภรพรรณ์ ไชยวารินทร์":"Miss Aphonphan Chaiwarin",
+};
 // Helper: get observations for a specific date + class
 function getObsForDateCls(dateStr,cls){
-  return OBSERVATIONS.filter(o=>o.date===dateStr&&o.cls===cls);
+  return []; // observations are private to the teacher view
 }
 // Helper: get observations for a specific date + teacher
 function getObsForDateTeacher(dateStr,teacherId){
@@ -2331,7 +2338,7 @@ function getObsForDateTeacher(dateStr,teacherId){
 }
 // Helper: get all obs for a class (any date) — for week grid
 function getObsForCls(cls){
-  return OBSERVATIONS.filter(o=>o.cls===cls);
+  return []; // observations are private to the teacher view
 }
 // Helper: get all obs for a teacher (any date)
 function getObsForTeacher(teacherId){
