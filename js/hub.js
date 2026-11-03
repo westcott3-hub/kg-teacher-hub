@@ -36,7 +36,10 @@ const HUB_I18N={
     homeroom:"Homeroom",onDuty:"On duty",dutyNow:"This week",
     ofSchoolYear:"",noWeek:"Outside the school term",
     posAt:"at",weekOf:"Week {w}",
-    lessonsLeft:"{n} left today",allDone:"Done for today",nextTag:"NEXT"
+    lessonsLeft:"{n} left today",allDone:"Done for today",nextTag:"NEXT",
+    obsTitle:"Observation lesson",obsToday:"Today",obsTomorrow:"Tomorrow",obsIn:"in {n} days",obsObservers:"Observers",
+    obsBannerToday:"Observation lesson today",obsBannerTmr:"Observation lesson tomorrow",obsTag:"OBS",
+    obsRoleHead:"Head of Dept",obsRoleAcad:"Academic",obsRoleLevel:"Level rep",obsRolePeer:"Peer"
   },
   th:{
     today:"วันนี้",week:"ตารางสัปดาห์",weekShort:"สัปดาห์",duty:"เวรและหน้าเสาธง",dutyShort:"เวร",
@@ -66,7 +69,10 @@ const HUB_I18N={
     homeroom:"ประจำชั้น",onDuty:"อยู่เวร",dutyNow:"สัปดาห์นี้",
     ofSchoolYear:"",noWeek:"นอกภาคเรียน",
     posAt:"ที่",weekOf:"สัปดาห์ที่ {w}",
-    lessonsLeft:"เหลืออีก {n} คาบวันนี้",allDone:"สอนครบแล้ววันนี้",nextTag:"ถัดไป"
+    lessonsLeft:"เหลืออีก {n} คาบวันนี้",allDone:"สอนครบแล้ววันนี้",nextTag:"ถัดไป",
+    obsTitle:"นิเทศการสอน",obsToday:"วันนี้",obsTomorrow:"พรุ่งนี้",obsIn:"อีก {n} วัน",obsObservers:"ผู้นิเทศ",
+    obsBannerToday:"วันนี้มีนิเทศการสอน",obsBannerTmr:"พรุ่งนี้มีนิเทศการสอน",obsTag:"นิเทศ",
+    obsRoleHead:"หัวหน้าแผนก",obsRoleAcad:"ฝ่ายวิชาการ",obsRoleLevel:"ตัวแทนสายชั้น",obsRolePeer:"เพื่อนครู"
   }
 };
 const HUB_SUBJ_TH={"Integration":"บูรณาการ","English":"ภาษาอังกฤษ","Math":"คณิตศาสตร์","Science":"วิทยาศาสตร์",
@@ -396,17 +402,44 @@ function hubWelcome(){
 }
 
 // ── TODAY ─────────────────────────────────────────────────────────────────────
-function hubLessonRow(l,state,showDay){
+// ── OBSERVATIONS (private: only the selected teacher sees theirs) ──────────────
+function hubMyObs(){
+  const me=hubMe();if(!me||typeof OBSERVATIONS==="undefined")return [];
+  const t=TEACHERS.find(x=>hubNorm(x.full)===me.key);if(!t)return [];
+  return OBSERVATIONS.filter(o=>o.teacherId===t.id&&o.observers).sort((a,b)=>a.date<b.date?-1:1);
+}
+function hubObsMatch(l,k){
+  const o=hubMyObs().find(x=>x.date===k);if(!o)return null;
+  const pn=parseInt(String(l.p.label).replace("P",""),10);
+  const clsOk=o.cls==="*"||String(l.cls).split(",").map(s=>s.trim()).includes(o.cls);
+  return clsOk&&o.periods.includes(pn)?o:null;
+}
+function hubObsWhen(o){
+  const n=Math.round((hubParse(o.date)-hubParse(hubKey(new Date())))/864e5);
+  return {n,txt:n===0?T("obsToday"):n===1?T("obsTomorrow"):T("obsIn",{n})};
+}
+function hubObsSlot(o){
+  const pc=getPeriodsForCls(o.cls==="*"?"N1":o.cls);
+  const ps=o.periods.map(p=>pc[p-1]).filter(Boolean);
+  return {per:o.periods.map(p=>"P"+p).join(" & "),time:ps.length?ps[0].start+"–"+ps[ps.length-1].end:"",cls:o.clsLabel||o.cls};
+}
+function hubObsPeople(o){
+  const roles=[T("obsRoleHead"),T("obsRoleAcad"),T("obsRoleLevel"),T("obsRolePeer")];
+  const en=typeof OBS_NAMES_EN!=="undefined"?OBS_NAMES_EN:{};
+  return '<span class="hub-obsppl">'+o.observers.map((n,i)=>'<span class="r">'+hubE(roles[i]||"")+'</span><span class="n">'+(hubLang()==="th"||!en[n]?hubE(n):hubE(en[n])+'<i>'+hubE(n)+'</i>')+'</span>').join("")+'</span>';
+}
+function hubObsToggle(){S.hubObsOpen=!S.hubObsOpen;render();}
+function hubLessonRow(l,state,showDay,obs){
   const ink=hubInk(l.sub);
   const tag=state==="now"?'<span class="hub-tag now">'+T("now").toUpperCase()+'</span>':state==="next"?'<span class="hub-tag next">'+T("nextTag")+'</span>':'';
   const meta=[hubE(l.cls),l.p.label,l.help?T("help"):""].filter(Boolean).join(" · ");
   const click=l.help?'':' onclick="hubOpenLesson(\''+l.cls.split(",")[0].trim()+'\','+l.idx+',\''+l.day+'\')"';
-  return '<button class="hub-lrow'+(state==="done"?" done":"")+(state==="now"?" isnow":"")+'"'+click+'>'
+  return '<button class="hub-lrow'+(obs?" isobs":"")+(state==="done"?" done":"")+(state==="now"?" isnow":"")+'"'+click+'>'
     +'<span class="tm"><b>'+l.p.start+'</b><i>'+l.p.end+'</i></span>'
     +'<span class="bar" style="background:'+subColor(l.sub)+'"></span>'
     +'<span class="bd"><span class="sb" style="color:'+ink+'">'+hubE(hubSub(l.sub))+'</span>'
     +'<span class="mt">'+meta+(l.topic?' · <span class="tp">'+hubE(l.topic)+'</span>':'')+'</span></span>'
-    +tag+'</button>';
+    +(obs?'<span class="hub-tag obs">&#128065; '+T("obsTag")+'</span>':'')+tag+'</button>';
 }
 function hubToday(){
   const me=hubMe();const now=new Date();const nowM=hubNowMins();
@@ -439,6 +472,10 @@ function hubToday(){
   if(me){
     const showWeek=hubWeekOf(hubKey(showDate));
     const lessons=hubLessons(me.name,hubEnDay(showDate),showWeek?showWeek.week:null);
+    // Observation banner (today / tomorrow)
+    {const _o=hubMyObs().find(x=>{const n=hubObsWhen(x).n;return n===0||n===1;});
+     if(_o){const w=hubObsWhen(_o),sl=hubObsSlot(_o);
+       h.push('<section class="hub-banner hub-obsban"><span style="font-size:20px;line-height:1">&#128065;</span><div><b>'+(w.n===0?T("obsBannerToday"):T("obsBannerTmr"))+'</b><div>'+sl.per+(sl.time?' · '+sl.time:'')+' · '+hubE(sl.cls)+'</div></div></section>');}}
     // Hero
     if(!showingNext&&isSchool){
       const cur=lessons.find(l=>timeToMins(l.p.start)<=nowM&&nowM<timeToMins(l.p.end));
@@ -470,7 +507,7 @@ function hubToday(){
           if(e<=nowM)st="done";else if(s<=nowM)st="now";else if(!marked){st="next";}
           if(st==="now"||st==="next")marked=true;
         }
-        h.push(hubLessonRow(l,st));
+        h.push(hubLessonRow(l,st,false,hubObsMatch(l,hubKey(showDate))));
       });
     }
     h.push('<button class="hub-more" onclick="hubGo(\'week\')">'+T("seeWeek")+' '+hubIcon("right",16)+'</button>');
@@ -533,6 +570,12 @@ function hubDutyTiles(){
   } else {
     h.push('<button class="hub-tile" onclick="hubGo(\'duty\')"><span class="hub-eyebrow">'+T("morningTalk")+'</span><span class="v">'+hubE(todayTalk||"—")+'</span><span class="s">'+(talkDay?hubE(hubFmt(talkDay,{weekday:"long"})):"")+'</span></button>');
   }
+  // Observation tile (shows up to 28 days before, hidden after the day)
+  if(me){
+    const _o=hubMyObs().find(x=>{const n=hubObsWhen(x).n;return n>=0&&n<=28;});
+    if(_o){const w=hubObsWhen(_o),sl=hubObsSlot(_o);
+      h.push('<button class="hub-tile hub-obstile'+(w.n<=1?" soon":"")+'" onclick="hubObsToggle()"><span class="hub-eyebrow">&#128065; '+T("obsTitle")+' · '+hubE(w.txt)+'</span><span class="v">'+hubE(hubFmt(hubParse(_o.date),{weekday:"short",day:"numeric",month:"short"}))+'</span><span class="s">'+sl.per+(sl.time?' · '+sl.time:'')+' · '+hubE(sl.cls)+'</span>'+(S.hubObsOpen?'<span class="hub-obsdet"><span class="hub-eyebrow">'+T("obsObservers")+'</span>'+hubObsPeople(_o)+'</span>':'<span class="more">'+T("obsObservers")+' &#9662;</span>')+'</button>');}
+  }
   h.push('</section>');
   return h.join("");
 }
@@ -575,7 +618,7 @@ function hubWeekView(){
     h.push('<div class="hd"><span>'+hubE(hubFmt(d.dt,{weekday:"long",day:"numeric",month:"short"}))+(isT?' · '+T("today"):'')+'</span><span class="cnt">'+(hol?'':(lessons.length===1?T("lessonN"):T("lessonsN",{n:lessons.length})))+'</span></div>');
     if(hol)h.push('<div class="hub-holi">'+hubIcon("sun",18,"#8A5A00")+'<span><b>'+T("noClass")+'</b><br>'+hubE(hol)+'</span></div>');
     else if(!lessons.length)h.push('<div class="hub-empty">'+T("noLessonsDay")+'</div>');
-    else lessons.forEach(l=>h.push(hubLessonRow(l,"")));
+    else lessons.forEach(l=>{const _ob=hubObsMatch(l,d.k);h.push(hubLessonRow(l,"",false,_ob));if(_ob)h.push('<div class="hub-wobs"><b>&#128065; '+T("obsTitle")+'</b>'+hubObsPeople(_ob)+'</div>');});
     const ev=getCalendarDay(d.k).filter(e=>e.type==="event"||e.type==="exam");
     ev.forEach(e=>h.push('<div class="hub-wev">'+hubIcon("bell",14,"#8A5A00")+hubE(e.label)+'</div>'));
     h.push('</section>');

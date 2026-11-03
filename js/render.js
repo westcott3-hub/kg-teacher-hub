@@ -988,35 +988,6 @@ function renderTeacherTab(teacher){
     h.push('</div>');
   }
 
-  // ── YOUR OBSERVATION card (teacher-only) ─────────────────────────────────
-  (function(){
-    const tk=todayKey();
-    const mine=getObsForTeacher(teacher.id).filter(o=>o.observers).sort((a,b)=>a.date<b.date?-1:1);
-    let o=mine.find(x=>x.date>=tk);
-    if(!o){const past=mine.filter(x=>x.date<tk);o=past[past.length-1];if(o&&(new Date(tk)-new Date(o.date))/864e5>14)o=null;}
-    if(!o)return;
-    const days=Math.round((new Date(o.date)-new Date(tk))/864e5);
-    const done=days<0;
-    const when=done?'&#9989; Completed':days===0?'TODAY':days===1?'Tomorrow':'in '+days+' days';
-    const dateTxt=new Date(o.date+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
-    const pc=getPeriodsForCls(o.cls==='*'?(teacher.classes[0]||'K1A'):o.cls);
-    const ps=o.periods.map(p=>pc[p-1]).filter(Boolean);
-    const timeTxt=ps.length?ps[0].start+'–'+ps[ps.length-1].end:'';
-    const perTxt=o.periods.map(p=>'P'+p).join(' & ');
-    const roles=['Head of Dept','Academic','Level rep','Peer'];
-    const acc=done?'#16a34a':'#F59E0B';
-    h.push('<div style="margin:0 1rem 0.75rem;background:'+(done?'#F0FDF4':'#FFFBEB')+';border:2px solid '+acc+';border-radius:12px;padding:0.7rem 0.9rem">');
-    h.push('<div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap">');
-    h.push('<div style="font-weight:900;font-size:0.95rem;color:#92400E">&#128065; Your observation lesson</div>');
-    h.push('<span style="font-size:0.72rem;font-weight:800;background:'+acc+';color:#fff;border-radius:5px;padding:2px 8px">'+when+'</span>');
-    h.push('</div>');
-    h.push('<div style="font-weight:800;font-size:1.05rem;color:#111827;margin-top:0.35rem">'+dateTxt+'</div>');
-    h.push('<div style="font-size:0.85rem;font-weight:700;color:#374151;margin-top:0.1rem">'+perTxt+(timeTxt?' &middot; '+timeTxt:'')+' &middot; '+(o.clsLabel||o.cls)+'</div>');
-    h.push('<div style="display:grid;grid-template-columns:auto 1fr;gap:0.15rem 0.6rem;margin-top:0.5rem;font-size:0.78rem">');
-    o.observers.forEach((n,i)=>h.push('<div style="color:#9CA3AF;font-weight:700">'+roles[i]+'</div><div style="color:#374151;font-weight:700">'+((typeof OBS_NAMES_EN!=='undefined'&&OBS_NAMES_EN[n])?OBS_NAMES_EN[n]+'<div style="font-size:0.7rem;font-weight:500;color:#9CA3AF">'+n+'</div>':n)+'</div>'));
-    h.push('</div></div>');
-  })();
-
   // ── TWO-COL: Period list + Week grid ─────────────────────────────────────
   const teacherGridsOpen=S.tmGridOpen!==false;
   const _tchrWo=S.tmWeekOffset||0;
