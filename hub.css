@@ -185,3 +185,18 @@
   .hub-wgrid{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto}
   .hub-me .nm{display:none}
 }
+
+/* Observation lessons (teacher-private) */
+.hub-obstile{grid-column:1/-1;border-color:#F5C26B;background:#FFFBEB;min-height:0}
+.hub-obstile .v{color:#92400E}
+.hub-obstile.soon{border:2px solid #F59E0B}
+.hub-obstile .more{font-size:12px;font-weight:800;color:#B45309;margin-top:2px}
+.hub-obsdet{display:block;margin-top:8px;padding-top:8px;border-top:1px solid #F5DDB0}
+.hub-obsppl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;margin-top:4px;font-size:13px;text-align:left}
+.hub-obsppl .r{color:#8A6D3B;font-weight:700;white-space:nowrap}
+.hub-obsppl .n{color:#1F2328;font-weight:800}
+.hub-obsppl .n i{display:block;font-style:normal;font-weight:600;font-size:11px;color:#8A8F98}
+.hub-obsban{border:2px solid #F59E0B;background:#FFFBEB}
+.hub-tag.obs{background:#F59E0B;color:#fff}
+.hub-lrow.isobs{box-shadow:inset 3px 0 0 #F59E0B;background:#FFFBEB}
+.hub-wobs{background:#FFFBEB;border:1px solid #F5C26B;border-radius:10px;padding:8px 10px;margin:-2px 0 8px;font-size:12px;color:#92400E}
