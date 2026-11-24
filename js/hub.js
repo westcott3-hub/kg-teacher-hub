@@ -21,6 +21,7 @@ const HUB_I18N={
     morningDuty:"Morning duty",onDutyThisWeek:"On duty this week",offThisWeek:"Off this week",next:"Next",
     morningTalk:"Morning talk",yourNextTalk:"Your next talk",todaySpeaker:"Today",notOnTalk:"Not on the talk rota",
     comingUp:"Coming up",announcements:"Announcements",manage:"Manage",addAnn:"+ Add announcement",noAnnouncements:"No announcements right now.",
+    schoolNotices:"School notices",seeAll:"See all",noNotices:"No school notices right now.",dressCode:"Dress code",weeklyDress:"Weekly dress code",nAll:"All",nAction:"Action needed",nRule:"Rules",nEvent:"Events",nInfo:"Info",nRef:"Reference",until:"until {d}",posted:"Posted {d}",nSource:"From the MLP Kindergarten and ACS Foreign Teachers LINE groups · updated {d}",openLink:"Open link",back:"Back",
     gateDutyToday:"Gate duty today",gateDutyYou:"You're on gate duty today",
     myDuties:"My duties",dutyThisWeek:"Morning duty this week",rota:"Rota",
     talkThisWeek:"Morning talk this week",talkNextWeek:"Morning talk next week",
@@ -54,6 +55,7 @@ const HUB_I18N={
     morningDuty:"เวรเช้า",onDutyThisWeek:"อยู่เวรสัปดาห์นี้",offThisWeek:"ไม่มีเวรสัปดาห์นี้",next:"ครั้งถัดไป",
     morningTalk:"พูดหน้าเสาธง",yourNextTalk:"คิวพูดครั้งถัดไป",todaySpeaker:"วันนี้",notOnTalk:"ไม่มีชื่อในตารางพูด",
     comingUp:"กิจกรรมที่จะมาถึง",announcements:"ประกาศ",manage:"จัดการ",addAnn:"+ เพิ่มประกาศ",noAnnouncements:"ยังไม่มีประกาศ",
+    schoolNotices:"ประกาศจากโรงเรียน",seeAll:"ดูทั้งหมด",noNotices:"ยังไม่มีประกาศจากโรงเรียน",dressCode:"การแต่งกาย",weeklyDress:"การแต่งกายประจำสัปดาห์",nAll:"ทั้งหมด",nAction:"ต้องดำเนินการ",nRule:"ระเบียบ",nEvent:"กิจกรรม",nInfo:"ข้อมูล",nRef:"อ้างอิง",until:"ถึง {d}",posted:"ประกาศเมื่อ {d}",nSource:"จากกลุ่ม LINE MLP Kindergarten และ ACS Foreign Teachers · อัปเดต {d}",openLink:"เปิดลิงก์",back:"กลับ",
     gateDutyToday:"เวรสายวันนี้",gateDutyYou:"วันนี้คุณอยู่เวรสาย",
     myDuties:"เวรของฉัน",dutyThisWeek:"เวรเช้าสัปดาห์นี้",rota:"ชุดเวร",
     talkThisWeek:"พูดหน้าเสาธงสัปดาห์นี้",talkNextWeek:"พูดหน้าเสาธงสัปดาห์หน้า",
@@ -234,6 +236,67 @@ function hubMyNextTalk(){
 }
 
 // ── EVENTS ────────────────────────────────────────────────────────────────────
+// ── SCHOOL NOTICES (data in js/notices.js, filled from the LINE groups) ───────
+const HUB_NCAT={action:{k:"nAction",r:0},event:{k:"nEvent",r:1},rule:{k:"nRule",r:2},info:{k:"nInfo",r:3},ref:{k:"nRef",r:4}};
+function hubNotices(){
+  if(typeof NOTICES==="undefined")return [];
+  const k=hubKey(new Date());
+  return NOTICES.filter(n=>!n.until||n.until>=k).slice().sort((a,b)=>
+    ((b.pin?1:0)-(a.pin?1:0))||((HUB_NCAT[a.cat]||{r:9}).r-(HUB_NCAT[b.cat]||{r:9}).r)||(a.posted<b.posted?1:a.posted>b.posted?-1:0));
+}
+function hubNoticesTop(n){
+  const k=hubKey(new Date());
+  const list=hubNotices().filter(x=>x.cat==="action"||x.cat==="event"||(x.posted&&(hubParse(k)-hubParse(x.posted))/86400000<=14));
+  list.sort((a,b)=>{const ra=(HUB_NCAT[a.cat]||{r:9}).r,rb=(HUB_NCAT[b.cat]||{r:9}).r;if(ra!==rb)return ra-rb;
+    const ua=a.until||"9999",ub=b.until||"9999";return ua<ub?-1:ua>ub?1:0;});
+  return list.slice(0,n);
+}
+function hubNChip(cat){const c=HUB_NCAT[cat];return c?'<span class="hub-nchip '+cat+'">'+T(c.k)+'</span>':'';}
+function hubNDate(k){return hubFmt(hubParse(k),{day:"numeric",month:"short"});}
+function hubNBody(t){return hubE(t).split("\n").join("<br>");}
+function hubDressFor(d){return (typeof DRESS_CODE!=="undefined"&&d)?(DRESS_CODE[hubEnDay(d)]||null):null;}
+function hubDressTable(){
+  if(typeof DRESS_CODE==="undefined")return "";
+  const today=hubEnDay(new Date());
+  const h=['<div class="hub-dress">'];
+  Object.keys(DRESS_CODE).forEach(d=>{const x=DRESS_CODE[d];
+    h.push('<div class="hub-drow'+(d===today?" today":"")+'"><span class="d">'+hubE(hubLang()==="th"?hubFmt(hubAddDays(new Date(2026,10,23),["Monday","Tuesday","Wednesday","Thursday","Friday"].indexOf(d)),{weekday:"short"}):d.slice(0,3))+'</span><span class="w"><b>'+hubE(x.wear)+'</b>'+(x.note?'<i>'+hubE(x.note)+'</i>':'')+'</span></div>');});
+  if(typeof DRESS_CODE_FALLBACK!=="undefined")h.push('<div class="hub-dnote">'+hubE(DRESS_CODE_FALLBACK)+'</div>');
+  h.push('</div>');
+  return h.join("");
+}
+function hubNSetCat(c){S.hubNcat=c;render();}
+function hubNoticesView(){
+  const all=hubNotices();
+  const cat=S.hubNcat&&S.hubNcat!=="all"?S.hubNcat:"all";
+  const list=cat==="all"?all:all.filter(n=>n.cat===cat);
+  const h=[];
+  h.push('<div class="hub-cols"><div class="hub-colA">');
+  h.push('<section class="hub-greet"><h1>'+T("schoolNotices")+'</h1><div class="sub">'+hubE(T("nSource",{d:typeof NOTICES_UPDATED!=="undefined"?hubFmt(hubParse(NOTICES_UPDATED),{day:"numeric",month:"long",year:"numeric"}):"—"}))+'</div></section>');
+  h.push('<div class="hub-nfilter" role="group">');
+  [["all","nAll"]].concat(Object.keys(HUB_NCAT).map(c=>[c,HUB_NCAT[c].k])).forEach(([c,lab])=>{
+    const n=c==="all"?all.length:all.filter(x=>x.cat===c).length;
+    if(c!=="all"&&!n)return;
+    h.push('<button class="'+(cat===c?"on":"")+'" onclick="hubNSetCat(\''+c+'\')">'+T(lab)+' <span>'+n+'</span></button>');
+  });
+  h.push('</div>');
+  if(!list.length)h.push('<section class="hub-card"><div class="hub-empty">'+T("noNotices")+'</div></section>');
+  list.forEach(n=>{
+    h.push('<article class="hub-card hub-notice '+hubE(n.cat)+'">');
+    h.push('<div class="hub-nhd">'+hubNChip(n.cat)+'<span class="meta">'+hubE(n.src||"")+(n.posted?' · '+hubE(T("posted",{d:hubNDate(n.posted)})):'')+'</span></div>');
+    h.push('<h3 class="hub-ntitle">'+hubE(n.title)+'</h3>');
+    h.push('<p class="hub-nbody">'+hubNBody(n.body||"")+'</p>');
+    if(n.id===5)h.push(hubDressTable());
+    if(n.until||n.link){h.push('<div class="hub-nfoot">'+(n.until?'<span class="u">'+hubE(T("until",{d:hubNDate(n.until)}))+'</span>':'<span></span>')
+      +(n.link&&/^https:\/\//.test(n.link)?'<a class="hub-link" href="'+hubE(n.link)+'" target="_blank" rel="noopener">'+T("openLink")+' &rarr;</a>':'')+'</div>');}
+    h.push('</article>');
+  });
+  h.push('</div><div class="hub-colB">');
+  h.push('<section class="hub-card"><h2 class="hub-h2">'+T("weeklyDress")+'</h2>'+hubDressTable()+'</section>');
+  h.push('</div></div>');
+  return h.join("");
+}
+
 function hubUpcoming(n){
   const today=hubKey(new Date());const all=[];
   Object.values(SCHOOL_CALENDAR).forEach(m=>[...(m.holidays||[]),...(m.events||[])].forEach(e=>{if(e.date>=today)all.push(e);}));
@@ -524,6 +587,14 @@ function hubToday(){
       h.push('<section class="hub-card hub-gate'+(mine?" mine":"")+'"><div class="hub-eyebrow">'+(mine?T("gateDutyYou"):T("gateDutyToday"))+' · 07:55–08:25</div><div class="v">'+gate.map(s=>hubIsMe(s)?'<b>'+hubE(s)+'</b>':hubE(s)).join(", ")+'</div></section>');
     }
   }
+  // School notices (from LINE)
+  if(typeof NOTICES!=="undefined"){
+    const top=hubNoticesTop(3);
+    h.push('<section class="hub-card hub-ncard"><div class="hub-cardhd"><h2 class="hub-h2">'+T("schoolNotices")+'</h2><button class="hub-link" onclick="hubGo(\'notices\')">'+T("seeAll")+' ('+hubNotices().length+')</button></div>');
+    if(!top.length)h.push('<div class="hub-empty">'+T("noNotices")+'</div>');
+    top.forEach(n=>h.push('<button class="hub-nrow" onclick="hubGo(\'notices\')">'+hubNChip(n.cat)+'<span class="t">'+hubE(n.title)+(n.until?'<span class="u">'+hubE(T("until",{d:hubNDate(n.until)}))+'</span>':'')+'</span></button>'));
+    h.push('</section>');
+  }
   // Coming up
   const ev=hubUpcoming(5);
   if(ev.length){
@@ -576,6 +647,10 @@ function hubDutyTiles(){
     if(_o){const w=hubObsWhen(_o),sl=hubObsSlot(_o);
       h.push('<button class="hub-tile hub-obstile'+(w.n<=1?" soon":"")+'" onclick="hubObsToggle()"><span class="hub-eyebrow">&#128065; '+T("obsTitle")+' · '+hubE(w.txt)+'</span><span class="v">'+hubE(hubFmt(hubParse(_o.date),{weekday:"short",day:"numeric",month:"short"}))+'</span><span class="s">'+sl.per+(sl.time?' · '+sl.time:'')+' · '+hubE(sl.cls)+'</span>'+(S.hubObsOpen?'<span class="hub-obsdet"><span class="hub-eyebrow">'+T("obsObservers")+'</span>'+hubObsPeople(_o)+'</span>':'<span class="more">'+T("obsObservers")+' &#9662;</span>')+'</button>');}
   }
+  // Dress code tile (today, or next school day)
+  {const dd=hubIsSchoolDay(now)?now:hubNextSchoolDay(now,false);const dc=hubDressFor(dd);
+   if(dc){const isT=hubKey(dd)===hubKey(now);
+     h.push('<button class="hub-tile hub-dresstile" onclick="hubGo(\'notices\')"><span class="hub-eyebrow">'+T("dressCode")+' · '+(isT?T("today"):hubE(hubFmt(dd,{weekday:"short"})))+'</span><span class="v">'+hubE(dc.wear)+'</span><span class="s">'+hubE(dc.note||"")+'</span></button>');}}
   h.push('</section>');
   return h.join("");
 }
@@ -720,10 +795,10 @@ function hubRender(){
       S.tab="resources";
       body='<div id="tab-body" style="flex:1;overflow:visible;position:relative;width:100%">'+renderResources()+'</div>';
     } else {
-      const v=S.hubTab==="week"?hubWeekView():S.hubTab==="duty"?hubDutyView():hubToday();
+      const v=S.hubTab==="week"?hubWeekView():S.hubTab==="duty"?hubDutyView():S.hubTab==="notices"?hubNoticesView():hubToday();
       body='<main class="hub-main">'+v+'</main>';
     }
-    root.className="hub-root hub-on"+(["today","week","duty"].includes(S.hubTab)?" hub-own":"");
+    root.className="hub-root hub-on"+(["today","week","duty","notices"].includes(S.hubTab)?" hub-own":"");
     root.innerHTML=hubHeader()+body+hubBottomNav()+(S.popup?renderPopup():"");
   }catch(err){
     console.error("hubRender error:",err);
@@ -743,7 +818,7 @@ render=hubRender;
   S.hubMe=null;
   if(st.me==="__all")S.hubMe="__all";
   else if(st.me&&hubPeople().some(p=>p.key===hubNorm(st.me)))S.hubMe=st.me;
-  const tabs=["today","week","duty","classes","resources"];
+  const tabs=["today","week","duty","notices","classes","resources"];
   S.hubTab=tabs.includes(st.tab)?st.tab:(S.hubMe==="__all"?"classes":"today");
   S.hubWkOff=0;S.hubDay=null;S.hubPicking=false;
   render();
