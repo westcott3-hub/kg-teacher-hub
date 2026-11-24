@@ -267,14 +267,14 @@ function renderCalendarCard(h){
     const daysInMonth=new Date(year,month+1,0).getDate();
     h.push('<div style="padding:0.75rem 0.9rem">');
     // Day headers
-    h.push('<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:5px">');
+    h.push('<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:5px">');
     ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"].forEach(d=>{
       const dc=THAI_DAY_COLORS[d]||{bg:"#e2e8f0",text:"#64748b"};
       h.push('<div style="text-align:center;font-size:0.78rem;font-weight:800;color:'+dc.text+';background:'+dc.bg+';border-radius:5px;padding:4px 0">'+d.slice(0,3)+'</div>');
     });
     h.push('</div>');
     // Calendar grid
-    h.push('<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">');
+    h.push('<div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px">');
     for(let i=0;i<firstDay;i++) h.push('<div></div>');
     for(let day=1;day<=daysInMonth;day++){
       const dateStr=year+"-"+(String(month+1).padStart(2,"0"))+"-"+(String(day).padStart(2,"0"));
@@ -288,9 +288,9 @@ function renderCalendarCard(h){
       const ts=topEntry?typeStyle[topEntry.type]:null;
       const cellBg=isToday?"var(--red)":ts?ts.bg:isWeekend?"#f8fafc":"#fff";
       const cellText=isToday?"#fff":ts?ts.text:isWeekend?"#cbd5e1":"#1e3a5f";
-      h.push('<div style="border-radius:6px;padding:4px 3px;min-height:58px;background:'+cellBg+';border:1px solid '+(isToday?"var(--red-dark,#991B1B)":"#f1f5f9")+';position:relative" title="'+(topEntry?topEntry.label:"")+'">');
+      h.push('<div style="border-radius:6px;padding:4px 3px;min-height:58px;background:'+cellBg+';border:1px solid '+(isToday?"var(--red-dark,#991B1B)":"#f1f5f9")+';position:relative;min-width:0;overflow:hidden" title="'+(topEntry?topEntry.label:"")+'">');
       h.push('<div style="font-size:0.88rem;font-weight:'+(isToday||topEntry?"800":"600")+';color:'+cellText+';text-align:center">'+day+'</div>');
-      if(topEntry) h.push('<div style="font-size:0.65rem;font-weight:700;color:'+cellText+';text-align:center;line-height:1.3;padding:0 2px;overflow:hidden">'+topEntry.label.slice(0,20)+(topEntry.label.length>20?"…":"")+'</div>');
+      if(topEntry) h.push('<div style="font-size:0.65rem;font-weight:700;color:'+cellText+';text-align:center;line-height:1.3;padding:0 2px;overflow:hidden;overflow-wrap:anywhere">'+topEntry.label.slice(0,20)+(topEntry.label.length>20?"…":"")+'</div>');
       if(entries.length>1) h.push('<div style="position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:'+(typeStyle[entries[1].type]?.dot||"#94a3b8")+'"></div>');
       h.push('</div>');
     }
