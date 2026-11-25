@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Lesson Plan</title>
+<style>
+body{font-family:Arial,sans-serif;font-size:13px;color:#111;margin:0;padding:24px;max-width:900px;margin:auto}
+h1{color:#1F4E79;font-size:24px;margin:0 0 4px}h2{color:#1F4E79;font-size:18px;margin:22px 0 8px}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #bbb;padding:6px 9px;vertical-align:top;text-align:left}
+th{background:#2E6DA4;color:#fff}.k{background:#E8F1FB;font-weight:700;width:150px}.say{color:#2E6DA4}.ph{color:#2E6DA4;font-style:italic;font-size:11px}
+.bar{background:#FFF4CC;padding:8px 12px;border-radius:8px;margin-bottom:14px}
+button{padding:8px 16px;font-size:14px;margin-right:8px}
+@media print{.bar{display:none}}
+</style></head><body>
+<div class="bar"><button onclick="dl()">Download Word (.docx)</button><button onclick="print()">Print / save as PDF</button></div>
+<div id="o"></div>
+<script src="engine.js"></script><script src="docx.js"></script><script src="topics/index.js"></script>
+<script>runAfter(new URLSearchParams(location.search).get("t")||"farm","plan.js")</script></body></html>

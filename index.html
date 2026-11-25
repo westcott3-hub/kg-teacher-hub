@@ -1,0 +1,62 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KG Lesson Builder</title>
+<style>
+body{margin:0;font-family:Nunito,Arial,sans-serif;background:#EAF4FF;color:#16324F}
+.w{max-width:820px;margin:0 auto;padding:28px 18px}
+h1{font-size:30px;margin:0 0 4px}p.s{margin:0 0 22px;color:#4a6580}
+.card{background:#fff;border-radius:18px;padding:22px;box-shadow:0 4px 18px #16324f1a}
+label{display:block;font-weight:800;margin:14px 0 5px}select{width:100%;font-size:17px;padding:11px;border-radius:12px;border:2px solid #b9d3ee;background:#fff;font-family:inherit}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.row{grid-template-columns:1fr}}
+.mt{font-size:14px;color:#4a6580;margin-top:6px;min-height:20px}
+.go{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+a.b{flex:1;min-width:200px;text-align:center;text-decoration:none;font-weight:800;font-size:17px;padding:14px;border-radius:14px;font-family:inherit}
+a.p{background:#FF8A5B;color:#fff}a.q{background:#16324F;color:#fff}
+a.off{opacity:.4;pointer-events:none}
+.seq{margin-top:20px;display:flex;gap:6px;flex-wrap:wrap}
+.seq span{background:#EAF4FF;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700}
+.seq small{display:block;font-weight:600;color:#2E6DA4}
+.note{font-size:13px;color:#4a6580;margin-top:18px}
+</style></head><body><div class="w"><h1>KG Lesson Builder</h1><p class="s">Pick the options. You get a lesson player link and a lesson plan.</p>
+<div class="card">
+<div class="row"><div><label for="l">Level</label><select id="l"></select></div><div><label for="t">Topic</label><select id="t"></select></div></div>
+<div class="row"><div><label for="min">Lesson time</label><select id="min"><option value="20">20 minutes</option><option value="30" selected>30 minutes</option><option value="40">40 minutes</option></select></div>
+<div><label for="m">Teaching method</label><select id="m"></select></div></div>
+<div class="mt" id="mt"></div>
+<label for="s">Variation <small style="font-weight:600">(same settings, different game mix)</small></label>
+<div style="display:flex;gap:10px;align-items:center"><select id="s" style="max-width:180px"></select></div>
+<div class="go"><a class="b p" id="play" target="_blank" rel="noopener">Open lesson player</a><a class="b q" id="plan" target="_blank" rel="noopener">Open lesson plan</a></div>
+<div class="seq" id="seq"></div>
+<p class="note">Teacher view on the laptop, then press "Open student view" for the TV. Use Chrome or Edge.</p>
+</div></div>
+<script src="engine.js"></script><script src="topics/index.js"></script>
+<script>
+var $=function(i){return document.getElementById(i)};
+var LV=['K1','K2','K3'],tok=0;
+LV.forEach(function(v){var n=TOPICS.filter(function(x){return x.level===v}).length;var o=new Option(v+(n?'':' (coming soon)'),v);o.disabled=!n;$('l').add(o)});
+var first=LV.filter(function(v){return TOPICS.some(function(x){return x.level===v})})[0];if(first)$('l').value=first;
+function fillTopics(){var sel=$('t');sel.innerHTML='';var v=$('l').value,groups={};
+  TOPICS.filter(function(x){return x.level===v}).forEach(function(x){
+    if(!groups[x.group]){var g=document.createElement('optgroup');g.label=x.group;sel.appendChild(g);groups[x.group]=g}
+    groups[x.group].appendChild(new Option(x.title,x.id))})}
+Object.keys(DATA.METHODS).forEach(function(k){$('m').add(new Option(DATA.METHODS[k].label.split(' (')[0],k))});
+for(var i=1;i<=6;i++)$('s').add(new Option('Mix '+i,i));
+function upd(){
+  var t=$('t').value,m=$('m').value,min=$('min').value,s=$('s').value;
+  $('mt').textContent=DATA.METHODS[m].label;
+  if(!t){$('seq').innerHTML='';return}
+  var q='t='+encodeURIComponent(t)+'&m='+m+'&min='+min+'&s='+s;
+  $('play').href='player.html?'+q;$('plan').href='plan.html?'+q;
+  var my=++tok;$('play').classList.add('off');$('plan').classList.add('off');
+  loadTopic(t).then(function(){
+    if(my!==tok)return;
+    var L=makeLesson(t,m,+min,s);
+    $('seq').innerHTML=L.stages.map(function(x){return '<span>'+x.name+'<small>'+x.phase+' \u00b7 '+x.min+' min</small></span>'}).join('');
+    $('play').classList.remove('off');$('plan').classList.remove('off')
+  }).catch(function(){if(my===tok)$('mt').textContent='Could not load this topic. Check your connection and try again.'})}
+$('l').onchange=function(){fillTopics();upd()};
+['t','m','min','s'].forEach(function(i){$(i).onchange=upd});
+var qs=new URLSearchParams(location.search),qt=qs.get('t'),ql=qs.get('l');
+var pt=qt?TOPICS.filter(function(x){return x.id===qt})[0]:null;
+if(pt)$('l').value=pt.level;else if(ql&&TOPICS.some(function(x){return x.level===ql}))$('l').value=ql;
+fillTopics();if(pt)$('t').value=pt.id;upd();
+</script></body></html>
