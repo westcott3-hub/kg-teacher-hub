@@ -20,14 +20,15 @@ const Q=new URLSearchParams(location.search);const L=makeLesson(Q.get('t')||'far
 const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const tot=L.stages.reduce((a,s)=>a+s.min,0);
 const RES=L.stages.map(s=>s.res),has=(...k)=>k.some(x=>RES.includes(x));
-const subj=(L.sub||'').split(' · ')[0].replace(/^K1\s*/,'')||'English';
+const subj=(L.sub||'').split(' · ')[0].replace(/^K\d\s*/,'')||'English';
 // ---- content for the school's six-column template (same wording and tick boxes as the school's plans) ----
 const sents=(L.objective||'').split(/(?<=[.!?])\s+/).filter(Boolean);
+const KLV=((L.level||'K1').match(/K(\d)/)||[0,'1'])[1];
 const OBJ=[['At the end of lesson, the pupils should be able to:']].concat(sents.map((t,i)=>[(i+1)+'. '+t.replace(/^Children can /,'Pupils can ').replace(/^Children /,'Pupils ')]));
 const wsay=(L.wordSay||'').trim();
 const sentences=[wsay?wsay+' ('+L.words[0]+').':'',L.hello&&L.hello.q?L.hello.q:'',L.hello&&L.hello.t?L.hello.t:''].filter(Boolean).join(' / ');
 const motor=has('mime','build2d','buildguide','draw','chant')||L.stages.some(s=>/dance/i.test(s.name));
-const social=has('wheel','balloons','tap','find','memory','missing','mime','shadow','odd','count','doors','scratch');
+const social=has('sense','wheel','balloons','tap','find','memory','missing','mime','shadow','odd','count','doors','scratch');
 const CONTENT=[[{t:'2.1 Knowledge',b:1}],['Vocabulary: '+L.words.join(', ')],['Sentences: '+(sentences||'')],[{t:'2.2 Development',b:1}],['☑ 1. Language'],['☐ 2. Emotional'],[(social?'☑':'☐')+' 3. Social']];
 const MOTOR=[[(motor?'☑':'☐')+' 4. Motor Skills']];
 const prep=(Array.isArray(L.prep)?L.prep:[L.prep||'']).filter(x=>x&&!/^Open this page|^Press 'Open student/i.test(x));
@@ -50,7 +51,7 @@ const fields=()=>({week:document.getElementById('iw').value.trim()||'……',uni
 const cellH=ls=>ls.map(l=>'<div>'+l.map(r=>typeof r==='string'?e(r):`<span style="${r.b?'font-weight:800;':''}${r.i?'font-style:italic;':''}${r.hl?'background:#D9D9D9;':''}">${e(r.t)}</span>`).join('')+'</div>').join('');
 const ph=(x,l)=>`<input oninput="" style="display:none">`;
 let h=`<div style="text-align:center;font-weight:800;font-size:18px;margin:6px 0">Assumption College Sriracha<br>Kindergarten Lesson Plan</div>
-<table class="hd"><tr><td><b>Learning Area of Foreign Languages</b></td><td></td><td><b>Subject:</b> ${e(subj)}</td></tr><tr><td><b>Academic Year: 2026</b></td><td><b>Semester 2</b></td><td><b>Class:</b> Kindergarten 1</td></tr><tr><td><b>Date:</b> <span id="pd">………</span></td><td><b>Week:</b> <span id="pw">……</span></td><td></td></tr><tr><td><b>Unit:</b> <span id="pu">……</span></td><td colspan=2><b>Topic:</b> ${e(L.title)}</td></tr></table>
+<table class="hd"><tr><td><b>Learning Area of Foreign Languages</b></td><td></td><td><b>Subject:</b> ${e(subj)}</td></tr><tr><td><b>Academic Year: 2026</b></td><td><b>Semester 2</b></td><td><b>Class:</b> Kindergarten ${KLV}</td></tr><tr><td><b>Date:</b> <span id="pd">………</span></td><td><b>Week:</b> <span id="pw">……</span></td><td></td></tr><tr><td><b>Unit:</b> <span id="pu">……</span></td><td colspan=2><b>Topic:</b> ${e(L.title)}</td></tr></table>
 <div class=tw><table class="six"><colgroup><col style="width:13%"><col style="width:12%"><col style="width:14%"><col style="width:9%"><col style="width:42%"><col style="width:10%"></colgroup><tr><th>1. Objectives</th><th>2. Learning Content</th><th>3. Materials/ Innovation/ Learning Resources</th><th>4. Teaching Methods</th><th>5. Teaching Process</th><th>6. Evaluation</th></tr>
 <tr><td>${cellH(OBJ)}</td><td>${cellH(CONTENT.concat(MOTOR))}</td><td>${cellH(MAT)}</td><td>${cellH(METHS)}</td><td>${cellH(PROC)}</td><td>${cellH(EVAL)}</td></tr></table></div>
 <table class="sg"><tr><td>Sign ……………………<br>(Teacher ………………………)<br>Instructor</td><td>Sign ……………………<br>(Miss Wassana Pornying)<br>Head of Kindergarten</td></tr></table>`;
@@ -64,7 +65,7 @@ async function dl(){
  const f=fields(),z=await JSZip.loadAsync(window.ACS_TPL,{base64:true});let x=await z.file('word/document.xml').async('string');
  const para=(tok,ls)=>{const re=new RegExp('<w:p[ >](?:(?!</w:p>)[\\s\\S])*?\\{\\{'+tok+'\\}\\}[\\s\\S]*?</w:p>');if(!re.test(x))throw new Error('template token '+tok);x=x.replace(re,()=>PX(ls))};
  para('OBJ',OBJ);para('CONTENT',CONTENT);para('MOTOR',MOTOR);para('MATERIALS',MAT);para('METHODS',METHS);para('PROCESS',PROC);para('EVAL',EVAL);
- const rep=(k,v)=>{x=x.split('{{'+k+'}}').join(X(v))};rep('SUBJECT',subj);rep('DATE',f.date);rep('WEEK',f.week);rep('UNIT',f.unit);rep('TOPIC',L.title);
+ const rep=(k,v)=>{x=x.split('{{'+k+'}}').join(X(v))};x=x.replace('>Kindergarten 1<','>Kindergarten '+KLV+'<');rep('SUBJECT',subj);rep('DATE',f.date);rep('WEEK',f.week);rep('UNIT',f.unit);rep('TOPIC',L.title);
  z.file('word/document.xml',x);const blob=await z.generateAsync({type:'blob',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
- const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='K1_'+L.title.replace(/\W+/g,'_')+'_'+tot+'min_Lesson_Plan.docx';document.body.appendChild(a);a.click();a.remove()}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='K'+KLV+'_'+L.title.replace(/\W+/g,'_')+'_'+tot+'min_Lesson_Plan.docx';document.body.appendChild(a);a.click();a.remove()}
 </script></body></html>
