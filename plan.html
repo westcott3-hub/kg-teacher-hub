@@ -51,14 +51,14 @@ const cellH=ls=>ls.map(l=>'<div>'+l.map(r=>typeof r==='string'?e(r):`<span style
 const ph=(x,l)=>`<input oninput="" style="display:none">`;
 let h=`<div style="text-align:center;font-weight:800;font-size:18px;margin:6px 0">Assumption College Sriracha<br>Kindergarten Lesson Plan</div>
 <table class="hd"><tr><td><b>Learning Area of Foreign Languages</b></td><td></td><td><b>Subject:</b> ${e(subj)}</td></tr><tr><td><b>Academic Year: 2026</b></td><td><b>Semester 2</b></td><td><b>Class:</b> Kindergarten 1</td></tr><tr><td><b>Date:</b> <span id="pd">………</span></td><td><b>Week:</b> <span id="pw">……</span></td><td></td></tr><tr><td><b>Unit:</b> <span id="pu">……</span></td><td colspan=2><b>Topic:</b> ${e(L.title)}</td></tr></table>
-<div class=tw><table class="six"><colgroup><col style="width:12%"><col style="width:13%"><col style="width:14%"><col style="width:11%"><col style="width:37%"><col style="width:13%"></colgroup><tr><th>1. Objectives</th><th>2. Learning Content</th><th>3. Materials/ Innovation/ Learning Resources</th><th>4. Teaching Methods</th><th>5. Teaching Process</th><th>6. Evaluation</th></tr>
+<div class=tw><table class="six"><colgroup><col style="width:13%"><col style="width:12%"><col style="width:14%"><col style="width:9%"><col style="width:42%"><col style="width:10%"></colgroup><tr><th>1. Objectives</th><th>2. Learning Content</th><th>3. Materials/ Innovation/ Learning Resources</th><th>4. Teaching Methods</th><th>5. Teaching Process</th><th>6. Evaluation</th></tr>
 <tr><td>${cellH(OBJ)}</td><td>${cellH(CONTENT.concat(MOTOR))}</td><td>${cellH(MAT)}</td><td>${cellH(METHS)}</td><td>${cellH(PROC)}</td><td>${cellH(EVAL)}</td></tr></table></div>
 <table class="sg"><tr><td>Sign ……………………<br>(Teacher ………………………)<br>Instructor</td><td>Sign ……………………<br>(Miss Wassana Pornying)<br>Head of Kindergarten</td></tr></table>`;
 document.title=L.title+' plan';document.getElementById('o').innerHTML=h;
 ['iw:pw','iu:pu','id:pd'].forEach(x=>{const [a,b]=x.split(':');document.getElementById(a).addEventListener('input',()=>{document.getElementById(b).textContent=document.getElementById(a).value||'……'})});
 // ---- Word: fill the school's own template file ----
 const X=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const RP=(b,i,hl)=>'<w:rPr><w:rFonts w:ascii="TH SarabunPSK" w:hAnsi="TH SarabunPSK" w:cs="TH SarabunPSK"/>'+(b?'<w:b/><w:bCs/>':'')+(i?'<w:i/><w:iCs/>':'')+'<w:color w:val="000000"/><w:sz w:val="26"/><w:szCs w:val="30"/>'+(hl?'<w:highlight w:val="lightGray"/>':'')+'</w:rPr>';
+const RP=(b,i,hl)=>'<w:rPr><w:rFonts w:ascii="TH SarabunPSK" w:hAnsi="TH SarabunPSK" w:cs="TH SarabunPSK"/>'+(b?'<w:b/><w:bCs/>':'')+(i?'<w:i/><w:iCs/>':'')+'<w:color w:val="000000"/><w:sz w:val="22"/><w:szCs w:val="26"/>'+(hl?'<w:highlight w:val="lightGray"/>':'')+'</w:rPr>';
 const PX=ls=>ls.map(l=>'<w:p><w:pPr><w:spacing w:after="0"/>'+RP(0,0,0)+'</w:pPr>'+l.map(r=>{r=typeof r==='string'?{t:r}:r;return '<w:r>'+RP(r.b,r.i,r.hl)+'<w:t xml:space="preserve">'+X(r.t)+'</w:t></w:r>'}).join('')+'</w:p>').join('');
 async function dl(){
  const f=fields(),z=await JSZip.loadAsync(window.ACS_TPL,{base64:true});let x=await z.file('word/document.xml').async('string');
