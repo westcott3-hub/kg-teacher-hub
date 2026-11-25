@@ -318,6 +318,8 @@ function buildStages(L,method,minutes,seed){
  for(let k=0;tot()<minutes&&k<60;k++){const c=out.filter(s=>GROW.includes(s.res)&&s.min<7);if(!c.length)break;c[k%c.length].min++}
  for(let k=0;tot()>minutes&&k<60;k++){const c=out.filter(s=>s.min>2&&s.res!=='intro');if(!c.length)break;let m=c[0];c.forEach(s=>{if(s.min>m.min)m=s});m.min--}
  for(let i=1;i<out.length;i++){if(out[i].res===out[i-1].res&&out[i].res!=='clips'){out.splice(i,1);i--}}
+ // keep 2D and 3D apart: 3D "solids" comes after all the 2D work, just before the goodbye stages
+ {const si=out.findIndex(x=>x.res==='solids');if(si>=0&&L.pics2d){let e=out.length;while(e>0&&(out[e-1].kind==='timetogo'||out[e-1].res==='bye'))e--;if(si<e-1){const s=out.splice(si,1)[0];const prev=out[e-2];s.phase=prev.phase;s.frame=prev.frame;out.splice(e-1,0,s)}}}
  return out}
 // ---- editing: swap / remove / add inside a method stage ----
 const SONGK=['greet','songs','yt','chant','timetogo'];
