@@ -11,3 +11,6 @@ Real clips and photos: Pexels (free licence, used inside this lesson product; no
 
 Songs (YouTube embeds, Super Simple Songs): _6HzoUcx3eo, 9FcCV286-gA.
 Cartoon art: generated with Gemini for this pack. Sounds and mascot: original.
+
+## Duck sound
+Mallard Duck by Mike Koenig, SoundBible.com, licensed CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/). Converted to mono.
