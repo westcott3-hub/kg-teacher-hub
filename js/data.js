@@ -1215,6 +1215,7 @@ const SCHOOL_CALENDAR={
     holidays:[
       {date:"2026-12-07",label:"Substitution for Father's Day – No Class",type:"holiday"},
       {date:"2026-12-10",label:"Substitution for Constitution Day – No Class",type:"holiday"},
+      {date:"2026-12-16",label:"Royal Cremation Ceremony of the Queen Mother – No Class",type:"holiday"},
       {date:"2026-12-21",label:"Christmas Break",type:"break"},
       {date:"2026-12-22",label:"Christmas Break",type:"break"},
       {date:"2026-12-23",label:"Christmas Break",type:"break"},
@@ -1226,7 +1227,7 @@ const SCHOOL_CALENDAR={
       {date:"2026-12-31",label:"Christmas Break",type:"break"}
     ],
     events:[
-      {date:"2026-12-18",label:"ACS Teachers & Staff Christmas Celebration",type:"event"}
+      {date:"2026-12-19",label:"ACS Teachers & Staff Christmas Celebration (evening)",type:"event"}
     ]
   },
   "2027-01":{

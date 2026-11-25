@@ -12,9 +12,17 @@
 //  • Expired notices can stay; they are filtered out automatically.
 // ══════════════════════════════════════════════════════════════════════════════
 
-const NOTICES_UPDATED="2026-11-25";
+const NOTICES_UPDATED="2026-11-26";
 
 const NOTICES=[
+  {id:14,posted:"2026-11-25",src:"HR",cat:"action",until:"2026-12-19",pin:true,
+   title:"Staff Christmas Party moved to Sat 19 Dec (evening)",
+   body:"The Annual Staff Christmas Party has moved from Friday 18 December to Saturday 19 December 2026, in the evening. 16 December is now a holiday (Royal Cremation Ceremony of the Queen Mother), so 18 December is a normal teaching day.\n• Going? Send HR your table seating list (8–9 people per table) by Monday 30 November.\n• Can't go because of existing plans? Send HR a letter with proof (e.g. a ticket or travel booking for 19 December) by Friday 27 November. Letters are reviewed for the Christmas gift after school resumes in January."},
+
+  {id:15,posted:"2026-11-25",src:"KG office",cat:"action",until:"2027-03-08",
+   title:"Classroom observation: bring your lesson plan",
+   body:"On the day of your classroom observation, have your lesson plan ready and bring it for review."},
+
   {id:1,posted:"2026-11-24",src:"KG office",cat:"action",until:"2026-12-19",
    title:"Flying out on 19 December?",
    body:"If you have already booked a flight departing on 19 December 2026, send a screenshot or photo of your booking confirmation to the KG office."},
