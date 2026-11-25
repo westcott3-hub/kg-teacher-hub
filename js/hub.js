@@ -14,7 +14,7 @@ const HUB_I18N={
     goodMorning:"Good morning",goodAfternoon:"Good afternoon",goodEvening:"Good evening",
     semester:"Semester",wk:"Week",integration:"Integration",integTopic:"Integration topic this week",
     nextLesson:"Next lesson",nowTeaching:"Teaching now",inMin:"in {n} min",endsIn:"{n} min left",period:"Period",
-    openResources:"Open resources",seeWeek:"See my week",details:"Lesson details",
+    openResources:"Open resources",lessonBtn:"Lesson",seeWeek:"See my week",details:"Lesson details",
     myLessonsToday:"My lessons today",myLessonsOn:"My lessons · {d}",
     noLessonsDay:"No lessons on your timetable for this day.",noMoreLessons:"That's all your lessons for today.",
     noSchool:"No school today",weekend:"It's the weekend",nextSchoolDay:"Next school day",
@@ -48,7 +48,7 @@ const HUB_I18N={
     goodMorning:"สวัสดีตอนเช้า",goodAfternoon:"สวัสดีตอนบ่าย",goodEvening:"สวัสดีตอนเย็น",
     semester:"ภาคเรียนที่",wk:"สัปดาห์ที่",integration:"บูรณาการ",integTopic:"หน่วยบูรณาการสัปดาห์นี้",
     nextLesson:"คาบต่อไป",nowTeaching:"กำลังสอน",inMin:"อีก {n} นาที",endsIn:"เหลือ {n} นาที",period:"คาบ",
-    openResources:"เปิดสื่อการสอน",seeWeek:"ดูตารางสัปดาห์",details:"รายละเอียดคาบ",
+    openResources:"เปิดสื่อการสอน",lessonBtn:"บทเรียน",seeWeek:"ดูตารางสัปดาห์",details:"รายละเอียดคาบ",
     myLessonsToday:"คาบสอนวันนี้",myLessonsOn:"คาบสอน · {d}",
     noLessonsDay:"ไม่มีคาบสอนในตารางของวันนี้",noMoreLessons:"หมดคาบสอนของวันนี้แล้ว",
     noSchool:"วันนี้ไม่มีการเรียนการสอน",weekend:"วันหยุดสุดสัปดาห์",nextSchoolDay:"วันเรียนถัดไป",
@@ -175,6 +175,23 @@ function hubTopic(sub,weekNum,cls){
   try{const t=getWeekTopic(sub,weekNum,cls);if(!t)return"";if(typeof t==="string")return t;return getTopicLabel(t,/Integration/.test(sub))||"";}
   catch(e){return"";}
 }
+
+// ── LESSON BUILDER LINKS (K1 only) ────────────────────────────────────────────
+function hubLessonUrl(cls,sub,topic){
+  if(!/^K1/.test(String(cls||"").trim()))return null;
+  const sb=String(sub||""),tp=String(topic||"");
+  if(!/English|Phonics|Integration|Science|Play|Math/.test(sb))return null;
+  let id=null;
+  if(/Phonics/.test(sb)){const m=tp.match(/Letter ([A-D])\b/);if(m)id="phonics_"+m[1].toLowerCase();}
+  else if(/zoo/i.test(tp))id="zoo";
+  else if(/farm|animals/i.test(tp))id="farm";
+  else if(/weather|rainy|sunny|windy|cloudy|outdoors/i.test(tp))id="weather";
+  else if(/shape|circle|square|triangle/i.test(tp))id="shapes";
+  else if(/classroom|things around|pencil|crayon|chair|table|bag|clock/i.test(tp))id="things";
+  if(id)return LESSON_BUILDER_URL+"?t="+id;
+  return /English|Phonics/.test(sb)?LESSON_BUILDER_URL+"?l=K1":null;
+}
+function hubOpenBuilder(ev,url){if(ev)ev.stopPropagation();window.open(url,"_blank","noopener");}
 function hubLessons(name,dayName,weekNum){
   const key=hubNorm(name);const out=[];
   hubAllClasses().forEach(cls=>{
@@ -516,7 +533,8 @@ function hubLessonRow(l,state,showDay,obs){
     +'<span class="bar" style="background:'+subColor(l.sub)+'"></span>'
     +'<span class="bd"><span class="sb" style="color:'+ink+'">'+hubE(hubSub(l.sub))+'</span>'
     +'<span class="mt">'+meta+(l.topic?' · <span class="tp">'+hubE(l.topic)+'</span>':'')+'</span></span>'
-    +(obs?'<span class="hub-tag obs">&#128065; '+T("obsTag")+'</span>':'')+tag+'</button>';
+    +(obs?'<span class="hub-tag obs">&#128065; '+T("obsTag")+'</span>':'')+tag
+    +(function(){const u=l.help?null:hubLessonUrl(l.cls,l.sub,l.topic);return u?'<span class="hub-lbtn" role="link" tabindex="0" onclick="hubOpenBuilder(event,\''+u+'\')">&#9654; '+T("lessonBtn")+'</span>':'';})()+'</button>';
 }
 function hubToday(){
   const me=hubMe();const now=new Date();const nowM=hubNowMins();
@@ -565,6 +583,7 @@ function hubToday(){
         h.push('<div class="top"><span class="hub-eyebrow" style="color:var(--red)">'+(isNow?T("nowTeaching")+' · '+T("endsIn",{n:mins}):T("nextLesson")+' · '+T("inMin",{n:mins}))+'</span><span class="tm">'+hero.p.start+' – '+hero.p.end+'</span></div>');
         h.push('<div class="main"><span class="bar" style="background:'+subColor(hero.sub)+'"></span><div><div class="sb" style="color:'+hubInk(hero.sub)+'">'+hubE(hubSub(hero.sub))+'</div><div class="mt">'+hubE(hero.cls)+' · '+T("period")+' '+hero.p.label.replace("P","")+(hero.topic?' · '+hubE(hero.topic):'')+'</div></div></div>');
         h.push('<div class="acts"><button class="hub-btn" onclick="hubOpenRes(\''+hero.sub.replace(/'/g,"")+'\',\''+hero.cls+'\')">'+T("openResources")+'</button>'
+          +(function(){const u=hero.help?null:hubLessonUrl(hero.cls,hero.sub,hero.topic);return u?'<button class="hub-btn" onclick="hubOpenBuilder(event,\''+u+'\')">&#9654; '+T("lessonBtn")+'</button>':'';})()
           +(hero.help?'':'<button class="hub-btn sec" onclick="hubOpenLesson(\''+hero.cls.split(",")[0].trim()+'\','+hero.idx+',\''+hero.day+'\')">'+T("details")+'</button>')+'</div>');
         h.push('</section>');
       } else if(lessons.length){
