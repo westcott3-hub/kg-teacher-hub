@@ -92,7 +92,7 @@ const HUB_DOC=()=>db.collection("hubData").doc("shared");
 // stale tab (e.g. the classroom TV) can't overwrite other people's additions.
 // It also NEVER seeds/overwrites the document: if Firestore looks empty or the
 // doc is missing (offline, auth not ready, cache), SEED_RESOURCES are shown in
-// memory only. (On 5 Jul 2026 the old seeding code wiped every added resource.)
+// memory only (and only when Firestore has no resources at all). (On 5 Jul 2026 the old seeding code wiped every added resource.)
 function startSync(){
   if(fsUnsub)fsUnsub();
   fsUnsub=HUB_DOC().onSnapshot(snap=>{
@@ -103,9 +103,9 @@ function startSync(){
       if(d.dailyLogs)DB.dailyLogs={...DB.dailyLogs,...d.dailyLogs};
       if(d.announcements)DB.announcements=d.announcements;
       if(Array.isArray(d.resources)&&d.resources.length>0){
-        const ids=new Set(d.resources.map(r=>r.id));
-        // seed entries missing from Firestore are shown, but not written back
-        DB.resources=[...d.resources,...SEED_RESOURCES.filter(r=>!ids.has(r.id))];
+        // Firestore holds the complete list (156 entries re-synced 25 Nov 2026), so it is
+        // used as-is: a delete stays deleted. SEED_RESOURCES is only the offline/empty fallback.
+        DB.resources=[...d.resources];
         console.log("[sync] "+d.resources.length+" resources from Firestore"+(snap.metadata.fromCache?" (cache)":""));
       } else {
         console.warn("[sync] Firestore resources empty — showing seed list, NOT writing");
