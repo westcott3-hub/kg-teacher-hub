@@ -42,7 +42,7 @@ const PM={};L.stages.forEach(s=>PM[s.phase]=(PM[s.phase]||0)+s.min);
 const PROC=[[{t:'Lesson – '+L.title+' ('+tot+' minutes)',b:1,hl:1}]];
 L.stages.forEach((s,i)=>{if(i===0||L.stages[i-1].phase!==s.phase)PROC.push([{t:s.phase+' ('+PM[s.phase]+' minutes)',b:1,i:1}]);
  PROC.push([(i+1)+'. '+s.name+' ('+s.min+' min):']);
- s.steps.forEach(st=>{PROC.push([' - '+st.do]);if(st.say)PROC.push([' - Say: “'+st.say+'”'])});
+ s.steps.forEach(st=>{PROC.push([' - '+st.do+(st.say?' Say: “'+st.say+'”':'')])});
 });
 if(L.chant&&L.chant.length){PROC.push([{t:'Chant: '+L.title,b:1,i:1}]);L.chant.forEach((l,k)=>PROC.push([' - '+l+((L.chantActions||[])[k]?'  ('+L.chantActions[k]+')':'')]))}
 const fields=()=>({week:document.getElementById('iw').value.trim()||'……',unit:document.getElementById('iu').value.trim()||'……',date:document.getElementById('id').value.trim()||'………………'});
