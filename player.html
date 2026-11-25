@@ -265,6 +265,15 @@ function stageFor(L,own,it,pname,m,frame,rnd,ch){
    lk.forEach(k=>(LM[k]||[]).forEach(x=>st.clips.push({src:x.src,t:x.b,b:x.b,loc:1})))}
   return st}
 function av2(L,r){if(r==='vgames')return !!(L.games&&L.games.length)&&!OWN;if(r==='songs')return !!(L.songs&&L.songs.length)&&!OWN;if(r==='scene')return !!L.scene;if(r==='mouth')return !!L.mouth&&!OWN;return avail(L,r)}
+const GAMERES=['mime','wheel','balloons','shadow','memory','odd','tap','find','zoom','missing','count','scratch','doors','draw','show'];
+const RANK={intro:0,hello:.6,real:1,spin:1,walk3d:1,zoomap:1,explore:1,letter:1,mouth:1.1,words:1.2,solids:1.4,yt:1.5,chant:1.5,clips:1.5,scene:2,tap:2.2,find:2.2,balloons:2.2,shadow:2.2,odd:2.2,zoom:2.3,wheel:2.5,mime:2.6,count:3,memory:3,missing:3,scratch:3.2,doors:3.2,build2d:3.5,buildguide:3.6,draw:4,show:4.1,bye:9.5};
+function stRank(s){if(s.kind==='greet')return .5;if(s.kind==='timetogo')return 9;if(s.kind==='vclip')return .55;if(s.kind==='mouth')return 1.1;if(s.kind==='vgames')return 2.2;if(s.res==='clips'&&s.kind==='songs')return 1.5;return RANK[s.res]!==undefined?RANK[s.res]:2}
+function orderFix(out){
+ // Lessons progress: welcome > meet the language (look, listen, say) > spot it > remember it > make/say it > goodbye. Stable, so the variety of the picks is kept.
+ const slots=out.map(s=>[s.phase,s.frame]);
+ const idx=out.map((s,i)=>[s,i]).sort((a,b)=>stRank(a[0])-stRank(b[0])||a[1]-b[1]);
+ idx.forEach((x,i)=>out[i]=x[0]);
+ out.forEach((s,i)=>{s.phase=slots[i][0];s.frame=slots[i][1]})}
 function buildStages(L,method,minutes,seed){
  const rnd=RNG((L.title||'')+'-'+method+'-'+minutes+'-'+seed),ch=a=>a[Math.floor(rnd()*a.length)];
  const own={};L.stages.forEach(s=>own[s.res]=s);
@@ -317,6 +326,7 @@ function buildStages(L,method,minutes,seed){
  const tot=()=>out.reduce((a,s)=>a+s.min,0),GROW=['words','letter','solids','build2d','buildguide','zoomap','explore','walk3d','real','chant','mime','scene','hello','yt'];
  for(let k=0;tot()<minutes&&k<60;k++){const c=out.filter(s=>GROW.includes(s.res)&&s.min<7);if(!c.length)break;c[k%c.length].min++}
  for(let k=0;tot()>minutes&&k<60;k++){const c=out.filter(s=>s.min>2&&s.res!=='intro');if(!c.length)break;let m=c[0];c.forEach(s=>{if(s.min>m.min)m=s});m.min--}
+ orderFix(out);
  for(let i=1;i<out.length;i++){if(out[i].res===out[i-1].res&&out[i].res!=='clips'){out.splice(i,1);i--}}
  // keep 2D and 3D apart: 3D "solids" comes after all the 2D work, just before the goodbye stages
  {const si=out.findIndex(x=>x.res==='solids');if(si>=0&&L.pics2d){let e=out.length;while(e>0&&(out[e-1].kind==='timetogo'||out[e-1].res==='bye'))e--;if(si<e-1){const s=out.splice(si,1)[0];const prev=out[e-2];s.phase=prev.phase;s.frame=prev.frame;out.splice(e-1,0,s)}}}
