@@ -2094,6 +2094,18 @@ function handleResUrlInput(url){
   }
 }
 
+// In-page (no download) viewer URL for a pasted link; '' when none is possible.
+function makeEmbedSrc(url){
+  let m;
+  if((m=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/)))return 'https://www.youtube.com/embed/'+m[1];
+  if((m=url.match(/youtube\.com\/playlist\?list=([\w-]+)/)))return 'https://www.youtube.com/embed/videoseries?list='+m[1];
+  if((m=url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/)))return 'https://drive.google.com/file/d/'+m[1]+'/preview';
+  if((m=url.match(/drive\.google\.com\/drive\/folders\/([\w-]{20,})/)))return 'https://drive.google.com/embeddedfolderview?id='+m[1]+'#list';
+  if((m=url.match(/docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([\w-]{20,})/)))return 'https://docs.google.com/'+m[1]+'/d/'+m[2]+'/preview';
+  if(/flipbuilder\.com|fliphtml5\.com/.test(url))return url;
+  return '';
+}
+
 function saveNewResource(){
   const name=(document.getElementById("res-name")||{}).value||"";
   const url=(document.getElementById("res-url")||{}).value||"";
@@ -2106,14 +2118,7 @@ function saveNewResource(){
   if(!name.trim()){alert("Please enter a resource name.");return;}
   if(!url.trim()){alert("Please enter a URL or upload a file.");return;}
 
-  // Auto-generate YouTube embed URL
-  let embedSrc='';
-  const ytMatch=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-  if(ytMatch){embedSrc='https://www.youtube.com/embed/'+ytMatch[1];}
-
-  // Google Drive file → in-page preview
-  const gd=url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
-  if(!embedSrc&&gd){embedSrc='https://drive.google.com/file/d/'+gd[1]+'/preview';}
+  const embedSrc=makeEmbedSrc(url.trim());
 
   const id=Date.now();
   addResourceToDB({id,prog,level,name:name.trim(),url:url.trim(),embedSrc,subject,type,note});
@@ -2126,7 +2131,7 @@ function openResourcePreview(idx){
   const r=DB.resources[idx];
   if(!r)return;
   // YouTube playlists open in new tab — can't embed playlist pages
-  if((r.url||'').includes('youtube.com/playlist')){
+  if((r.url||'').includes('youtube.com/playlist')&&!r.embedSrc){
     window.open(r.url,'_blank');return;
   }
   const src=r.embedSrc||r.url||'';
