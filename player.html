@@ -455,6 +455,7 @@ setInterval(()=>{const R=S.ta;if(!R||L.stages[S.st].res!==R.res)return;const el=
 function snew(){const w=L.words,t=w[Math.floor(Math.random()*w.length)];S.sh={t,opts:sh(w),done:0,bad:null};Tk('Whose shadow is this?')}
 function mnew(){const cs=[];L.words.slice(0,4).forEach(x=>{cs.push({k:x,t:0});cs.push({k:x,t:1})});S.mm={cards:sh(cs),up:[],done:[],lock:0};Tk('Find the matching pairs!')}
 function burst(x,y){const root=VIEW==='student'?$('sv'):$('pv');const s=root&&root.firstElementChild;if(!s)return;const C=['#FF8A5B','#FF7AA8','#FFC83D','#6FC7F7','#8FD16B','#B28BFF'];for(let i=0;i<42;i++){const e=document.createElement('i');const z=14+Math.random()*18;e.style.cssText=`position:absolute;left:${x}px;top:${y}px;width:${z}px;height:${z*.6}px;background:${C[i%6]};border-radius:3px;z-index:8;pointer-events:none`;s.appendChild(e);const a=Math.random()*Math.PI*2,d=200+Math.random()*440;e.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d+170}px) rotate(${Math.random()*720}deg)`,opacity:0}],{duration:1300+Math.random()*500,easing:'cubic-bezier(.1,.7,.3,1)'}).onfinish=()=>e.remove()}}
+function clipDrop(cs){const cur=S.rw||0;return `<select class="ytdrop" onchange="act('rw',+this.value)" onclick="event.stopPropagation()">`+cs.map((x,i)=>`<option value="${i}"${i===cur?' selected':''}>${(x.b||x.t||'Video '+(i+1)).replace(/</g,'&lt;')}</option>`).join('')+`</select>`}
 function ytDrop(){const l=YL();return `<select class="ytdrop" onchange="act('ytsel',+this.value)" onclick="event.stopPropagation()">`+l.map((x,i)=>`<option value="${i}"${i===S.yi?' selected':''}>${(x.b||x.t).replace(/</g,'&lt;')}</option>`).join('')+`</select>`}
 function YL(){return L.stages[S.st].yt||L.yt||[]}
 function openSong(){const v=YL()[S.yi]||YL()[0];window.open('https://www.youtube.com/watch?v='+v.id,'k1song','width=1280,height=720')}
@@ -804,7 +805,7 @@ function ctl(){const r=L.stages[S.st].res;const B=(t,a,p,c)=>`<button class="b $
  else if(r==='memory')h=B('Race 60s','rstart','','o')+B('New game','mnew','','y')+`<span class="lab">Stars: ${S.ts}</span>`;
  else if(r==='yt'&&!YTOK)h=ytDrop()+`<button class="b y" onclick="openSong()">Open song in new window</button><span class="lab">YouTube cannot play inside this preview page. Press Open song, then drag that window onto the TV (it plays inside the page once the site is on its own web address).</span>`
  else if(r==='yt')h=ytDrop()+B('Play','ytplay','','y')+B('Pause','ytpause','','g')+`<a href="https://www.youtube.com/watch?v=${(YL()[S.yi]||YL()[0]).id}" target="_blank" style="margin-left:10px;font-size:14px">Open on YouTube</a>`
- else if(r==='clips')h=B('Play','vplay','','y')+B('Pause','vpause','','g')+B('Restart','vreset','','g')
+ else if(r==='clips')h=(L.stages[S.st].clips.length>1?clipDrop(L.stages[S.st].clips):'')+B('Play','vplay','','y')+B('Pause','vpause','','g')+B('Restart','vreset','','g')
  else if(r==='real')h=L.words.map((x,i)=>B(x,'rw',i,i===(S.rw||0)?'y':'g')).join('')+B('Play','vplay','','y')+B('Pause','vpause','','g')
  else if(r==='tapoff')h=B('Reset tap','tapreset','','g');
  $('ctl').innerHTML=h}
