@@ -49,8 +49,8 @@ select.add{width:calc(100% - 20px);margin:6px 10px 10px;font-size:13px;padding:7
 <script src="engine.js"></script>
 <script>
 const $=i=>document.getElementById(i);
-const TN={farm:'Farm animals',weather:'Weather',zoo:'At the zoo',phonics_a:'Phonics: Letter A',phonics_b:'Phonics: Letter B',phonics_c:'Phonics: Letter C',phonics_d:'Phonics: Letter D',phonics_r:'Phonics: Letter R',shapes:'Shapes: flat and 3D (magnetic tiles)',things:'Things around us: my classroom (3D)',senses:'Five senses: my body (K1)',senses_k2:'Five senses: in the garden (K2)',senses_k3:'Five senses: sense-sational garden (K3)'};
-const GR={Topics:['zoo','farm','weather','things'],'Five Senses (Integration)':['senses','senses_k2','senses_k3'],Shapes:['shapes'],Phonics:['phonics_a','phonics_b','phonics_c','phonics_d','phonics_r']};
+const TN={farm:'Farm animals',weather:'Weather',zoo:'At the zoo',phonics_a:'Phonics: Letter A',phonics_b:'Phonics: Letter B',phonics_c:'Phonics: Letter C',phonics_d:'Phonics: Letter D',phonics_r:'Phonics: Letter R',phonics_s:'Phonics: Letter S',shapes:'Shapes: flat and 3D (magnetic tiles)',things:'Things around us: my classroom (3D)',senses:'Five senses: my body (K1)',senses_k2:'Five senses: in the garden (K2)',senses_k3:'Five senses: sense-sational garden (K3)'};
+const GR={Topics:['zoo','farm','weather','things'],'Five Senses (Integration)':['senses','senses_k2','senses_k3'],Shapes:['shapes'],Phonics:['phonics_a','phonics_b','phonics_c','phonics_d','phonics_r','phonics_s']};
 const seen={};Object.keys(GR).forEach(g=>{const og=document.createElement('optgroup');og.label=g;GR[g].forEach(k=>{if(LESSONS[k]){og.appendChild(new Option(TN[k]||k,k));seen[k]=1}});if(og.children.length)$('t').appendChild(og)});
 Object.keys(LESSONS).forEach(k=>{if(!seen[k])$('t').add(new Option(TN[k]||k,k))});
 const QS=new URLSearchParams(location.search),QT=QS.get('t');if(QT&&LESSONS[QT])$('t').value=QT;
