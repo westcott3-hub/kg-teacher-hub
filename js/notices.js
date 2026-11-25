@@ -12,7 +12,7 @@
 //  • Expired notices can stay; they are filtered out automatically.
 // ══════════════════════════════════════════════════════════════════════════════
 
-const NOTICES_UPDATED="2026-11-24";
+const NOTICES_UPDATED="2026-11-25";
 
 const NOTICES=[
   {id:1,posted:"2026-11-24",src:"KG office",cat:"action",until:"2026-12-19",
