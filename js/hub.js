@@ -10,7 +10,7 @@
 const HUB_I18N={
   en:{
     today:"Today",week:"My week",weekShort:"Week",duty:"Duty & Assembly",dutyShort:"Duty",
-    classes:"All classes",classesShort:"Classes",resources:"Resources",
+    classes:"All classes",classesShort:"Classes",resources:"Resources",lessons:"Lessons",lessonsTitle:"Lesson builder",lessonsHelp:"Build a ready-to-teach lesson: pick a level and topic, then open the lesson player for your TV and the lesson plan.",lessonsOpen:"Open the lesson builder",lessonsLevel:"Go straight to {l}",lessonsTip:"Opens in a new tab. On the laptop press Open lesson player, then Open student view and drag it onto the TV.",
     goodMorning:"Good morning",goodAfternoon:"Good afternoon",goodEvening:"Good evening",
     semester:"Semester",wk:"Week",integration:"Integration",integTopic:"Integration topic this week",
     nextLesson:"Next lesson",nowTeaching:"Teaching now",inMin:"in {n} min",endsIn:"{n} min left",period:"Period",
@@ -44,7 +44,7 @@ const HUB_I18N={
   },
   th:{
     today:"วันนี้",week:"ตารางสัปดาห์",weekShort:"สัปดาห์",duty:"เวรและหน้าเสาธง",dutyShort:"เวร",
-    classes:"ทุกห้องเรียน",classesShort:"ห้องเรียน",resources:"สื่อการสอน",
+    classes:"ทุกห้องเรียน",classesShort:"ห้องเรียน",resources:"สื่อการสอน",lessons:"บทเรียน",lessonsTitle:"ตัวสร้างบทเรียน",lessonsHelp:"สร้างบทเรียนพร้อมสอน เลือกระดับและหัวข้อ แล้วเปิดตัวเล่นบทเรียนสำหรับทีวีและแผนการสอน",lessonsOpen:"เปิดตัวสร้างบทเรียน",lessonsLevel:"ไปที่ {l} โดยตรง",lessonsTip:"เปิดในแท็บใหม่ บนแล็ปท็อปกด Open lesson player แล้วกด Open student view และลากไปที่ทีวี",
     goodMorning:"สวัสดีตอนเช้า",goodAfternoon:"สวัสดีตอนบ่าย",goodEvening:"สวัสดีตอนเย็น",
     semester:"ภาคเรียนที่",wk:"สัปดาห์ที่",integration:"บูรณาการ",integTopic:"หน่วยบูรณาการสัปดาห์นี้",
     nextLesson:"คาบต่อไป",nowTeaching:"กำลังสอน",inMin:"อีก {n} นาที",endsIn:"เหลือ {n} นาที",period:"คาบ",
@@ -266,6 +266,16 @@ function hubDressTable(){
   return h.join("");
 }
 function hubNSetCat(c){S.hubNcat=c;render();}
+// Lesson builder: a separate site (GitHub Pages) so new K1-K3 topics never need a dashboard deploy.
+const LESSON_BUILDER_URL="https://westcott3-hub.github.io/kg-lesson-builder/";
+function hubLessonsView(){
+  const u=LESSON_BUILDER_URL,h=[];
+  h.push('<section class="hub-greet"><h1>'+T("lessonsTitle")+'</h1><div class="sub">'+hubE(T("lessonsHelp"))+'</div></section>');
+  h.push('<section class="hub-card hub-lessons"><a class="hub-btn hub-lbig" href="'+hubE(u)+'" target="_blank" rel="noopener">'+hubIcon("lessons",20)+' '+T("lessonsOpen")+'</a>');
+  h.push('<div class="hub-lrow">'+["K1","K2","K3"].map(l=>'<a class="hub-lgo" href="'+hubE(u)+'?l='+l+'" target="_blank" rel="noopener">'+hubE(T("lessonsLevel",{l:l}))+'</a>').join("")+'</div>');
+  h.push('<div class="hub-ltip">'+hubE(T("lessonsTip"))+'</div></section>');
+  return h.join("");
+}
 function hubNoticesView(){
   const all=hubNotices();
   const cat=S.hubNcat&&S.hubNcat!=="all"?S.hubNcat:"all";
@@ -323,6 +333,7 @@ const HUB_IC={
   duty:'<path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
   classes:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
   resources:'<path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>',
+  lessons:'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M10 8.5l5 2.5-5 2.5z"/>',
   leaf:'<path d="M12 22V12"/><path d="M12 12C12 8 9 5 4 5c0 5 3 7 8 7z"/><path d="M12 12c0-3 2.5-6 7-6 0 4.5-2.5 6-7 6z"/>',
   check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
   mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
@@ -423,7 +434,7 @@ function hubHeader(){
 }
 function hubTabs(){
   const me=hubMe();
-  const tabs=[["today",T("today"),T("today")],["week",T("week"),T("weekShort")],["duty",T("duty"),T("dutyShort")],["classes",T("classes"),T("classesShort")],["resources",T("resources"),T("resources")]];
+  const tabs=[["today",T("today"),T("today")],["week",T("week"),T("weekShort")],["duty",T("duty"),T("dutyShort")],["classes",T("classes"),T("classesShort")],["resources",T("resources"),T("resources")],["lessons",T("lessons"),T("lessons")]];
   return me?tabs:tabs.filter(t=>t[0]!=="week");
 }
 function hubTopNav(){
@@ -795,10 +806,10 @@ function hubRender(){
       S.tab="resources";
       body='<div id="tab-body" style="flex:1;overflow:visible;position:relative;width:100%">'+renderResources()+'</div>';
     } else {
-      const v=S.hubTab==="week"?hubWeekView():S.hubTab==="duty"?hubDutyView():S.hubTab==="notices"?hubNoticesView():hubToday();
+      const v=S.hubTab==="week"?hubWeekView():S.hubTab==="duty"?hubDutyView():S.hubTab==="notices"?hubNoticesView():S.hubTab==="lessons"?hubLessonsView():hubToday();
       body='<main class="hub-main">'+v+'</main>';
     }
-    root.className="hub-root hub-on"+(["today","week","duty","notices"].includes(S.hubTab)?" hub-own":"");
+    root.className="hub-root hub-on"+(["today","week","duty","notices","lessons"].includes(S.hubTab)?" hub-own":"");
     root.innerHTML=hubHeader()+body+hubBottomNav()+(S.popup?renderPopup():"");
   }catch(err){
     console.error("hubRender error:",err);
@@ -818,7 +829,7 @@ render=hubRender;
   S.hubMe=null;
   if(st.me==="__all")S.hubMe="__all";
   else if(st.me&&hubPeople().some(p=>p.key===hubNorm(st.me)))S.hubMe=st.me;
-  const tabs=["today","week","duty","notices","classes","resources"];
+  const tabs=["today","week","duty","notices","classes","resources","lessons"];
   S.hubTab=tabs.includes(st.tab)?st.tab:(S.hubMe==="__all"?"classes":"today");
   S.hubWkOff=0;S.hubDay=null;S.hubPicking=false;
   render();
