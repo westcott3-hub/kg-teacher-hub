@@ -75,7 +75,7 @@
 .hub-lrow .bar{width:4px;align-self:stretch;border-radius:2px;flex-shrink:0}
 .hub-lrow .bd{flex:1;min-width:0;display:flex;flex-direction:column}
 .hub-lrow .sb{font-size:15px;font-weight:900}
-.hub-lrow .mt{font-size:13px;font-weight:700;color:#5F6368;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hub-lrow .mt{font-size:13px;font-weight:700;color:#5F6368;white-space:normal}
 .hub-lrow .tp{font-weight:600;font-style:italic}
 .hub-tag{font-size:10px;font-weight:900;padding:3px 7px;border-radius:6px;letter-spacing:.4px;flex-shrink:0}
 .hub-tag.now{background:var(--red);color:#fff}.hub-tag.next{background:#FBF1F1;color:var(--red)}
