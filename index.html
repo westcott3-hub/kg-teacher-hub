@@ -1,72 +1,69 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KG Lesson Builder | Assumption College Sriracha</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="brand.css">
 <style>
-:root{--red:#B91C1C;--ink:#1F2328;--muted:#5F6368;--line:#E7E5E1;--bg:#F5F5F3}
+:root{--red:#B91C1C;--navy:#16324F;--ink:#1F2328;--muted:#5F6368;--line:#E7E5E1;--bg:#F5F5F3}
 *{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
 body{margin:0;font-family:Nunito,Arial,sans-serif;background:var(--bg);color:var(--ink)}
 .hdr{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
-.hdr-in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px}
+.hdr-in{max-width:980px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
 .hdr img{height:42px;width:auto;border-radius:6px}
 .hdr .t1{font-weight:900;font-size:16px;line-height:1.2}.hdr .t2{font-size:12px;color:var(--muted);font-weight:700}
 .hdr .pill{margin-left:auto;font-size:12px;font-weight:800;color:var(--red);background:#FEF2F2;border:1px solid #FECACA;border-radius:999px;padding:5px 12px}
-.w{max-width:980px;margin:0 auto;padding:24px 20px 32px}
+.w{max-width:980px;margin:0 auto;padding:22px 16px 32px}
 h1{font-size:26px;font-weight:900;letter-spacing:-.3px;margin:0 0 4px}p.s{margin:0 0 18px;color:var(--muted);font-weight:700;font-size:14px}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;box-shadow:0 1px 3px #0000000a}
 label{display:block;font-weight:800;font-size:13px;margin:14px 0 5px;color:var(--ink)}
 select{width:100%;font-size:16px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-family:inherit;color:var(--ink)}
 select:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px #B91C1C22}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:560px){.row{grid-template-columns:1fr}.hdr .pill{display:none}}
 .mt{font-size:13px;color:var(--muted);margin-top:6px;min-height:20px;font-weight:600}
 .go{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
 a.b{flex:1;min-width:200px;text-align:center;text-decoration:none;font-weight:800;font-size:16px;padding:13px;border-radius:12px;font-family:inherit}
 a.p{background:var(--red);color:#fff}a.p:hover{background:#991B1B}
 a.q{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}a.q:hover{background:var(--bg)}
-a.off{opacity:.4;pointer-events:none}
-.seq{margin-top:20px;display:flex;gap:6px;flex-wrap:wrap}
-.seq span{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:13px;font-weight:800}
-.seq small{display:block;font-weight:700;color:var(--muted);font-size:11px}
+.own{display:flex;gap:8px;align-items:flex-start;margin:14px 0 0;font-weight:700;font-size:14px}.own input{margin-top:3px;flex:none}.own small{display:block;font-weight:600;color:var(--muted)}
+.seq{margin-top:20px}.ph{margin-bottom:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.phh{display:flex;justify-content:space-between;background:var(--navy);color:#fff;font-weight:800;padding:8px 12px;font-size:14px}
+.phf{font-size:12px;color:var(--muted);background:#F5F5F3;padding:6px 12px;font-weight:600}
+.ar{display:flex;gap:8px;align-items:center;padding:6px 10px;border-top:1px solid var(--line)}
+.an{width:150px;flex:none;font-weight:800;font-size:14px}.an small{display:block;font-weight:700;color:var(--muted);font-size:11px}
+.ar select{flex:1;min-width:0;font-size:14px;padding:7px 8px}
+.ar button{flex:none;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer;color:var(--red);font-weight:800}.ar button:disabled{opacity:.3;cursor:not-allowed}
+.fx{flex:1;color:var(--muted);font-size:13px;font-weight:700}
+select.add{width:calc(100% - 20px);margin:6px 10px 10px;font-size:13px;padding:7px;border:1.5px dashed #c9a0a0;color:var(--red)}
 .note{font-size:13px;color:var(--muted);margin-top:18px;font-weight:600}
-</style></head><body><header class="hdr"><div class="hdr-in"><img src="acs_logo.png" alt="ACS"><div><div class="t1">KG Lesson Builder</div><div class="t2">Assumption College Sriracha</div></div><span class="pill">Kindergarten</span></div></header><div class="w"><h1>Build a lesson</h1><p class="s">Pick the options. You get a lesson player link and a lesson plan.</p>
+@media(max-width:600px){.row{grid-template-columns:1fr}.hdr .pill{display:none}.card{padding:16px 14px}.ar{flex-wrap:wrap}.an{width:calc(100% - 52px)}.ar select,.fx{flex:1 1 calc(100% - 52px)}a.b{min-width:100%}h1{font-size:22px}}
+</style></head><body><header class="hdr"><div class="hdr-in"><img src="acs_logo.png" alt="ACS"><div><div class="t1">KG Lesson Builder</div><div class="t2">Assumption College Sriracha</div></div><span class="pill">Kindergarten</span></div></header><div class="w"><h1>Build a lesson</h1><p class="s">Pick the options, then change any activity inside each stage. You get a lesson player link and a lesson plan.</p>
 <div class="card">
-<div class="row"><div><label for="l">Level</label><select id="l"></select></div><div><label for="t">Topic</label><select id="t"></select></div></div>
-<div class="row"><div><label for="min">Lesson time</label><select id="min"><option value="20">20 minutes</option><option value="30" selected>30 minutes</option><option value="40">40 minutes</option></select></div>
+<div class="row"><div><label for="t">Topic</label><select id="t"></select></div><div><label for="l">Level</label><select id="l"><option>K1 (age 3)</option><option disabled>K2 (coming soon)</option><option disabled>K3 (coming soon)</option></select></div></div>
+<div class="row"><div><label for="min">Lesson time</label><select id="min"><option value="30">30 minutes</option><option value="40" selected>40 minutes</option></select></div>
 <div><label for="m">Teaching method</label><select id="m"></select></div></div>
 <div class="mt" id="mt"></div>
 <label for="s">Variation <small style="font-weight:600">(same settings, different game mix)</small></label>
 <div style="display:flex;gap:10px;align-items:center"><select id="s" style="max-width:180px"></select></div>
+<label class="own"><input type="checkbox" id="own"><span>Own media only<small>No third-party videos; songs play from YouTube links.</small></span></label>
 <div class="go"><a class="b p" id="play" target="_blank" rel="noopener">Open lesson player</a><a class="b q" id="plan" target="_blank" rel="noopener">Open lesson plan</a></div>
 <div class="seq" id="seq"></div>
 <p class="note">Teacher view on the laptop, then press "Open student view" for the TV. Use Chrome or Edge.</p>
 </div><div class="acs-foot"><span class="m1">Labor omnia vincit</span><span class="m2">Work conquers all</span><span class="m3">Empowering Learning Through AI &amp; Innovation, for Student Well-Being</span></div></div>
-<script src="engine.js"></script><script src="topics/index.js"></script>
+<script src="engine.js"></script>
 <script>
-var $=function(i){return document.getElementById(i)};
-var LV=['K1','K2','K3'],tok=0;
-LV.forEach(function(v){var n=TOPICS.filter(function(x){return x.level===v}).length;var o=new Option(v+(n?'':' (coming soon)'),v);o.disabled=!n;$('l').add(o)});
-var first=LV.filter(function(v){return TOPICS.some(function(x){return x.level===v})})[0];if(first)$('l').value=first;
-function fillTopics(){var sel=$('t');sel.innerHTML='';var v=$('l').value,groups={};
-  TOPICS.filter(function(x){return x.level===v}).forEach(function(x){
-    if(!groups[x.group]){var g=document.createElement('optgroup');g.label=x.group;sel.appendChild(g);groups[x.group]=g}
-    groups[x.group].appendChild(new Option(x.title,x.id))})}
-Object.keys(DATA.METHODS).forEach(function(k){$('m').add(new Option(DATA.METHODS[k].label.split(' (')[0],k))});
-for(var i=1;i<=6;i++)$('s').add(new Option('Mix '+i,i));
-function upd(){
-  var t=$('t').value,m=$('m').value,min=$('min').value,s=$('s').value;
-  $('mt').textContent=DATA.METHODS[m].label;
-  if(!t){$('seq').innerHTML='';return}
-  var q='t='+encodeURIComponent(t)+'&m='+m+'&min='+min+'&s='+s;
-  $('play').href='player.html?'+q;$('plan').href='plan.html?'+q;
-  var my=++tok;$('play').classList.add('off');$('plan').classList.add('off');
-  loadTopic(t).then(function(){
-    if(my!==tok)return;
-    var L=makeLesson(t,m,+min,s);
-    $('seq').innerHTML=L.stages.map(function(x){return '<span>'+x.name+'<small>'+x.phase+' \u00b7 '+x.min+' min</small></span>'}).join('');
-    $('play').classList.remove('off');$('plan').classList.remove('off')
-  }).catch(function(){if(my===tok)$('mt').textContent='Could not load this topic. Check your connection and try again.'})}
-$('l').onchange=function(){fillTopics();upd()};
-['t','m','min','s'].forEach(function(i){$(i).onchange=upd});
-var qs=new URLSearchParams(location.search),qt=qs.get('t'),ql=qs.get('l');
-var pt=qt?TOPICS.filter(function(x){return x.id===qt})[0]:null;
-if(pt)$('l').value=pt.level;else if(ql&&TOPICS.some(function(x){return x.level===ql}))$('l').value=ql;
-fillTopics();if(pt)$('t').value=pt.id;upd();
+const $=i=>document.getElementById(i);
+const TN={farm:'Farm animals',weather:'Weather',zoo:'At the zoo',phonics_a:'Phonics: Letter A',phonics_b:'Phonics: Letter B',phonics_c:'Phonics: Letter C',phonics_d:'Phonics: Letter D',shapes:'Shapes: flat and 3D (magnetic tiles)',things:'Things around us: my classroom (3D)'};
+const GR={Topics:['zoo','farm','weather','things'],Shapes:['shapes'],Phonics:['phonics_a','phonics_b','phonics_c','phonics_d']};
+const seen={};Object.keys(GR).forEach(g=>{const og=document.createElement('optgroup');og.label=g;GR[g].forEach(k=>{if(LESSONS[k]){og.appendChild(new Option(TN[k]||k,k));seen[k]=1}});if(og.children.length)$('t').appendChild(og)});
+Object.keys(LESSONS).forEach(k=>{if(!seen[k])$('t').add(new Option(TN[k]||k,k))});
+const QS=new URLSearchParams(location.search),QT=QS.get('t');if(QT&&LESSONS[QT])$('t').value=QT;
+Object.keys(DATA.METHODS).forEach(k=>$('m').add(new Option(DATA.METHODS[k].label.split(' (')[0],k)));
+for(let i=1;i<=6;i++)$('s').add(new Option('Mix '+i,i));
+let ED=[];
+function upd(reset){if(reset===true)ED=[];const t=$('t').value,m=$('m').value,min=$('min').value,s=$('s').value,own=$('own').checked?1:0;
+ const L=makeLesson(t,m,+min,s,own);ED.forEach(op=>edApply(L,op));
+ const q='t='+t+'&m='+m+'&min='+min+'&s='+s+(own?'&own=1':'')+(ED.length?'&ed='+edEnc(ED):'');$('play').href='player.html?'+q;$('plan').href='plan.html?'+q;
+ $('mt').textContent=DATA.METHODS[m].label;
+ const g=[];L.stages.forEach((x,i)=>{let y=g[g.length-1];if(!y||y.p!==x.phase){y={p:x.phase,f:x.frame,m:0,i:[]};g.push(y)}y.m+=x.min;y.i.push(i)});
+ $('seq').innerHTML=g.map(y=>'<div class="ph"><div class="phh"><b>'+y.p+'</b><span>'+y.m+' min</span></div><div class="phf">'+(y.f||'')+'</div>'+y.i.map(i=>{const x=L.stages[i],o=optionsFor(L,i),rm=canRemove(L,i);
+  return '<div class="ar"><div class="an">'+x.name+'<small>'+x.min+' min</small></div>'+(o.length>1?'<select onchange="ed({t:\'swap\',i:'+i+',k:this.value})">'+o.map(z=>'<option value="'+z.kind+'"'+(z.kind===x.kind?' selected':'')+'>'+z.name+' ('+z.len+(z.prep?', '+z.prep:'')+')</option>').join('')+'</select>':'<div class="fx">fixed</div>')+'<button '+(rm?'':'disabled ')+'title="'+(rm?'Remove':'Keep one song or dance, and one activity per stage')+'" onclick="ed({t:\'rm\',i:'+i+'})">&#10005;</button></div>'}).join('')+(function(){const a=addOptions(L,y.p);return a.length&&y.i.some(i=>L.stages[i].min>3&&L.stages[i].kind!=='intro')?'<select class="add" onchange="if(this.value)ed({t:\'add\',p:\''+y.p+'\',k:this.value.split(\'|\')[0],u:this.value.split(\'|\')[1]})"><option value="">+ add activity</option>'+a.map(z=>'<option value="'+z.kind+'|'+z.pur+'">'+z.name+' ('+z.len+')</option>').join('')+'</select>':''})()+'</div>').join('')}
+function ed(op){ED.push(op);upd()}
+['t','m','min','s','own'].forEach(i=>$(i).onchange=()=>upd(true));upd();
 </script></body></html>

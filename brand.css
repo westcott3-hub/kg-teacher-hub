@@ -10,3 +10,14 @@
 .acs-foot .m3{display:block;margin-top:8px;padding-top:8px;border-top:1px solid #FFD23F66;color:#8fe0ff;font-weight:800;font-size:14px;line-height:1.3}
 @media print{.acs-foot{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 #start{padding-bottom:118px!important;gap:8px!important;overflow:auto}
+/* phone layout for the lesson player (teacher view): screen first, then prompts, then stage list */
+@media(max-width:700px){
+ #top{padding:8px 10px!important;gap:6px!important}#top h1{font-size:17px!important}#top .sub{display:none!important}
+ #top button,#top .b{font-size:13px!important;padding:7px 10px!important;min-height:0!important;border-radius:10px!important}
+ #top #tm,#top .tmr{font-size:18px!important;padding:4px 10px!important}
+ #wrap{display:flex!important}
+ #cls{order:1!important;padding:8px!important}
+ #teach{order:2!important;padding:10px!important}
+ #rail{order:3!important;flex-direction:column!important;overflow-x:visible!important;border-bottom:0!important;border-top:1px solid #cfe6f5}
+ #rail .st{width:auto!important}
+}
