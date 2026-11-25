@@ -1698,7 +1698,7 @@ function deleteResourceConfirmed(idx){
 // Files go to Gary's Drive folder "KG Teacher Hub Resources" (MLP|IEP / K1-K3),
 // shared "anyone with the link can view". The script runs as Gary, so teachers
 // don't need to sign in. Leave the URL empty to fall back to Cloudinary.
-const DRIVE_UPLOAD_URL="";
+const DRIVE_UPLOAD_URL="https://script.google.com/macros/s/AKfycbyr2gglY_GRDTYdyDnYru1AM3QAp2SCWvBCOT3Y3s1qObuux9Ihuk8Oh1Ww-FEXn5Nqyg/exec";
 const DRIVE_MAX_BYTES=35*1024*1024; // Apps Script request limit ~50MB after base64
 
 function uploadToDrive(file){
