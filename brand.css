@@ -24,3 +24,8 @@
 /* phone: make the full-screen button prominent */
 @media(max-width:700px){#fsbtn{font-size:17px!important;padding:14px!important;background:#B91C1C!important;color:#fff!important}#fsbtn::before{content:"\26F6  "}}
 #cls.full #fsbtn{display:none!important}
+/* phones: exit-fullscreen button sits in the side bar, small, so it never covers lesson buttons */
+@media(max-width:900px),(max-height:500px){
+ #cls.full #exitfs{top:50%!important;bottom:auto!important;left:6px!important;right:auto!important;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;padding:0!important;font-size:20px!important;line-height:1;opacity:.8}
+ #cls.full #exitfs .exl{display:none}
+}
