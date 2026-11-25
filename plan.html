@@ -1,15 +1,15 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lesson Plan | Assumption College Sriracha</title><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="brand.css">
 <style>
 *{box-sizing:border-box}
-body{font-family:Nunito,Arial,sans-serif;font-size:13px;color:#1F2328;margin:0;padding:16px;max-width:920px;margin:auto;background:#F5F5F3}
+body{font-family:Nunito,Arial,sans-serif;font-size:13px;color:#1F2328;margin:0;padding:16px;max-width:1500px;margin:auto;background:#F5F5F3}
 h1{color:#16324F;font-size:24px;font-weight:900;margin:0 0 4px}h2{color:#16324F;font-size:18px;margin:22px 0 8px}
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;background:#fff}td,th{border:1px solid #E7E5E1;padding:6px 9px;vertical-align:top;text-align:left}
-th{background:#fff;color:#000;text-align:center}table.six td,table.six th{border:1px solid #000;font-family:"TH Sarabun New",Arial,sans-serif;font-size:14px;vertical-align:top}table.hd td,table.sg td{border:none;font-size:15px}table.hd{width:100%;background:none}table.sg{margin-top:12px;text-align:center}table.sg td{width:50%}th{background:#fff;color:#000;text-align:center}.phr{background:#FEF2F2;color:#B91C1C}.k{background:#F5F5F3;font-weight:800;width:150px}.say{color:#B91C1C}.ph{color:#B91C1C;font-style:italic;font-size:11px}
+th{background:#fff;color:#000;text-align:center}table.six{min-width:1100px;table-layout:fixed}table.six td,table.six th{border:1px solid #000;font-family:"TH Sarabun New",Arial,sans-serif;font-size:14px;vertical-align:top}table.hd td,table.sg td{border:none;font-size:15px}table.hd{width:100%;background:none}table.sg{margin-top:12px;text-align:center}table.sg td{width:50%}th{background:#fff;color:#000;text-align:center}.phr{background:#FEF2F2;color:#B91C1C}.k{background:#F5F5F3;font-weight:800;width:150px}.say{color:#B91C1C}.ph{color:#B91C1C;font-style:italic;font-size:11px}
 .bar{background:#fff;border:1px solid #E7E5E1;padding:8px 12px;border-radius:10px;margin-bottom:14px;display:flex;gap:8px;flex-wrap:wrap}
 button{padding:9px 16px;font-size:14px;font-weight:800;font-family:inherit;border-radius:10px;border:1.5px solid #1F2328;background:#fff;cursor:pointer}button:first-child{background:#B91C1C;border-color:#B91C1C;color:#fff}
 @media(max-width:600px){body{padding:10px}td,th{padding:5px 6px}.k{width:96px}h1{font-size:20px}}
-@media print{.bar{display:none}body{background:#fff}}
+@page{size:A4 landscape;margin:10mm}@media print{.bar{display:none}body{background:#fff}}
 </style></head><body>
 <div class="acs-bar" style="margin-top:4px"><img src="acs_logo.png" alt="ACS"><div><div class="n1">Assumption College Sriracha</div><div class="n2">Kindergarten Lesson Plan</div></div></div>
 <div class="bar"><button onclick="dl()">Download Word (school template)</button><button onclick="print()">Print / save as PDF</button><input id="iw" placeholder="Week no." size="7"><input id="iu" placeholder="Unit" size="7"><input id="id" placeholder="Date, e.g. 26 Nov 2026" size="20"></div>
@@ -51,14 +51,14 @@ const cellH=ls=>ls.map(l=>'<div>'+l.map(r=>typeof r==='string'?e(r):`<span style
 const ph=(x,l)=>`<input oninput="" style="display:none">`;
 let h=`<div style="text-align:center;font-weight:800;font-size:18px;margin:6px 0">Assumption College Sriracha<br>Kindergarten Lesson Plan</div>
 <table class="hd"><tr><td><b>Learning Area of Foreign Languages</b></td><td></td><td><b>Subject:</b> ${e(subj)}</td></tr><tr><td><b>Academic Year: 2026</b></td><td><b>Semester 2</b></td><td><b>Class:</b> Kindergarten 1</td></tr><tr><td><b>Date:</b> <span id="pd">………</span></td><td><b>Week:</b> <span id="pw">……</span></td><td></td></tr><tr><td><b>Unit:</b> <span id="pu">……</span></td><td colspan=2><b>Topic:</b> ${e(L.title)}</td></tr></table>
-<div class=tw><table class="six"><tr><th>1. Objectives</th><th>2. Learning Content</th><th>3. Materials/ Innovation/ Learning Resources</th><th>4. Teaching Methods</th><th>5. Teaching Process</th><th>6. Evaluation</th></tr>
+<div class=tw><table class="six"><colgroup><col style="width:12%"><col style="width:13%"><col style="width:14%"><col style="width:11%"><col style="width:37%"><col style="width:13%"></colgroup><tr><th>1. Objectives</th><th>2. Learning Content</th><th>3. Materials/ Innovation/ Learning Resources</th><th>4. Teaching Methods</th><th>5. Teaching Process</th><th>6. Evaluation</th></tr>
 <tr><td>${cellH(OBJ)}</td><td>${cellH(CONTENT.concat(MOTOR))}</td><td>${cellH(MAT)}</td><td>${cellH(METHS)}</td><td>${cellH(PROC)}</td><td>${cellH(EVAL)}</td></tr></table></div>
 <table class="sg"><tr><td>Sign ……………………<br>(Teacher ………………………)<br>Instructor</td><td>Sign ……………………<br>(Miss Wassana Pornying)<br>Head of Kindergarten</td></tr></table>`;
 document.title=L.title+' plan';document.getElementById('o').innerHTML=h;
 ['iw:pw','iu:pu','id:pd'].forEach(x=>{const [a,b]=x.split(':');document.getElementById(a).addEventListener('input',()=>{document.getElementById(b).textContent=document.getElementById(a).value||'……'})});
 // ---- Word: fill the school's own template file ----
 const X=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const RP=(b,i,hl)=>'<w:rPr><w:rFonts w:ascii="TH SarabunPSK" w:hAnsi="TH SarabunPSK" w:cs="TH SarabunPSK"/>'+(b?'<w:b/><w:bCs/>':'')+(i?'<w:i/><w:iCs/>':'')+'<w:color w:val="000000"/><w:sz w:val="32"/><w:szCs w:val="36"/>'+(hl?'<w:highlight w:val="lightGray"/>':'')+'</w:rPr>';
+const RP=(b,i,hl)=>'<w:rPr><w:rFonts w:ascii="TH SarabunPSK" w:hAnsi="TH SarabunPSK" w:cs="TH SarabunPSK"/>'+(b?'<w:b/><w:bCs/>':'')+(i?'<w:i/><w:iCs/>':'')+'<w:color w:val="000000"/><w:sz w:val="26"/><w:szCs w:val="30"/>'+(hl?'<w:highlight w:val="lightGray"/>':'')+'</w:rPr>';
 const PX=ls=>ls.map(l=>'<w:p><w:pPr><w:spacing w:after="0"/>'+RP(0,0,0)+'</w:pPr>'+l.map(r=>{r=typeof r==='string'?{t:r}:r;return '<w:r>'+RP(r.b,r.i,r.hl)+'<w:t xml:space="preserve">'+X(r.t)+'</w:t></w:r>'}).join('')+'</w:p>').join('');
 async function dl(){
  const f=fields(),z=await JSZip.loadAsync(window.ACS_TPL,{base64:true});let x=await z.file('word/document.xml').async('string');
