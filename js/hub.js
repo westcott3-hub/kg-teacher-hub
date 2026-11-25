@@ -267,7 +267,7 @@ function hubDressTable(){
 }
 function hubNSetCat(c){S.hubNcat=c;render();}
 // Lesson builder: a separate site (GitHub Pages) so new K1-K3 topics never need a dashboard deploy.
-const LESSON_BUILDER_URL="https://westcott3-hub.github.io/kg-lesson-builder/";
+const LESSON_BUILDER_URL="https://westcott3-hub.github.io/kg-teacher-hub/";
 function hubLessonsView(){
   const u=LESSON_BUILDER_URL,h=[];
   h.push('<section class="hub-greet"><h1>'+T("lessonsTitle")+'</h1><div class="sub">'+hubE(T("lessonsHelp"))+'</div></section>');
