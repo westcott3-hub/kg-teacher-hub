@@ -1688,11 +1688,68 @@ function deleteResourceConfirmed(idx){
     input.focus();
     return;
   }
-  DB.resources.splice(idx,1);
-  _pushing=true; // block onSnapshot from overwriting DB.resources until this push completes
-  pushDB();
+  const res=DB.resources[idx];
+  if(res)removeResourceFromDB(res);
   document.getElementById("delete-res-modal").remove();
   render();
+}
+
+// ── GOOGLE DRIVE UPLOAD (Apps Script web app) ────────────────────────────────
+// Files go to Gary's Drive folder "KG Teacher Hub Resources" (MLP|IEP / K1-K3),
+// shared "anyone with the link can view". The script runs as Gary, so teachers
+// don't need to sign in. Leave the URL empty to fall back to Cloudinary.
+const DRIVE_UPLOAD_URL="";
+const DRIVE_MAX_BYTES=35*1024*1024; // Apps Script request limit ~50MB after base64
+
+function uploadToDrive(file){
+  const zone=document.getElementById("cld-upload-zone");
+  const progressWrap=document.getElementById("cld-progress-wrap");
+  const progressBar=document.getElementById("cld-progress-bar");
+  const progressLabel=document.getElementById("cld-progress-label");
+  const urlEl=document.getElementById("res-url");
+  const saveBtn=document.getElementById("res-save-btn");
+  const setLabel=(t,c)=>{if(progressLabel){progressLabel.textContent=t;if(c)progressLabel.style.color=c;}};
+  const fail=msg=>{setLabel(msg,"#dc2626");if(zone)zone.style.display="block";if(saveBtn)saveBtn.disabled=false;};
+  if(progressWrap)progressWrap.style.display="block";
+  if(zone)zone.style.display="none";
+  if(saveBtn)saveBtn.disabled=true;
+  setLabel("Preparing…");
+
+  const reader=new FileReader();
+  reader.onerror=()=>fail("Couldn't read the file");
+  reader.onload=()=>{
+    const b64=String(reader.result).split(",")[1]||"";
+    const body=JSON.stringify({
+      name:file.name,mimeType:file.type||"application/octet-stream",data:b64,
+      prog:(document.getElementById("res-prog")||{}).value||"MLP",
+      level:(document.getElementById("res-level")||{}).value||"K1"
+    });
+    const xhr=new XMLHttpRequest();
+    xhr.open("POST",DRIVE_UPLOAD_URL);
+    xhr.setRequestHeader("Content-Type","text/plain;charset=utf-8"); // simple request: no CORS preflight
+    xhr.upload.onprogress=e=>{
+      if(!e.lengthComputable)return;
+      const pct=Math.round(e.loaded/e.total*100);
+      if(progressBar)progressBar.style.width=pct+"%";
+      setLabel(pct<100?"Uploading to Google Drive… "+pct+"%":"Saving in Google Drive…");
+    };
+    xhr.onload=()=>{
+      let r=null;try{r=JSON.parse(xhr.responseText);}catch(e){}
+      if(!r||!r.ok){console.error("[drive] upload failed:",xhr.status,xhr.responseText);fail("Upload failed"+(r&&r.error?": "+r.error:""));return;}
+      if(urlEl){urlEl.value=r.url;urlEl.dataset.embed=r.preview||"";}
+      setLabel("✓ Saved to Google Drive","#16a34a");
+      if(progressBar){progressBar.style.background="#16a34a";progressBar.style.width="100%";}
+      if(saveBtn)saveBtn.disabled=false;
+      if(zone){
+        zone.style.display="block";zone.style.borderColor="#16a34a";zone.style.background="#F0FDF4";
+        zone.innerHTML='<div style="font-size:1.4rem">&#10003;</div><div style="font-weight:700;font-size:0.85rem;color:#16a34a"></div><div style="font-size:0.7rem;color:#6B7280;margin-top:0.15rem">Saved to Google Drive. Now press Save Resource.</div>';
+        zone.children[1].textContent=file.name;
+      }
+    };
+    xhr.onerror=()=>fail("Upload failed. Check your connection.");
+    xhr.send(body);
+  };
+  reader.readAsDataURL(file);
 }
 
 // ── CLOUDINARY CONFIG ─────────────────────────────────────────────────────────
@@ -1725,9 +1782,9 @@ function openAddResourceModal(){
         <div id="cld-upload-label">
           <div style="font-size:1.8rem;margin-bottom:0.3rem">&#128194;</div>
           <div style="font-weight:700;font-size:0.88rem;color:#374151">Click or drag &amp; drop to upload</div>
-          <div style="font-size:0.72rem;color:#9CA3AF;margin-top:0.2rem">PDF, image, or any file · max 100MB</div>
+          <div style="font-size:0.72rem;color:#9CA3AF;margin-top:0.2rem">PDF, image, slides or video · max ${DRIVE_UPLOAD_URL?"35":"10"}MB</div>
         </div>
-        <input id="cld-file-input" type="file" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.gif,.mp4,.pptx,.docx,.xlsx" onchange="handleCldFile(this.files[0])">
+        <input id="cld-file-input" type="file" style="display:none" accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.mp4,.mov,.mp3,.m4a,.pptx,.ppt,.docx,.doc,.xlsx" onchange="handleCldFile(this.files[0])">
       </div>
 
       <!-- Progress bar (hidden until upload) -->
@@ -1831,6 +1888,16 @@ function handleCldFile(file){
     else if(/skill/i.test(lower))subjectEl.value="Skill Building";
     else if(/integrat/i.test(lower))subjectEl.value="Integration";
     else if(/love.read/i.test(lower))subjectEl.value="Love Reading";
+  }
+
+  // Google Drive upload (preferred when the Apps Script URL is set)
+  if(DRIVE_UPLOAD_URL){
+    if(file.size>DRIVE_MAX_BYTES){
+      showUploadZoneMessage('File is '+(file.size/1048576).toFixed(1)+'MB, so it\'s too large to upload here (35MB limit). Put it in the shared Google Drive folder and paste its link below.','#dc2626');
+      return;
+    }
+    uploadToDrive(file);
+    return;
   }
 
   const MAX_SIZE=10*1024*1024; // 10MB
@@ -2044,9 +2111,12 @@ function saveNewResource(){
   const ytMatch=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
   if(ytMatch){embedSrc='https://www.youtube.com/embed/'+ytMatch[1];}
 
+  // Google Drive file → in-page preview
+  const gd=url.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{20,})/);
+  if(!embedSrc&&gd){embedSrc='https://drive.google.com/file/d/'+gd[1]+'/preview';}
+
   const id=Date.now();
-  DB.resources=[...(DB.resources||[]),{id,prog,level,name:name.trim(),url:url.trim(),embedSrc,subject,type,note}];
-  pushDB();
+  addResourceToDB({id,prog,level,name:name.trim(),url:url.trim(),embedSrc,subject,type,note});
   document.getElementById("add-res-modal").remove();
   render();
 }

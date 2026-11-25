@@ -84,93 +84,85 @@ let _pushing=false;
 let fsUnsub=null;
 let pollInterval=null;
 let popupActive=false;
+const HUB_DOC=()=>db.collection("hubData").doc("shared");
 
+// ── SYNC (rewritten 25 Nov 2026) ──────────────────────────────────────────────
+// Firestore is the only source of truth for resources. This client NEVER writes
+// the whole resources array: adds use arrayUnion, deletes use arrayRemove, so a
+// stale tab (e.g. the classroom TV) can't overwrite other people's additions.
+// It also NEVER seeds/overwrites the document: if Firestore looks empty or the
+// doc is missing (offline, auth not ready, cache), SEED_RESOURCES are shown in
+// memory only. (On 5 Jul 2026 the old seeding code wiped every added resource.)
 function startSync(){
   if(fsUnsub)fsUnsub();
-  fsUnsub=db.collection("hubData").doc("shared").onSnapshot(snap=>{
-    if(popupActive)return;
-    if(_pushing)return;
+  fsUnsub=HUB_DOC().onSnapshot(snap=>{
     if(snap.exists){
-      const d=snap.data();
+      const d=snap.data()||{};
       if(d.snapshots)DB.snapshots={...DB.snapshots,...d.snapshots};
       if(d.assessments)DB.assessments=d.assessments;
       if(d.dailyLogs)DB.dailyLogs={...DB.dailyLogs,...d.dailyLogs};
       if(d.announcements)DB.announcements=d.announcements;
-
-      if(d.resources&&d.resources.length>0){
-        // Firestore has resources — use as-is, full source of truth
-        const prevCount=DB.resources.length;
-        DB.resources=d.resources;
-        console.log("[sync] Firestore→DB: "+d.resources.length+" resources (was "+prevCount+") ts="+new Date().toISOString());
-        // Append any SEED_RESOURCES entries missing from Firestore (new additions to defaults)
-        const existingIds=new Set(DB.resources.map(r=>r.id));
-        const missing=SEED_RESOURCES.filter(r=>!existingIds.has(r.id));
-        if(missing.length>0){
-          console.log("[sync] WRITING BACK "+missing.length+" missing seed IDs: "+missing.map(r=>r.id).join(","));
-          DB.resources=[...DB.resources,...missing];
-          _pushing=true;
-          db.collection("hubData").doc("shared").set(
-            {resources:DB.resources,resourcesVersion:RESOURCES_VERSION},
-            {merge:true}
-          ).then(()=>{_pushing=false;console.log("[sync] write-back complete: "+DB.resources.length+" resources");})
-           .catch((e)=>{_pushing=false;console.error("[sync] write-back failed:",e);});
-        }
-        console.log("[sync] loaded "+DB.resources.length+" resources from Firestore");
+      if(Array.isArray(d.resources)&&d.resources.length>0){
+        const ids=new Set(d.resources.map(r=>r.id));
+        // seed entries missing from Firestore are shown, but not written back
+        DB.resources=[...d.resources,...SEED_RESOURCES.filter(r=>!ids.has(r.id))];
+        console.log("[sync] "+d.resources.length+" resources from Firestore"+(snap.metadata.fromCache?" (cache)":""));
       } else {
-        // Firestore shows empty resources — could be transient. Only seed if memory is also empty.
-        if(DB.resources.length<=SEED_RESOURCES.length){
-          console.log("[sync] Firestore empty — seeding "+SEED_RESOURCES.length+" resources");
-          DB.resources=JSON.parse(JSON.stringify(SEED_RESOURCES));
-          db.collection("hubData").doc("shared").set(
-            {resources:DB.resources,resourcesVersion:RESOURCES_VERSION},
-            {merge:true}
-          );
-        } else {
-          console.warn("[sync] Firestore shows empty but DB has "+DB.resources.length+" resources — skipping seed");
-        }
+        console.warn("[sync] Firestore resources empty — showing seed list, NOT writing");
       }
     } else {
-      // Document appears not to exist — but this can happen transiently during
-      // auth token refresh or network blips. Only seed if we have no resources at all.
-      if(DB.resources.length<=SEED_RESOURCES.length){
-        console.log("[sync] no doc or empty — seeding with SEED_RESOURCES");
-        DB.resources=JSON.parse(JSON.stringify(SEED_RESOURCES));
-        db.collection("hubData").doc("shared").set(
-          {resources:DB.resources,resourcesVersion:RESOURCES_VERSION,snapshots:{},assessments:{},dailyLogs:{}}
-        );
-      } else {
-        console.warn("[sync] snap.exists=false but DB has "+DB.resources.length+" resources — skipping seed to protect user data");
-      }
+      console.warn("[sync] hubData/shared missing"+(snap.metadata.fromCache?" (cache)":"")+" — showing seed list, NOT writing");
     }
-    S.syncStatus="ok";
+    if(!snap.metadata.hasPendingWrites)S.syncStatus="ok";
     render();
-  },()=>{S.syncStatus="err";render();});
+  },e=>{console.error("[sync] listen failed:",e);S.syncStatus="err";render();});
 }
 
+function showSyncToast(msg,ok){
+  const t=document.createElement("div");
+  t.textContent=msg;
+  t.style.cssText="position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);z-index:2000;padding:0.6rem 1rem;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.85rem;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.25);background:"+(ok?"#16a34a":"#dc2626");
+  document.body.appendChild(t);setTimeout(()=>t.remove(),ok?2500:7000);
+}
+
+// Waits for the server to confirm; a write still pending after 15 s (offline,
+// blocked network) is reported instead of silently "saved".
+function confirmWrite(promise,okMsg,failMsg,onFail){
+  S.syncStatus="ing";render();
+  let done=false;
+  const timer=setTimeout(()=>{if(!done){S.syncStatus="err";render();showSyncToast("Not saved yet — no connection to the database. Keep this page open and check your internet.",false);}},15000);
+  return promise.then(()=>{done=true;clearTimeout(timer);S.syncStatus="ok";render();if(okMsg)showSyncToast(okMsg,true);})
+    .catch(e=>{done=true;clearTimeout(timer);console.error("[save] failed:",e);S.syncStatus="err";if(onFail)onFail();render();showSyncToast(failMsg+" ("+(e.code||e.message)+")",false);});
+}
+
+function addResourceToDB(res){
+  DB.resources=[...DB.resources,res]; // optimistic; the snapshot confirms it
+  return confirmWrite(
+    HUB_DOC().set({resources:firebase.firestore.FieldValue.arrayUnion(res)},{merge:true}),
+    "Resource saved","Couldn't save the resource",
+    ()=>{DB.resources=DB.resources.filter(r=>r.id!==res.id);}
+  );
+}
+
+function removeResourceFromDB(res){
+  const before=DB.resources;
+  DB.resources=DB.resources.filter(r=>r!==res);
+  // arrayRemove needs the exact stored object, which is what we hold
+  return confirmWrite(
+    HUB_DOC().update({resources:firebase.firestore.FieldValue.arrayRemove(res)}),
+    "Resource deleted","Couldn't delete the resource",
+    ()=>{DB.resources=before;}
+  );
+}
+
+// Saves everything EXCEPT resources (announcements etc.).
 function pushDB(){
-  _pushing=true;
-  S.syncStatus="ing";
-  console.log("[push] saving "+DB.resources.length+" resources");
-  db.collection("hubData").doc("shared").set({
+  confirmWrite(HUB_DOC().set({
     snapshots:DB.snapshots,
-    resources:DB.resources,
-    resourcesVersion:RESOURCES_VERSION,
     assessments:DB.assessments,
     dailyLogs:DB.dailyLogs,
     announcements:DB.announcements||[]
-  },{merge:true})
-  .then(()=>{
-    _pushing=false;
-    S.syncStatus="ok";
-    console.log("[push] saved OK "+DB.resources.length+" resources");
-    render();
-  })
-  .catch((e)=>{
-    _pushing=false;
-    S.syncStatus="err";
-    console.error("[push] failed:",e);
-    render();
-  });
+  },{merge:true}),null,"Couldn't save");
 }
 // ── CHECK-IN HELPERS ──────────────────────────────────────────────────────────
 
