@@ -21,3 +21,6 @@
  #rail{order:3!important;flex-direction:column!important;overflow-x:visible!important;border-bottom:0!important;border-top:1px solid #cfe6f5}
  #rail .st{width:auto!important}
 }
+/* phone: make the full-screen button prominent */
+@media(max-width:700px){#fsbtn{font-size:17px!important;padding:14px!important;background:#B91C1C!important;color:#fff!important}#fsbtn::before{content:"\26F6  "}}
+#cls.full #fsbtn{display:none!important}
