@@ -446,6 +446,9 @@ function hubBottomNav(){
 }
 
 // ── WELCOME / PICKER ──────────────────────────────────────────────────────────
+function hubMotto(){
+  return '<footer class="hub-motto" aria-label="School motto"><span class="m1">Labor omnia vincit</span><span class="m2">Work conquers all</span><span class="m3">Empowering Learning Through AI &amp; Innovation, for Student Well-Being</span></footer>';
+}
 function hubWelcome(){
   const ppl=hubPeople();const cur=hubMe();
   const h=[];
@@ -794,7 +797,7 @@ function hubRender(){
     S.clockStr=nowTimeStr();
     if(!S.hubMe||S.hubPicking){
       root.className="hub-root";
-      root.innerHTML=hubWelcome()+(S.popup?renderPopup():"");
+      root.innerHTML=hubWelcome()+hubMotto()+(S.popup?renderPopup():"");
       return;
     }
     if(!hubMe()&&S.hubTab==="week")S.hubTab="today";
@@ -810,7 +813,7 @@ function hubRender(){
       body='<main class="hub-main">'+v+'</main>';
     }
     root.className="hub-root hub-on"+(["today","week","duty","notices","lessons"].includes(S.hubTab)?" hub-own":"");
-    root.innerHTML=hubHeader()+body+hubBottomNav()+(S.popup?renderPopup():"");
+    root.innerHTML=hubHeader()+body+hubMotto()+hubBottomNav()+(S.popup?renderPopup():"");
   }catch(err){
     console.error("hubRender error:",err);
     try{root.className="";_hubLegacyRender();}catch(e2){
