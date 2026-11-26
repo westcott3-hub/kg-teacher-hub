@@ -59,3 +59,21 @@
 .sr{gap:6px!important}.sw{gap:4px!important}
 .sw button{min-width:40px!important;min-height:30px!important;font-size:18px!important;border-radius:10px!important;background:#e4edf6!important}
 .sw button:hover:not(:disabled){background:#cfe0f1!important}
+
+/* ===== UX pass 3 (Nov 2026): controls = side drawer from the right (no longer covers the bottom buttons) ===== */
+#ctlhd{display:none}
+#cls.full.ctlopen #ctl{position:fixed!important;top:0!important;right:0!important;bottom:0!important;left:auto!important;width:min(400px,88vw)!important;max-height:none!important;display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:flex-start!important;gap:10px!important;overflow:auto!important;padding:84px 18px 20px!important;background:#fff!important;border:0!important;border-left:6px solid #FFD23F!important;box-shadow:-18px 0 50px rgba(0,0,0,.35)!important;z-index:15!important;animation:ctlin .22s ease-out}
+@keyframes ctlin{from{transform:translateX(100%)}to{transform:none}}
+#cls.full.ctlopen #ctlhd{display:flex;position:fixed;top:0;right:0;width:min(400px,88vw);height:72px;align-items:center;gap:12px;padding:0 14px 0 22px;background:#16324F;color:#fff;font:700 22px Fredoka,Nunito,sans-serif;z-index:16;box-sizing:border-box;border-left:6px solid #FFD23F}
+#cls.full.ctlopen #ctlhd b{flex:1}
+#cls.full.ctlopen #ctlhd button{width:48px;height:48px;border-radius:50%;border:0;background:#fff;color:#16324F;font:700 22px Fredoka,sans-serif;cursor:pointer}
+#cls.full.ctlopen #ctl .b{width:100%!important;margin:0!important;font-size:19px!important;padding:14px 18px!important;min-height:56px!important;text-align:left!important;border-radius:16px!important}
+#cls.full.ctlopen #ctl .lab{color:#5a7084!important;font-size:14px!important}
+#cls.full.ctlopen #ctl .mpbtn,#cls.full.ctlopen #ctl select{width:100%!important;font-size:18px!important}
+#cls.full.ctlopen #ctl a{font-size:15px!important;padding:6px 2px}
+#cls.full.ctlopen #snav{display:flex!important}
+@media(max-width:900px),(max-height:500px){
+ #cls.full.ctlopen #ctl{padding:64px 12px 12px!important;gap:8px!important}
+ #cls.full.ctlopen #ctlhd{height:54px;font-size:18px}
+ #cls.full.ctlopen #ctlhd button{width:40px;height:40px;font-size:18px}
+ #cls.full.ctlopen #ctl .b{font-size:16px!important;padding:10px 14px!important;min-height:46px!important}}
