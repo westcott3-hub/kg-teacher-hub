@@ -39,3 +39,23 @@
 
 .ytdrop{font:700 15px system-ui,sans-serif;padding:8px 10px;border-radius:10px;border:2px solid #F5C542;background:#fff;color:#0B1B33;max-width:62vw;min-width:200px}
 #cls.full.ctlopen #ctl .ytdrop{font-size:16px;flex:1 1 100%;max-width:none}
+
+/* ===== UX pass 2 (Nov 2026): full-screen controls grouped bottom-left, big enough to tap ===== */
+#cls.full #exitfs,#cls.full #ctlbtn{position:fixed!important;top:auto!important;right:auto!important;bottom:16px!important;width:62px!important;height:62px!important;border-radius:50%!important;padding:0!important;font-size:26px!important;line-height:1!important;opacity:.7!important;border:3px solid #fff!important;background:rgba(185,28,28,.92)!important;color:#fff!important;box-shadow:0 6px 0 rgba(0,0,0,.25)!important;z-index:14!important;transform:none!important;display:block!important}
+#cls.full #exitfs{left:16px!important}
+#cls.full #ctlbtn{left:88px!important;background:rgba(22,50,79,.92)!important}
+#cls.full #exitfs:hover,#cls.full #ctlbtn:hover{opacity:1!important}
+#cls.full.ctlopen #ctlbtn{background:#FFD23F!important;color:#16324F!important}
+#cls.full #snav{left:172px!important}
+#cls.full.ctlopen #ctl{padding:12px 16px 12px 172px!important}
+#cls.full.ctlopen #ctl .b{font-size:17px!important;padding:12px 16px!important;min-height:48px!important}
+@media(max-width:900px),(max-height:500px){
+ #cls.full #exitfs,#cls.full #ctlbtn{width:46px!important;height:46px!important;font-size:19px!important;bottom:8px!important;border-width:2px!important}
+ #cls.full #exitfs{left:8px!important}#cls.full #ctlbtn{left:60px!important}
+ #cls.full #snav{left:120px!important}
+ #cls.full.ctlopen #ctl{padding:8px 8px 8px 116px!important;max-height:62vh!important}
+ #cls.full.ctlopen #ctl .b{font-size:15px!important;padding:10px 12px!important;min-height:44px!important}}
+/* teacher stage list: bigger swap / remove buttons */
+.sr{gap:6px!important}.sw{gap:4px!important}
+.sw button{min-width:40px!important;min-height:30px!important;font-size:18px!important;border-radius:10px!important;background:#e4edf6!important}
+.sw button:hover:not(:disabled){background:#cfe0f1!important}
