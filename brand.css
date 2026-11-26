@@ -77,3 +77,8 @@
  #cls.full.ctlopen #ctlhd{height:54px;font-size:18px}
  #cls.full.ctlopen #ctlhd button{width:40px;height:40px;font-size:18px}
  #cls.full.ctlopen #ctl .b{font-size:16px!important;padding:10px 14px!important;min-height:46px!important}}
+
+/* ===== UX pass 4: gear only where the stage has extra controls ===== */
+#cls.full.noctl #ctlbtn{display:none!important}
+#cls.full.noctl #snav{left:88px!important}
+@media(max-width:900px),(max-height:500px){#cls.full.noctl #snav{left:60px!important}}
