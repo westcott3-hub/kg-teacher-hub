@@ -10,6 +10,7 @@ const Y=(id,t,b)=>({id,t:'Song: '+t,b});
 const THEMES={
  christmas:{name:'Christmas',icon:'\u{1F384}',auto:[12,1,12,31],mascot:'shared/xmas/mascot/',
   bg:{farm:'farm',zoo:'zoo',weather:'meadow',phonics:'playground',things:'classroom_soft',shapes:'classroom_soft',senses:'garden_soft'},bgDir:'shared/xmas/bg/',
+  poster:{farm:'farm',weather:'weather',zoo:'zoo'},posterDir:'shared/xmas/poster/',
   songs:{
    greet:[Y('ZUi1YJVChpg','Hello, Reindeer (Super Simple Songs)','Hello, reindeer'),Y('qDL2HBPy9uQ','Hello Reindeer, Goodbye Snowman (Super Simple Songs)','Hello reindeer'),Y('4YBGRGBj7_w','Jingle Bells (Super Simple Songs)','Jingle Bells'),Y('mGAYzlqj-aE','S-A-N-T-A (Super Simple Songs)','S-A-N-T-A'),Y('s2rgaLmyiFU','Up On The Housetop (Super Simple Songs)','Up on the housetop'),Y('VJXg2xmdG7k','Jingle Jingle Little Bell (Super Simple Songs)','Jingle jingle little bell'),Y('AvCcpY3UBCM','C-H-R-I-S-T-M-A-S (Super Simple Songs)','C-H-R-I-S-T-M-A-S'),Y('uZuzK16g19U','Twinkle Twinkle Christmas Star (The Kiboomers)','Christmas star'),Y('2Expn6UPZqI','Hello Reindeer, Goodbye Snowman (Noodle & Pals)','Hello reindeer (Noodle)')],
    dance:[Y('eo9bpiwKpx4','Christmas Freeze Dance (The Kiboomers)','Christmas freeze dance'),Y('7ZOPX85PXGw','Shake Your Santa Hat! (The Kiboomers)','Shake your Santa hat'),Y('E48dJsivx7s','Reindeer Hokey Pokey (The Kiboomers)','Reindeer hokey pokey'),Y('BfBPW9rQ-1k',"Santa's Little Reindeer (The Kiboomers)","Santa's little reindeer"),Y('zgbHfniNyLQ','Christmas Floor Is Lava (The Kiboomers)','Floor is lava'),Y('6qs0gGxb_Ms','Santa Freeze Dance (Danny Go!)','Santa freeze dance'),Y('WYYJ7yaL9WU','Five Little Elves (Super Simple Songs)','Five little elves'),Y('Av_U0SP2aBI',"Danny's Sleigh Ride (Danny Go!)",'Sleigh ride'),Y('bB2aJP9KvTM','Santa Dance (Takabloo)','Santa dance'),Y('P0KjRThyGcM','Christmas Yoga Freeze Dance (Yoga Guppy)','Christmas yoga freeze'),Y('kN9x19YWpHs','Jingle Bell Opposites (The Kiboomers)','Jingle bell opposites'),Y('Lj0q3Zn-Ml4','Jingle Bells Dance (Children Love to Sing)','Jingle Bells dance'),Y('rHjxTnThKQk','Up on the Housetop Dance (Love to Sing)','Housetop dance'),Y('7PG6PPahpLE','Five Little Reindeer (The Kiboomers)','Five little reindeer')],
@@ -38,6 +39,7 @@ function prep(DATA,LESSONS,topic){const k=active(),T=THEMES[k];document.document
  if(B){B.greet=dedupe((S.greet||[]).concat(Lx&&!(Lx.yt||[]).length?tk:[],B.greet||[]));B.dance=dedupe((S.dance||[]).concat(B.dance||[]));B.bye=dedupe((S.bye||[]).concat(B.bye||[]))}
  if(Lx){if((Lx.yt||[]).length&&tk.length)Lx.yt=dedupe(tk.concat(Lx.yt));
   const bk=T.bg&&T.bg[topicKey(topic)];if(bk&&Lx.theme){Lx.theme=Object.assign({},Lx.theme,{bg:T.bgDir+bk+'.jpg'})}
+  const pk=T.poster&&T.poster[topicKey(topic)];if(pk&&Lx.poster)Lx.poster=T.posterDir+pk+'.jpg';
   if(Lx.mascot&&T.mascot){const m={};for(const n in Lx.mascot){const f=String(Lx.mascot[n]).match(/cloud_(\w+)\.webm$/);m[n]=f?T.mascot+'cloud_'+f[1]+'.webm':Lx.mascot[n]}Lx.mascot=m}}
  return k}
 
@@ -49,7 +51,7 @@ function mkFx(w,h,opt){const c=document.createElement('canvas');c.className='kgt
  c._snow=true;let last=0,FR=null;
  if(opt.frost){FR=document.createElement('canvas');FR.width=w;FR.height=h;const q=FR.getContext('2d');[[0,0],[w,0],[0,h],[w,h]].forEach(([x,y])=>{const r=Math.min(w,h)*.5,gr=q.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(255,255,255,.8)');gr.addColorStop(.4,'rgba(230,242,255,.38)');gr.addColorStop(1,'rgba(235,245,255,0)');q.fillStyle=gr;q.fillRect(0,0,w,h)})}
  function sag(x){const seg=w/(opt.swags||5),u=(x%seg)/seg;return 4+Math.sin(u*Math.PI)*18}
- function frame(t){if(!c.isConnected){c._raf=0;return}c._raf=requestAnimationFrame(frame);if(t-last<33)return;last=t;g.clearRect(0,0,w,h);if(FR&&c._snow)g.drawImage(FR,0,0);
+ function frame(t){if(!c.isConnected){c._raf=0;return}c._raf=requestAnimationFrame(frame);if(t-last<33)return;last=t;g.clearRect(0,0,w,h);if(FR&&c._snow&&!c._nofrost)g.drawImage(FR,0,0);
   if(c._snow)for(const f of fl){f.y+=f.s*1.6;f.x+=Math.sin(t/1400+f.p)*.5;if(f.y>h+8){f.y=-8;f.x=Math.random()*w}
    g.beginPath();g.arc(f.x,f.y,f.r,0,6.3);g.fillStyle=(opt.tint||'rgba(255,255,255,')+f.a+')';g.shadowColor='rgba(60,90,140,.7)';g.shadowBlur=opt.tint?0:6;g.fill()}
   g.shadowBlur=0;
@@ -57,12 +59,12 @@ function mkFx(w,h,opt){const c=document.createElement('canvas');c.className='kgt
    g.lineWidth=3;g.strokeStyle='#2FA155';g.stroke();
    for(const b of bulbs){const y=sag(b.x)+10,on=.55+.45*Math.sin(t/420+b.p);g.save();g.translate(b.x,y);g.fillStyle='#555';g.fillRect(-4,-9,8,7);
     g.shadowColor=b.c;g.shadowBlur=18*on;g.globalAlpha=.6+.4*on;g.fillStyle=b.c;g.beginPath();g.ellipse(0,5,8,12,0,0,6.3);g.fill();g.restore()}}
-  if(opt.drift&&c._snow){g.fillStyle='rgba(255,255,255,.92)';g.shadowColor='rgba(120,150,200,.5)';g.shadowBlur=10;g.beginPath();g.moveTo(0,h);g.lineTo(0,h-opt.drift*.6);
+  if(opt.drift&&c._snow&&!c._nofrost){g.fillStyle='rgba(255,255,255,.92)';g.shadowColor='rgba(120,150,200,.5)';g.shadowBlur=10;g.beginPath();g.moveTo(0,h);g.lineTo(0,h-opt.drift*.6);
    for(let x=0;x<=w;x+=40)g.quadraticCurveTo(x+20,h-opt.drift-(x/40%2?6:14),x+40,h-opt.drift*.7);g.lineTo(w,h);g.closePath();g.fill();g.shadowBlur=0}}
  c._raf=requestAnimationFrame(frame);c._wake=()=>{if(!c._raf)c._raf=requestAnimationFrame(frame)};return c}
 let FX=null;
 function mount(stage,kind){const k=active(),T=THEMES[k];if(!stage)return;if(!T){if(FX)FX.remove();return}
- if(!FX)FX=mkFx(1600,900,{garland:true,swags:6,flakes:56,frost:true,drift:40});FX._snow=!NOSNOW.includes(kind);
+ if(!FX)FX=mkFx(1600,900,{garland:true,swags:6,flakes:56,frost:true,drift:40});FX._snow=!NOSNOW.includes(kind);FX._nofrost=!!stage.querySelector('.poster');
  if(FX.parentElement!==stage)stage.appendChild(FX);FX._wake()}
 function page(el,opt){const k=active();if(!THEMES[k]||!el)return null;const c=mkFx(opt&&opt.w||1600,opt&&opt.h||900,Object.assign({flakes:60},opt||{}));c.classList.add('kgt-page');el.appendChild(c);c._wake();return c}
 /* picker (used by player top bar and the index page) */
@@ -74,6 +76,12 @@ const css=document.createElement('style');css.textContent=
  '.s16>canvas.kgt-fx{position:absolute;left:0;top:0;width:1600px;height:900px;pointer-events:none;z-index:3}'+
  'canvas.kgt-page{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:0}'+
  'select.kgt-pick{font:inherit;font-weight:800;font-size:14px;border-radius:10px;padding:6px 8px;border:1.5px solid #E7E5E1;background:#fff;color:#16324F;cursor:pointer;max-width:230px}'+
+ '[data-theme=christmas] .poster{background:#FBF4E8 url(shared/xmas/poster/frame.jpg) center/100% 100% no-repeat}'+
+ '[data-theme=christmas] .poster img{left:258px;top:150px;width:1084px;height:610px;object-fit:cover;border-radius:22px;box-shadow:0 0 0 8px #fff,0 14px 34px rgba(60,30,10,.35)}'+
+ '[data-theme=christmas] .poster::before{content:"\\2744  Merry Christmas!  \\2744";position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:2;white-space:nowrap;font:700 52px Fredoka,Nunito,sans-serif;color:#FFE08A;background:linear-gradient(#D62828,#A4161A);padding:8px 46px 12px;border-radius:999px;box-shadow:0 6px 0 #7A0F12,0 12px 24px rgba(0,0,0,.25);text-shadow:0 3px 0 #7A0F12}'+
+ '[data-theme=christmas] #start{background:radial-gradient(ellipse at 50% 0%,#1E6B45,#0F3D2E 55%,#5C1012)!important}'+
+ '[data-theme=christmas] #start::before{content:"\\1F384  Merry Christmas!  \\1F384";font:700 30px Fredoka,Nunito,sans-serif;color:#FFE08A;background:#B91C1C;padding:6px 26px 8px;border-radius:999px;box-shadow:0 4px 0 #7A0F12}'+
+ '[data-theme=christmas] #start .b.y{background:#D62828;color:#fff;box-shadow:0 5px 0 #7A0F12}'+
  '[data-theme=christmas] #top{background:linear-gradient(90deg,#7F1D1D,#B91C1C 45%,#14532D)!important}'+
  '[data-theme=christmas] .hdr{border-bottom:4px solid transparent;border-image:repeating-linear-gradient(90deg,#B91C1C 0 18px,#fff 18px 26px,#15803D 26px 44px,#fff 44px 52px) 4}';
 (document.head||document.documentElement).appendChild(css);
