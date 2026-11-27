@@ -41,12 +41,13 @@ select.add{width:calc(100% - 20px);margin:6px 10px 10px;font-size:13px;padding:7
 <div class="mt" id="mt"></div>
 <label for="s">Variation <small style="font-weight:600">(same settings, different game mix)</small></label>
 <div style="display:flex;gap:10px;align-items:center"><select id="s" style="max-width:180px"></select></div>
+<div id="throw" style="display:none"><label for="thx">Theme <small style="font-weight:600">(Cloud's outfit, decorations and festive songs first)</small></label><div id="thx"></div></div>
 <label class="own"><input type="checkbox" id="own"><span>Own media only<small>No third-party videos; songs play from YouTube links.</small></span></label>
 <div class="go"><a class="b p" id="play" target="_blank" rel="noopener">Open lesson player</a><a class="b q" id="plan" target="_blank" rel="noopener">Open lesson plan</a></div>
 <div class="seq" id="seq"></div>
 <p class="note">Teacher view on the laptop, then press "Open student view" for the TV. Use Chrome or Edge.</p>
 </div><div class="acs-foot"><span class="m1">Labor omnia vincit</span><span class="m2">Work conquers all</span><span class="m3">Empowering Learning Through AI &amp; Innovation, for Student Well-Being</span></div></div>
-<script src="engine.js"></script>
+<script src="engine.js"></script><script src="themes.js"></script>
 <script>
 const $=i=>document.getElementById(i);
 const TN={pp1_u7a:'Pippa and Pop 1 · Unit 7 · Lesson 1: Clothes: song and new words',pp1_u7b:'Pippa and Pop 1 · Unit 7 · Lesson 2: Letter i and Tommy\'s T-shirt',pp1_u7c:'Pippa and Pop 1 · Unit 7 · Lesson 3: I\'ve got... dress, skirt, trousers, T-shirt',pp1_u7d:'Pippa and Pop 1 · Unit 7 · Lesson 4: Rough and smooth, review and project',farm:'Farm animals',weather:'Weather',zoo:'At the zoo',phonics_a:'Phonics: Letter A',phonics_b:'Phonics: Letter B',phonics_c:'Phonics: Letter C',phonics_d:'Phonics: Letter D',phonics_o:'Phonics: Letter O',phonics_p:'Phonics: Letter P',phonics_q:'Phonics: Letter Q',phonics_r:'Phonics: Letter R',phonics_s:'Phonics: Letter S',phonics_t:'Phonics: Letter T',phonics_u:'Phonics: Letter U',phonics_v:'Phonics: Letter V',phonics_w:'Phonics: Letter W',phonics_x:'Phonics: Letter X',phonics_y:'Phonics: Letter Y',phonics_z:'Phonics: Letter Z',shapes:'Shapes: flat and 3D (magnetic tiles)',things:'Things around us: my classroom (3D)',senses:'Five senses: my body (K1)',senses_k2:'Five senses: in the garden (K2)',senses_k3:'Five senses: sense-sational garden (K3)'};
@@ -59,11 +60,14 @@ for(let i=1;i<=6;i++)$('s').add(new Option('Mix '+i,i));
 let ED=[];
 function upd(reset){if(reset===true)ED=[];const t=$('t').value,m=$('m').value,min=$('min').value,s=$('s').value,own=$('own').checked?1:0;
  const L=makeLesson(t,m,+min,s,own);ED.forEach(op=>edApply(L,op));
- const q='t='+t+'&m='+m+'&min='+min+'&s='+s+(own?'&own=1':'')+(ED.length?'&ed='+edEnc(ED):'');$('play').href='player.html?'+q;$('plan').href='plan.html?'+q;
+ let q='t='+t+'&m='+m+'&min='+min+'&s='+s+(own?'&own=1':'')+(ED.length?'&ed='+edEnc(ED):'');const th=window.KGT?KGT.choice():'auto';if(th!=='auto'){q+='&th='+th}$('play').href='player.html?'+q;$('plan').href='plan.html?'+q;
  $('mt').textContent=DATA.METHODS[m].label;
  const g=[];L.stages.forEach((x,i)=>{let y=g[g.length-1];if(!y||y.p!==x.phase){y={p:x.phase,f:x.frame,m:0,i:[]};g.push(y)}y.m+=x.min;y.i.push(i)});
  $('seq').innerHTML=g.map(y=>'<div class="ph"><div class="phh"><b>'+y.p+'</b><span>'+y.m+' min</span></div><div class="phf">'+(y.f||'')+'</div>'+y.i.map(i=>{const x=L.stages[i],o=optionsFor(L,i),rm=canRemove(L,i);
   return '<div class="ar"><div class="an">'+x.name+'<small>'+x.min+' min</small></div>'+(o.length>1?'<select onchange="ed({t:\'swap\',i:'+i+',k:this.value})">'+o.map(z=>'<option value="'+z.kind+'"'+(z.kind===x.kind?' selected':'')+'>'+z.name+' ('+z.len+(z.prep?', '+z.prep:'')+')</option>').join('')+'</select>':'<div class="fx">fixed</div>')+'<button '+(rm?'':'disabled ')+'title="'+(rm?'Remove':'Keep one song or dance, and one activity per stage')+'" onclick="ed({t:\'rm\',i:'+i+'})">&#10005;</button></div>'}).join('')+(function(){const a=addOptions(L,y.p);return a.length&&y.i.some(i=>L.stages[i].min>3&&L.stages[i].kind!=='intro')?'<select class="add" onchange="if(this.value)ed({t:\'add\',p:\''+y.p+'\',k:this.value.split(\'|\')[0],u:this.value.split(\'|\')[1]})"><option value="">+ add activity</option>'+a.map(z=>'<option value="'+z.kind+'|'+z.pur+'">'+z.name+' ('+z.len+')</option>').join('')+'</select>':''})()+'</div>').join('')}
 function ed(op){ED.push(op);upd()}
-['t','m','min','s','own'].forEach(i=>$(i).onchange=()=>upd(true));upd();
+['t','m','min','s','own'].forEach(i=>$(i).onchange=()=>upd(true));
+if(window.KGT){const tp=KGT.picker(()=>{document.documentElement.dataset.theme=KGT.active();thFx();upd()});tp.style.cssText='width:100%;max-width:340px;font-size:16px;padding:10px 12px;border-radius:12px';$('thx').appendChild(tp);$('throw').style.display='';document.documentElement.dataset.theme=KGT.active()}
+let TFX=null;function thFx(){if(TFX){TFX.remove();TFX=null}if(window.KGT)TFX=KGT.page(document.body,{w:innerWidth,h:innerHeight,flakes:50,tint:'rgba(140,175,215,'});if(TFX)TFX.style.zIndex='-1'}thFx();
+upd();
 </script></body></html>

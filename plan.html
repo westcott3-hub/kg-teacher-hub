@@ -14,9 +14,9 @@ button{padding:9px 16px;font-size:14px;font-weight:800;font-family:inherit;borde
 <div class="acs-bar" style="margin-top:4px"><img src="acs_logo.png" alt="ACS"><div><div class="n1">Assumption College Sriracha</div><div class="n2">Kindergarten Lesson Plan</div></div></div>
 <div class="bar"><button onclick="dl()">Download Word (school template)</button><button onclick="print()">Print / save as PDF</button><input id="iw" placeholder="Week no." size="7"><input id="iu" placeholder="Unit" size="7"><input id="id" placeholder="Date, e.g. 26 Nov 2026" size="20"></div>
 <div id="o"></div><div class="acs-foot"><span class="m1">Labor omnia vincit</span><span class="m2">Work conquers all</span><span class="m3">Empowering Learning Through AI &amp; Innovation, for Student Well-Being</span></div>
-<script src="engine.js"></script><script src="jszip.min.js"></script><script src="acs-template.js"></script>
+<script src="engine.js"></script><script src="themes.js"></script><script src="jszip.min.js"></script><script src="acs-template.js"></script>
 <script>
-const Q=new URLSearchParams(location.search);const L=makeLesson(Q.get('t')||'farm',Q.get('m')||'ipdpc',+(Q.get('min')||30),Q.get('s')||'1',Q.get('own')==='1');edDec(Q.get('ed')||'').forEach(op=>edApply(L,op));
+const Q=new URLSearchParams(location.search);if(window.KGT)KGT.prep(DATA,LESSONS,Q.get('t')||'farm');const L=makeLesson(Q.get('t')||'farm',Q.get('m')||'ipdpc',+(Q.get('min')||30),Q.get('s')||'1',Q.get('own')==='1');edDec(Q.get('ed')||'').forEach(op=>edApply(L,op));
 const e=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const tot=L.stages.reduce((a,s)=>a+s.min,0);
 const RES=L.stages.map(s=>s.res),has=(...k)=>k.some(x=>RES.includes(x));
